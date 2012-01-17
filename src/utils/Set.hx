@@ -1,4 +1,4 @@
-package mymetrics.utils;
+package utils;
 
 using Lambda;
 

@@ -3,7 +3,7 @@ package mymetrics;
 using Lambda;
 import neko.Lib;
 import mymetrics.node.Node;
-import mymetrics.utils.Utils;
+import utils.Utils;
 
 class ReportGenerator
 {

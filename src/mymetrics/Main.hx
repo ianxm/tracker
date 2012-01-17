@@ -2,7 +2,7 @@ package mymetrics;
 
 import neko.Lib;
 import neko.Sys;
-import mymetrics.utils.Utils;
+import utils.Utils;
 
 class Main
 {
