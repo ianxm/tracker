@@ -2,10 +2,10 @@ package mymetrics.node;
 
 class Node
 {
-    private var parent :Node;
-    private var depth :Int;                     // ie. 0=root, 1=year, 2=month, 3=day
+    public var parent(default,null) :Node;
+    public var depth(default,null) :Int;        // ie. 0=root, 1=year, 2=month, 3=day
     public var index(default,null) :String;     // ie. 00=jan, 01=feb
-    private var value :Int;                     // agg of children
+    public var value(default,null) :Int;        // agg of children
     private var maxChildren :Int;               // length for averaging
     private var children :Hash<Node>;
 
