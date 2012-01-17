@@ -1,12 +1,13 @@
 package mymetrics;
 
+using Lambda;
 import neko.Lib;
 import mymetrics.node.Node;
+import mymetrics.utils.Utils;
 
 class ReportGenerator
 {
     private var currentAvg :ResultBlock;
-    private var currentTot :ResultBlock;
 
     private var highAvg :ResultBlock;
     private var highTot :ResultBlock;
@@ -39,18 +40,18 @@ class ReportGenerator
     public function print()
     {
         trace(root.prettyPrint());
-        highTot = { dayVal: 0,
-                    weekVal: 0,
-                    monthVal: 0,
-                    yearVal: 0,
+        highTot = { dayVal: 0.0,
+                    weekVal: 0.0,
+                    monthVal: 0.0,
+                    yearVal: 0.0,
                     dayDate: "",
                     weekDate: "",
                     monthDate: "",
                     yearDate: ""};
-        lowTot  = { dayVal: 9999,
-                    weekVal: 9999,
-                    monthVal: 9999,
-                    yearVal: 9999,
+        lowTot  = { dayVal: 9999.0,
+                    weekVal: 9999.0,
+                    monthVal: 9999.0,
+                    yearVal: 9999.0,
                     dayDate: "",
                     weekDate: "",
                     monthDate: "",
@@ -113,10 +114,26 @@ class ReportGenerator
         buf.add("low day: "+ lowTot.dayVal +" ("+ lowTot.dayDate +")\n");
         buf.add("\n");
 
-        // buf.add("total for today: "+ currentTot.dayVal +"\n");
-        // buf.add("total for this month: " + currentTot.monthVal +"\n");
-        // buf.add("total for this year: " + currentTot.yearVal +"\n");
-        // buf.add("\n");
+        var now = Date.now();
+        var today = Utils.dayStr(now);
+        var todayPath = Node.pathFromDayStr(today).array();
+        var today = root.pullIt(todayPath.list(), false);
+        var thisMonth = root.pullIt(todayPath.slice(0,2).list(), false);
+        var thisYear = root.pullIt(todayPath.slice(0,1).list(), false);
+
+        var aMonthBack = Utils.dayStr(new Date(now.getFullYear(),
+                                               now.getMonth()-1,
+                                               now.getDate(),
+                                               0, 0, 0));
+        var aMonthBackPath = Node.pathFromDayStr(aMonthBack).array();
+        var lastMonth = root.pullIt(aMonthBackPath.slice(0,2).list(), false);
+
+        buf.add("this year: "+ thisYear +"\n");
+        buf.add("this month: "+ thisMonth +"\n");
+        buf.add("last month: "+ lastMonth +"\n");
+        buf.add("today: "+ today +"\n");
+        buf.add("\n");
+
         Lib.println(buf.toString());
     }
 
@@ -127,10 +144,10 @@ class ReportGenerator
 }
 
 typedef ResultBlock = {
-    var dayVal :Int;
-    var weekVal :Int;
-    var monthVal :Int;
-    var yearVal :Int;
+    var dayVal :Float;
+    var weekVal :Float;
+    var monthVal :Float;
+    var yearVal :Float;
 
     var dayDate :String;
     var weekDate :String;

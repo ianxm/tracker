@@ -66,7 +66,10 @@ class Node
         else
         {
             var childIndex = path.pop();
-            return children.get(childIndex).pullIt(path, avg);
+            if( children.exists(childIndex) )
+                return children.get(childIndex).pullIt(path, avg);
+            else
+                return 0;
         }
     }
 
