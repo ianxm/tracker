@@ -35,15 +35,6 @@ class Node
         return buf.toString();
     }
 
-    public static function prettyPrint(root :Node)
-    {
-        var buf = new StringBuf();
-        buf.add("\n");
-        for( node in root )
-            buf.add(node.prettyPrintNode());
-        return buf.toString();
-    }
-
     public function toString()
     {
         return index +"="+ value;
@@ -99,6 +90,15 @@ class Node
                 children.get(key).walkTree(nodes);
         }
         return nodes;
+    }
+
+    public static function prettyPrint(root :Node)
+    {
+        var buf = new StringBuf();
+        buf.add("\n");
+        for( node in root )
+            buf.add(node.prettyPrintNode());
+        return buf.toString();
     }
 
     // convert dayStr such as (2010-01-01) to path

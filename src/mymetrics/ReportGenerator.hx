@@ -39,7 +39,6 @@ class ReportGenerator
 
     public function print()
     {
-        trace(Node.prettyPrint(root));
         highTot = { dayVal: 0.0,
                     weekVal: 0.0,
                     monthVal: 0.0,
@@ -61,7 +60,7 @@ class ReportGenerator
         {
             switch( node.depth )
             {
-            case 0: break;                      // do nothing for root
+            case 0: {}                          // do nothing for root
             case 1:                             // year
                 {
                     if( node.value > highTot.yearVal )
