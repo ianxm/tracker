@@ -7,23 +7,22 @@ import utils.Utils;
 
 class ReportGenerator
 {
-    private var currentAvg :ResultBlock;
-
-    private var highAvg :ResultBlock;
-    private var highTot :ResultBlock;
-
-    private var lowAvg :ResultBlock;
-    private var lowTot :ResultBlock;
-
-    private var longestOnStreak :Int;           // consective positive days
-    private var longestOnStreakEnded :String;
-    private var longestOffStreak :Int;          // consecutive zero days
-    private var longestOffStreakEnded :String;
-
-    private var currentStreak :Int;             // days
-    private var currentStreakOn :Bool;          // if true, current streak is 'on'
-
     private var root :Node;
+
+    private var currentAvg :ResultBlock;
+    private var highAvg    :ResultBlock;
+    private var highTot    :ResultBlock;
+    private var lowAvg     :ResultBlock;
+    private var lowTot     :ResultBlock;
+    private var highCount  :ResultBlock;
+    private var lowCount   :ResultBlock;
+
+    private var longestOnStreak       :Int;             // consective positive days
+    private var longestOnStreakEnded  :String;
+    private var longestOffStreak      :Int;             // consecutive zero days
+    private var longestOffStreakEnded :String;
+    private var currentStreak         :Int;             // days
+    private var currentStreakOn       :Bool;            // if true, current streak is 'on'
 
     public function new()
     {
@@ -39,23 +38,25 @@ class ReportGenerator
 
     public function print()
     {
-        highTot = { dayVal: 0.0,
-                    weekVal: 0.0,
-                    monthVal: 0.0,
-                    yearVal: 0.0,
-                    dayDate: "",
-                    weekDate: "",
-                    monthDate: "",
-                    yearDate: ""};
-        lowTot  = { dayVal: 9999.0,
-                    weekVal: 9999.0,
-                    monthVal: 9999.0,
-                    yearVal: 9999.0,
-                    dayDate: "",
-                    weekDate: "",
-                    monthDate: "",
-                    yearDate: ""};
+        highTot   = { day   : null,
+                      week  : null,
+                      month : null,
+                      year  : null};
+        lowTot    = { day   : null,
+                      week  : null,
+                      month : null,
+                      year  : null};
+        highCount = { day   : null,
+                      week  : null,
+                      month : null,
+                      year  : null};
+        lowCount  = { day   : null,
+                      week  : null,
+                      month : null,
+                      year  : null};
 
+        var startDay = null;
+        var lastDay = null;
         for( node in root )
         {
             switch( node.depth )
@@ -63,54 +64,57 @@ class ReportGenerator
             case 0: {}                          // do nothing for root
             case 1:                             // year
                 {
-                    if( node.value > highTot.yearVal )
-                    {
-                        highTot.yearVal = node.value;
-                        highTot.yearDate = node.index;
-                    }
-                    if( node.value <= lowTot.yearVal )
-                    {
-                        lowTot.yearVal = node.value;
-                        lowTot.yearDate = node.index;
-                    }
+                    if( highCount.year==null || node.count>highCount.year.value )
+                        highCount.year = node;
+                    if( lowCount.year==null || node.count < lowCount.year.value )
+                        lowCount.year = node;
+                    if( highTot.year==null || node.value > highTot.year.value )
+                        highTot.year = node;
+                    if( lowTot.year==null || node.value <= lowTot.year.value )
+                        lowTot.year = node;
                 }
             case 2:                             // month
                 {
-                    if( node.value > highTot.monthVal )
-                    {
-                        highTot.monthVal = node.value;
-                        highTot.monthDate = node.parent.index +"-"+ node.index;
-                    }
-                    if( node.value <= lowTot.monthVal )
-                    {
-                        lowTot.monthVal = node.value;
-                        lowTot.monthDate = node.parent.index +"-"+ node.index;
-                    }
+                    if( highCount.month==null || node.count > highCount.month.value )
+                        highCount.month = node;
+                    if( lowCount.month==null || node.count < lowCount.month.value )
+                        lowCount.month = node;
+                    if( highTot.month==null || node.value > highTot.month.value )
+                        highTot.month = node;
+                    if( lowTot.month==null || node.value <= lowTot.month.value )
+                        lowTot.month = node;
                 }
             case 3:                             // day
                 {
-                    if( node.value > highTot.dayVal )
+                    var thisDay = new Date(Std.parseInt(node.parent.parent.index),
+                                           Std.parseInt(node.parent.index),
+                                           Std.parseInt(node.index),
+                                           0, 0, 0);
+                    if( startDay == null )
                     {
-                        highTot.dayVal = node.value;
-                        highTot.dayDate = node.parent.parent.index +"-"+ node.parent.index +"-"+ node.index;
+                        startDay = thisDay;
+                        lastDay = thisDay;
                     }
-                    if( node.value <= lowTot.dayVal )
-                    {
-                        lowTot.dayVal = node.value;
-                        lowTot.dayDate = node.parent.parent.index +"-"+ node.parent.index +"-"+ node.index;
-                    }
+                    if( highTot.day==null || node.value > highTot.day.value )
+                        highTot.day = node;
+                    if( lowTot.day==null || node.value <= lowTot.day.value )
+                        lowTot.day = node;
+                    lastDay = thisDay;
                 }
             }
         }
 
         var buf = new StringBuf();
-        buf.add("high year: "+ highTot.yearVal +" ("+ highTot.yearDate +")\n");
-        buf.add("high month: "+ highTot.monthVal +" ("+ highTot.monthDate +")\n");
-        buf.add("high day: "+ highTot.dayVal +" ("+ highTot.dayDate +")\n");
         buf.add("\n");
-        buf.add("low year: "+ lowTot.yearVal +" ("+ lowTot.yearDate +")\n");
-        buf.add("low month: "+ lowTot.monthVal +" ("+ lowTot.monthDate +")\n");
-        buf.add("low day: "+ lowTot.dayVal +" ("+ lowTot.dayDate +")\n");
+        buf.add("totals\n");
+        buf.add("------\n");
+        buf.add("high year: "+ highTot.year.value +" ("+ highTot.year.date +")\n");
+        buf.add("high month: "+ highTot.month.value +" ("+ highTot.month.date +")\n");
+        buf.add("high day: "+ highTot.day.value +" ("+ highTot.day.date +")\n");
+        buf.add("\n");
+        buf.add("low year: "+ lowTot.year.value +" ("+ lowTot.year.date +")\n");
+        buf.add("low month: "+ lowTot.month.value +" ("+ lowTot.month.date +")\n");
+        buf.add("low day: "+ lowTot.day.value +" ("+ lowTot.day.date +")\n");
         buf.add("\n");
 
         var now = Date.now();
@@ -132,24 +136,30 @@ class ReportGenerator
         buf.add("last month: "+ lastMonth +"\n");
         buf.add("today: "+ today +"\n");
         buf.add("\n");
+        buf.add("first day: "+ Utils.dayStr(startDay) +"\n");
+        buf.add("last day: "+ Utils.dayStr(lastDay) +"\n");
+        buf.add("total duration: "+ delta(startDay, lastDay) +" days\n");
+        buf.add("\n");
 
+        buf.add("counts\n");
+        buf.add("------\n");
+        buf.add("high year: "+ highCount.year.value +" ("+ highCount.year.date +")\n");
+        buf.add("high month: "+ highCount.month.value +" ("+ highCount.month.date +")\n");
+        buf.add("\n");
+        buf.add("low year: "+ lowCount.year.value +" ("+ lowCount.year.date +")\n");
+        buf.add("low month: "+ lowCount.month.value +" ("+ lowCount.month.date +")\n");
         Lib.println(buf.toString());
     }
 
-    private function tenths(val)
+    inline private function delta(date1 :Date, date2 :Date)
     {
-        return Math.round(val*10)/10;
+        return (date2.getTime()-date1.getTime())/(1000*60*60*24);
     }
 }
 
 typedef ResultBlock = {
-    var dayVal :Float;
-    var weekVal :Float;
-    var monthVal :Float;
-    var yearVal :Float;
-
-    var dayDate :String;
-    var weekDate :String;
-    var monthDate :String;
-    var yearDate :String;
+    var day :Node;
+    var week :Node;
+    var month :Node;
+    var year :Node;
 }

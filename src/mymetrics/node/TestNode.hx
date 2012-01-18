@@ -26,7 +26,7 @@ class TestNode extends haxe.unit.TestCase
         assertEquals(1.0, root.pullIt(path, false));
 
         //trace(Node.prettyPrint(root));
-        assertEquals("2012=1, root=1", Lambda.map(root, function(ii) return ii.toString()).join(", "));
+        assertEquals("root=1, 2012=1", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 
     public function testMonthValue()
@@ -42,7 +42,7 @@ class TestNode extends haxe.unit.TestCase
         assertEquals(2.0, root.pullIt(path, false));
 
         //trace(Node.prettyPrint(root));
-        assertEquals("00=2, 2012=2, root=2", Lambda.map(root, function(ii) return ii.toString()).join(", "));
+        assertEquals("root=2, 2012=2, 00=2", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 
     public function testDayValue()
@@ -61,7 +61,7 @@ class TestNode extends haxe.unit.TestCase
         assertEquals(3.0, root.pullIt(path, false));
 
         //trace(Node.prettyPrint(root));
-        assertEquals("01=3, 00=3, 2012=3, root=3", Lambda.map(root, function(ii) return ii.toString()).join(", "));
+        assertEquals("root=3, 2012=3, 00=3, 01=3", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 
     public function testDayAvg()
@@ -80,7 +80,7 @@ class TestNode extends haxe.unit.TestCase
         assertEquals(3.0/366.0, root.pullIt(path, true));
 
         //trace(Node.prettyPrint(root));
-        assertEquals("01=3, 00=3, 2012=3, root=3", Lambda.map(root, function(ii) return ii.toString()).join(", "));
+        assertEquals("root=3, 2012=3, 00=3, 01=3", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 
     public function testDayTwoValues()
@@ -105,7 +105,7 @@ class TestNode extends haxe.unit.TestCase
         path = ["2012"].list();
         assertEquals(5.0, root.pullIt(path, false));
 
-        assertEquals("31=2, 01=3, 00=5, 2012=5, root=5", Lambda.map(root, function(ii) return ii.toString()).join(", "));
+        assertEquals("root=5, 2012=5, 00=5, 01=3, 31=2", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 
     public function testDayTwoValuesDifferentMonths()
@@ -133,6 +133,6 @@ class TestNode extends haxe.unit.TestCase
         path = ["2012"].list();
         assertEquals(5.0, root.pullIt(path, false));
 
-        assertEquals("01=3, 00=3, 01=2, 02=2, 2012=5, root=5", Lambda.map(root, function(ii) return ii.toString()).join(", "));
+        assertEquals("root=5, 2012=5, 00=3, 01=3, 02=2, 01=2", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 }

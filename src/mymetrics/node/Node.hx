@@ -1,13 +1,16 @@
 package mymetrics.node;
 
 using Lambda;
+import utils.Utils;
 
 class Node
 {
     public var parent(default,null) :Node;
     public var depth(default,null) :Int;        // ie. 0=root, 1=year, 2=month, 3=day
     public var index(default,null) :String;     // ie. 00=jan, 01=feb
+    public var count(default,null) :Int;        // count of decendents
     public var value(default,null) :Int;        // agg of children
+    public var date(printDate,null)  :String;
     private var maxChildren :Int;               // length for averaging
     private var children :Hash<Node>;
 
@@ -17,6 +20,7 @@ class Node
         depth = d;
         index = i;
         value = 0;
+        count = 0;
         maxChildren = switch(depth)
         {
         case 0: null; // should be from first date until now
@@ -35,19 +39,32 @@ class Node
         return buf.toString();
     }
 
-    public function toString()
+    inline public function toString()
     {
         return index +"="+ value;
     }
 
+    public function printDate()
+    {
+        return switch(depth)
+        {
+        case 0: null;
+        case 1: index;
+        case 2: parent.index
+                + "-" + Utils.zeroFill(Std.parseInt(index)+1, 2);
+        case 3: parent.parent.index
+                + "-" + Utils.zeroFill(Std.parseInt(parent.index)+1, 2)
+                + "-" + index;
+        }
+    }
+
     public function fileIt(path :List<String>, val :Int)
     {
+        count++;
         value += val;
         if( path.length == 0 )
-        {
-            value = val;
             return;
-        }
+
         if( children == null )
             children = new Hash<Node>();
         

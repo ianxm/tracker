@@ -32,13 +32,25 @@ class Set<T>
       vals.add(item);
   }
 
-  public function has(item :T, ?cmd :T->T->Bool)
+  public function has(item :T, ?cmp :T->T->Bool)
   {
-    return( vals.has(item, cmd) );
+    return( vals.has(item, cmp) );
+  }
+
+  public function minus(otherItems :Iterable<T>, ?cmp :T->T->Bool)
+  {
+    for( ii in vals )
+      if( otherItems.has(ii, cmp) )
+        vals.remove(ii);
   }
 
   public function clear()
   {
     vals.clear();
+  }
+
+  public function iterator()
+  {
+    return vals.iterator();
   }
 }
