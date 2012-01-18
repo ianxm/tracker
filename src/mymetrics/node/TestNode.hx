@@ -25,7 +25,7 @@ class TestNode extends haxe.unit.TestCase
         root.fileIt(path, 1);
         assertEquals(1.0, root.pullIt(path, false));
 
-        //trace(root.prettyPrint());
+        //trace(Node.prettyPrint(root));
         assertEquals("2012=1, root=1", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 
@@ -41,7 +41,7 @@ class TestNode extends haxe.unit.TestCase
         path = ["2012"].list();
         assertEquals(2.0, root.pullIt(path, false));
 
-        //trace(root.prettyPrint());
+        //trace(Node.prettyPrint(root));
         assertEquals("00=2, 2012=2, root=2", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 
@@ -60,7 +60,7 @@ class TestNode extends haxe.unit.TestCase
         path = ["2012"].list();
         assertEquals(3.0, root.pullIt(path, false));
 
-        //trace(root.prettyPrint());
+        //trace(Node.prettyPrint(root));
         assertEquals("01=3, 00=3, 2012=3, root=3", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 
@@ -79,7 +79,7 @@ class TestNode extends haxe.unit.TestCase
         path = ["2012"].list();
         assertEquals(3.0/366.0, root.pullIt(path, true));
 
-        //trace(root.prettyPrint());
+        //trace(Node.prettyPrint(root));
         assertEquals("01=3, 00=3, 2012=3, root=3", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
 
@@ -91,7 +91,7 @@ class TestNode extends haxe.unit.TestCase
 
         var path = ["2012", "00", "31"].list();
         root.fileIt(path, 2);
-        //trace(root.prettyPrint());
+        //trace(Node.prettyPrint(root));
 
         path = ["2012", "00", "01"].list();
         assertEquals(3.0, root.pullIt(path, false));
@@ -116,7 +116,7 @@ class TestNode extends haxe.unit.TestCase
 
         path = ["2012", "02", "01"].list();
         root.fileIt(path, 2);
-        //trace(root.prettyPrint());
+        //trace(Node.prettyPrint(root));
 
         path = ["2012", "00", "01"].list();
         assertEquals(3.0, root.pullIt(path, false));

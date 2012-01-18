@@ -1,5 +1,7 @@
 package mymetrics.node;
 
+using Lambda;
+
 class Node
 {
     public var parent(default,null) :Node;
@@ -24,16 +26,21 @@ class Node
         }
     }
 
-    public function prettyPrint()
+    private function prettyPrintNode()
     {
         var buf = new StringBuf();
         for( ii in 0...depth )
             buf.add("  ");
-        buf.add(toString());
+        buf.add(toString()+"\n");
+        return buf.toString();
+    }
+
+    public static function prettyPrint(root :Node)
+    {
+        var buf = new StringBuf();
         buf.add("\n");
-        if( children != null )
-            for( child in children.keys() )
-                buf.add(children.get(child).prettyPrint());
+        for( node in root )
+            buf.add(node.prettyPrintNode());
         return buf.toString();
     }
 
@@ -81,10 +88,16 @@ class Node
     // walk the tree returning a list of nodes using preorder traversal
     private function walkTree(nodes :List<Node>) :List<Node>
     {
-        nodes.push(this);
+        nodes.add(this);
         if( children != null )
-            for( child in children )
-                child.walkTree(nodes);
+        {
+            var keys = new Array<String>();            // sort children
+            for( key in children.keys() )
+                keys.push(key);
+            keys.sort(function(a,b) return Reflect.compare(a,b));
+            for( key in keys )
+                children.get(key).walkTree(nodes);
+        }
         return nodes;
     }
 

@@ -39,7 +39,7 @@ class ReportGenerator
 
     public function print()
     {
-        trace(root.prettyPrint());
+        trace(Node.prettyPrint(root));
         highTot = { dayVal: 0.0,
                     weekVal: 0.0,
                     monthVal: 0.0,
