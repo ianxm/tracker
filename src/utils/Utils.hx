@@ -7,6 +7,11 @@ class Utils
         return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0).toString().substr(0, 10);
     }
 
+    inline public static function day( date :Date ) :Date
+    {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+    }
+
     public static function zeroFill( num :Int, width :Int ) :String
     {
         var str = Std.string(num);

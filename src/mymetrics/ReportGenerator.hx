@@ -103,18 +103,19 @@ class ReportGenerator
                 }
             }
         }
+        lastDay = Utils.day(Date.now());
 
         var buf = new StringBuf();
         buf.add("\n");
         buf.add("totals\n");
         buf.add("------\n");
-        buf.add("high year: "+ highTot.year.value +" ("+ highTot.year.date +")\n");
-        buf.add("high month: "+ highTot.month.value +" ("+ highTot.month.date +")\n");
-        buf.add("high day: "+ highTot.day.value +" ("+ highTot.day.date +")\n");
+        buf.add("high year: "+ highTot.year.date +" ("+ highTot.year.value +")\n");
+        buf.add("high month: "+ highTot.month.date +" ("+ highTot.month.value +")\n");
+        buf.add("high day: "+ highTot.day.date +" ("+ highTot.day.value +")\n");
         buf.add("\n");
-        buf.add("low year: "+ lowTot.year.value +" ("+ lowTot.year.date +")\n");
-        buf.add("low month: "+ lowTot.month.value +" ("+ lowTot.month.date +")\n");
-        buf.add("low day: "+ lowTot.day.value +" ("+ lowTot.day.date +")\n");
+        buf.add("low year: "+ lowTot.year.date +" ("+ lowTot.year.value +")\n");
+        buf.add("low month: "+ lowTot.month.date +" ("+ lowTot.month.value +")\n");
+        buf.add("low day: "+ lowTot.day.date +" ("+ lowTot.day.value +")\n");
         buf.add("\n");
 
         var now = Date.now();
@@ -137,17 +138,16 @@ class ReportGenerator
         buf.add("today: "+ today +"\n");
         buf.add("\n");
         buf.add("first day: "+ Utils.dayStr(startDay) +"\n");
-        buf.add("last day: "+ Utils.dayStr(lastDay) +"\n");
         buf.add("total duration: "+ delta(startDay, lastDay) +" days\n");
         buf.add("\n");
 
         buf.add("counts\n");
         buf.add("------\n");
-        buf.add("high year: "+ highCount.year.value +" ("+ highCount.year.date +")\n");
-        buf.add("high month: "+ highCount.month.value +" ("+ highCount.month.date +")\n");
+        buf.add("high year: "+ highCount.year.date +" ("+ highCount.year.value +")\n");
+        buf.add("high month: "+ highCount.month.date +" ("+ highCount.month.value +")\n");
         buf.add("\n");
-        buf.add("low year: "+ lowCount.year.value +" ("+ lowCount.year.date +")\n");
-        buf.add("low month: "+ lowCount.month.value +" ("+ lowCount.month.date +")\n");
+        buf.add("low year: "+ lowCount.year.date +" ("+ lowCount.year.value +")\n");
+        buf.add("low month: "+ lowCount.month.date +" ("+ lowCount.month.value +")\n");
         Lib.println(buf.toString());
     }
 
