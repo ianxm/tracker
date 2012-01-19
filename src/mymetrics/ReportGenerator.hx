@@ -17,18 +17,14 @@ class ReportGenerator
     private var highCount  :ResultBlock;
     private var lowCount   :ResultBlock;
 
-    private var longestOnStreak       :Int;             // consective positive days
-    private var longestOnStreakEnded  :String;
-    private var longestOffStreak      :Int;             // consecutive zero days
-    private var longestOffStreakEnded :String;
-    private var currentStreak         :Int;             // days
-    private var currentStreakOn       :Bool;            // if true, current streak is 'on'
+    private var onStreak   :Streak;               // consective positive days
+    private var offStreak  :Streak;               // consecutive zero days
+    private var currentStreak :Int;               // days
 
     public function new()
     {
         root = new Node(null, 0, "root");
         currentStreak = 0;
-        currentStreakOn = false;
     }
 
     public function include( occ )
@@ -54,6 +50,12 @@ class ReportGenerator
                       week  : null,
                       month : null,
                       year  : null};
+        onStreak  = { start : null,
+                      end   : null,
+                      length :0};
+        offStreak = { start : null,
+                      end   : null,
+                      length :0};
 
         var startDay = null;
         var lastDay = null;
@@ -94,6 +96,31 @@ class ReportGenerator
                     {
                         startDay = thisDay;
                         lastDay = thisDay;
+                        currentStreak = 1;
+                    }
+                    else
+                    {
+                        var delta = Utils.dayDelta(lastDay, thisDay);
+                        if( delta==1 )
+                            currentStreak++;
+                        else
+                        {
+                            if( currentStreak >= onStreak.length )
+                            {
+                                onStreak.start = Utils.dayShift(lastDay, -currentStreak);
+                                onStreak.end = lastDay;
+                                onStreak.length = currentStreak;
+                            }
+                            currentStreak=1;
+
+                            if( delta >= offStreak.length )
+                            {
+                                offStreak.start = Utils.dayShift(thisDay, -(delta-1));
+                                offStreak.end = Utils.dayShift(thisDay, -1);
+                                offStreak.length = delta-1;
+                            }
+                        }
+                            
                     }
                     if( highTot.day==null || node.value > highTot.day.value )
                         highTot.day = node;
@@ -138,7 +165,7 @@ class ReportGenerator
         buf.add("today: "+ today +"\n");
         buf.add("\n");
         buf.add("first day: "+ Utils.dayStr(startDay) +"\n");
-        buf.add("total duration: "+ delta(startDay, lastDay) +" days\n");
+        buf.add("total duration: "+ Utils.dayDelta(startDay, lastDay) +" days\n");
         buf.add("\n");
 
         buf.add("counts\n");
@@ -148,12 +175,14 @@ class ReportGenerator
         buf.add("\n");
         buf.add("low year: "+ lowCount.year.date +" ("+ lowCount.year.value +")\n");
         buf.add("low month: "+ lowCount.month.date +" ("+ lowCount.month.value +")\n");
-        Lib.println(buf.toString());
-    }
+        buf.add("\n");
+        
+        buf.add("streaks\n");
+        buf.add("-------\n");
+        buf.add("longest on streak: "+ Utils.dayToStr(onStreak.start) +" to " + Utils.dayToStr(onStreak.end) +" ("+ onStreak.length +" days)\n");
+        buf.add("longest off streak: "+ Utils.dayToStr(offStreak.start) +" to " + Utils.dayToStr(offStreak.end) +" ("+ offStreak.length +" days)\n");
 
-    inline private function delta(date1 :Date, date2 :Date)
-    {
-        return (date2.getTime()-date1.getTime())/(1000*60*60*24);
+        Lib.println(buf.toString());
     }
 }
 
@@ -162,4 +191,10 @@ typedef ResultBlock = {
     var week :Node;
     var month :Node;
     var year :Node;
+}
+
+typedef Streak = {
+    var start :Date;
+    var end :Date;
+    var length :Int;
 }
