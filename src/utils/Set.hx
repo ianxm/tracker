@@ -6,7 +6,7 @@ using Lambda;
 // there should be a "has" that uses binary search
 class Set<T>
 {
-  public var vals(default,null) :List<T>;
+  private var vals :List<T>;
 
   public function new()
   {

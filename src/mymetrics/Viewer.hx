@@ -52,7 +52,7 @@ class Viewer
             metrics.add(rr.metric);
 
         Lib.println("Current Metrics:");
-        for( metric in metrics.vals )
+        for( metric in metrics )
             Lib.println("- "+ metric);
     }
 
