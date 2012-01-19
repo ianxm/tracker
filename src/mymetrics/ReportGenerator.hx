@@ -19,12 +19,14 @@ class ReportGenerator
 
     private var onStreak   :Streak;               // consective positive days
     private var offStreak  :Streak;               // consecutive zero days
-    private var currentStreak :Int;               // days
+    private var currentStreak :Streak;            // current positive or zero streak
+    private var streakCount :Int;
+    private var isCurrentStreakOn :Bool;
 
     public function new()
     {
         root = new Node(null, 0, "root");
-        currentStreak = 0;
+        streakCount = 0;
     }
 
     public function include( occ )
@@ -56,6 +58,9 @@ class ReportGenerator
         offStreak = { start : null,
                       end   : null,
                       length :0};
+        currentStreak = { start : null,
+                          end   : null,
+                          length :0};
 
         var startDay = null;
         var lastDay = null;
@@ -96,24 +101,24 @@ class ReportGenerator
                     {
                         startDay = thisDay;
                         lastDay = thisDay;
-                        currentStreak = 1;
+                        streakCount = 1;
                     }
                     else
                     {
                         var delta = Utils.dayDelta(lastDay, thisDay);
                         if( delta==1 )
-                            currentStreak++;
-                        else
+                            streakCount++;
+                        else                    // gap in on streak
                         {
-                            if( currentStreak >= onStreak.length )
+                            if( streakCount >= onStreak.length )
                             {
-                                onStreak.start = Utils.dayShift(lastDay, -currentStreak);
+                                onStreak.start = Utils.dayShift(lastDay, -streakCount);
                                 onStreak.end = lastDay;
-                                onStreak.length = currentStreak;
+                                onStreak.length = streakCount;
                             }
-                            currentStreak=1;
+                            streakCount=1;
 
-                            if( delta >= offStreak.length )
+                            if( delta-1 >= offStreak.length )
                             {
                                 offStreak.start = Utils.dayShift(thisDay, -(delta-1));
                                 offStreak.end = Utils.dayShift(thisDay, -1);
@@ -130,7 +135,27 @@ class ReportGenerator
                 }
             }
         }
-        lastDay = Utils.day(Date.now());
+
+        // current streak
+        var thisDay = Utils.day(Date.now());
+        isCurrentStreakOn = (thisDay.toString() == lastDay.toString());
+        if( isCurrentStreakOn )
+        {
+            currentStreak.start = Utils.dayShift(thisDay, -(streakCount-1));
+            currentStreak.end = thisDay;
+            currentStreak.length = streakCount;
+            if( streakCount >= currentStreak.length )
+                onStreak = currentStreak;
+        }
+        else
+        {
+            var delta = Utils.dayDelta(lastDay, thisDay);
+            currentStreak.start = Utils.dayShift(thisDay, -(delta-1));
+            currentStreak.end = thisDay;
+            currentStreak.length = delta;
+            if( delta-1 >= offStreak.length )
+                offStreak = currentStreak;
+        }
 
         var buf = new StringBuf();
         buf.add("\n");
@@ -181,6 +206,7 @@ class ReportGenerator
         buf.add("-------\n");
         buf.add("longest on streak: "+ Utils.dayToStr(onStreak.start) +" to " + Utils.dayToStr(onStreak.end) +" ("+ onStreak.length +" days)\n");
         buf.add("longest off streak: "+ Utils.dayToStr(offStreak.start) +" to " + Utils.dayToStr(offStreak.end) +" ("+ offStreak.length +" days)\n");
+        buf.add("current streak: ("+ (isCurrentStreakOn?"on":"off")+") "+ Utils.dayToStr(currentStreak.start) +" to " + Utils.dayToStr(currentStreak.end) +" ("+ currentStreak.length +" days)\n");
 
         Lib.println(buf.toString());
     }
