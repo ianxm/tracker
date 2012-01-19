@@ -19,7 +19,7 @@ class Utils
 
     inline public static function dayShift( date :Date, days :Int )
     {
-        return DateTools.delta(date, days*1000*60*60*24);
+        return DateTools.delta(date, days*1000*60*60*24.0);
     }
 
     inline public static function dayDelta( date1 :Date, date2 :Date ) :Int

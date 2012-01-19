@@ -30,6 +30,7 @@ class TestUtils extends haxe.unit.TestCase
     {
         assertEquals("2010-01-02 00:00:00", Utils.dayShift(new Date(2010, 00, 01, 0, 0, 0), 1).toString());
         assertEquals("2009-12-31 00:00:00", Utils.dayShift(new Date(2010, 00, 01, 0, 0, 0), -1).toString());
+        assertEquals("2012-01-01 00:00:00", Utils.dayShift(new Date(2012, 00, 14, 0, 0, 0), -13).toString());
     }
 
     public function testDayDelta()
