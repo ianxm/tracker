@@ -187,47 +187,43 @@ class ReportGenerator
         var buf = new StringBuf();
         buf.add("\n");
 
-        buf.add("info\n");
-        buf.add("----\n");
-        buf.add("first day: "+ Utils.dayStr(startDay) +"\n");
-        buf.add("total duration: "+ Utils.dayDelta(startDay, lastDay) +" days\n");
+        buf.add("info:\n");
+        buf.add("  first day: "+ Utils.dayStr(startDay) +"\n");
+        buf.add("  total duration: "+ Utils.dayDelta(startDay, lastDay) +" days\n");
         buf.add("\n");
 
-        buf.add("totals\n");
-        buf.add("------\n");
-        buf.add("high year: "  + printNodeWithDate(highTot.year, "value") + "\n");
-        buf.add("high month: " + printNodeWithDate(highTot.month, "value") +"\n");
-        buf.add("high day: "   + printNodeWithDate(highTot.day, "value") +"\n");
+        buf.add("totals:\n");
+        buf.add("  high year: "  + printNodeWithDate(highTot.year, "value") + "\n");
+        buf.add("  high month: " + printNodeWithDate(highTot.month, "value") +"\n");
+        buf.add("  high day: "   + printNodeWithDate(highTot.day, "value") +"\n");
         buf.add("\n");
-        buf.add("low year: "   + printNodeWithDate(lowTot.year, "value") +"\n");
-        buf.add("low month: "  + printNodeWithDate(lowTot.month, "value") +"\n");
-        buf.add("low day: "    + printNodeWithDate(lowTot.day, "value") +"\n");
+        buf.add("  low year: "   + printNodeWithDate(lowTot.year, "value") +"\n");
+        buf.add("  low month: "  + printNodeWithDate(lowTot.month, "value") +"\n");
+        buf.add("  low day: "    + printNodeWithDate(lowTot.day, "value") +"\n");
         buf.add("\n");
-        buf.add("this year: "  + printNode(currentCount.year, "value") +"\n");
-        buf.add("this month: " + printNode(currentCount.month, "value") +"\n");
-        buf.add("last month: " + printNode(lastMonth, "value") +"\n");
-        buf.add("today: "      + printNode(currentCount.day, "value") +"\n");
+        buf.add("  this year: "  + printNode(currentCount.year, "value") +"\n");
+        buf.add("  this month: " + printNode(currentCount.month, "value") +"\n");
+        buf.add("  last month: " + printNode(lastMonth, "value") +"\n");
+        buf.add("  today: "      + printNode(currentCount.day, "value") +"\n");
         buf.add("\n");
 
-        buf.add("counts\n");
-        buf.add("------\n");
-        buf.add("high year: "  + printNodeWithDate(highCount.year, "count") +"\n");
-        buf.add("high month: " + printNodeWithDate(highCount.month, "count") +"\n");
+        buf.add("counts:\n");
+        buf.add("  high year: "  + printNodeWithDate(highCount.year, "count") +"\n");
+        buf.add("  high month: " + printNodeWithDate(highCount.month, "count") +"\n");
         buf.add("\n");
-        buf.add("low year: "   + printNodeWithDate(lowCount.year, "count") +"\n");
-        buf.add("low month: "  + printNodeWithDate(lowCount.month, "count") +"\n");
+        buf.add("  low year: "   + printNodeWithDate(lowCount.year, "count") +"\n");
+        buf.add("  low month: "  + printNodeWithDate(lowCount.month, "count") +"\n");
         buf.add("\n");
-        buf.add("this year: "  + printNode(currentCount.year, "count") +"\n");
-        buf.add("this month: " + printNode(currentCount.month, "count") +"\n");
-        buf.add("last month: " + printNode(lastMonth, "count") +"\n");
-        buf.add("today: "      + printNode(currentCount.day, "count") +"\n");
+        buf.add("  this year: "  + printNode(currentCount.year, "count") +"\n");
+        buf.add("  this month: " + printNode(currentCount.month, "count") +"\n");
+        buf.add("  last month: " + printNode(lastMonth, "count") +"\n");
+        buf.add("  today: "      + printNode(currentCount.day, "count") +"\n");
         buf.add("\n");
         
-        buf.add("streaks\n");
-        buf.add("-------\n");
-        buf.add("longest on streak: "+ printStreak(onStreak) +"\n");
-        buf.add("longest off streak: "+ printStreak(offStreak) +"\n");
-        buf.add("current streak: ("+ (isCurrentStreakOn?"on":"off")+") "+ printStreak(currentStreak) +"\n");
+        buf.add("streaks:\n");
+        buf.add("  longest on streak: "+ printStreak(onStreak) +"\n");
+        buf.add("  longest off streak: "+ printStreak(offStreak) +"\n");
+        buf.add("  current streak: ("+ (isCurrentStreakOn?"on":"off")+") "+ printStreak(currentStreak) +"\n");
 
         Lib.println(buf.toString());
     }
