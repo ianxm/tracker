@@ -11,6 +11,7 @@ class Node
     public var count(default,null) :Int;        // count of decendents
     public var value(default,null) :Int;        // agg of children
     public var date(printDate,null)  :String;
+    public var avg(getAvg,null) :Float;
     private var maxChildren :Int;               // length for averaging
     private var children :Hash<Node>;
 
@@ -42,6 +43,11 @@ class Node
     inline public function toString()
     {
         return index +"="+ value;
+    }
+
+    inline public function getAvg()
+    {
+        return value / maxChildren;
     }
 
     public function printDate()

@@ -23,7 +23,7 @@ class TestNode extends haxe.unit.TestCase
         var root = new Node(null, 0, "root");
         var path = ["2012"].list();
         root.fileIt(path, 1);
-        assertEquals(1.0, root.pullIt(path, false));
+        assertEquals(1.0, root.pullNode(path).value);
 
         //trace(Node.prettyPrint(root));
         assertEquals("root=1, 2012=1", Lambda.map(root, function(ii) return ii.toString()).join(", "));
@@ -36,10 +36,10 @@ class TestNode extends haxe.unit.TestCase
         root.fileIt(path, 2);
 
         path = ["2012", "00"].list();
-        assertEquals(2.0, root.pullIt(path, false));
+        assertEquals(2.0, root.pullNode(path).value);
 
         path = ["2012"].list();
-        assertEquals(2.0, root.pullIt(path, false));
+        assertEquals(2.0, root.pullNode(path).value);
 
         //trace(Node.prettyPrint(root));
         assertEquals("root=2, 2012=2, 00=2", Lambda.map(root, function(ii) return ii.toString()).join(", "));
@@ -52,13 +52,13 @@ class TestNode extends haxe.unit.TestCase
         root.fileIt(path, 3);
 
         path = ["2012", "00", "01"].list();
-        assertEquals(3.0, root.pullIt(path, false));
+        assertEquals(3.0, root.pullNode(path).value);
 
         path = ["2012", "00"].list();
-        assertEquals(3.0, root.pullIt(path, false));
+        assertEquals(3.0, root.pullNode(path).value);
 
         path = ["2012"].list();
-        assertEquals(3.0, root.pullIt(path, false));
+        assertEquals(3.0, root.pullNode(path).value);
 
         //trace(Node.prettyPrint(root));
         assertEquals("root=3, 2012=3, 00=3, 01=3", Lambda.map(root, function(ii) return ii.toString()).join(", "));
@@ -71,13 +71,13 @@ class TestNode extends haxe.unit.TestCase
         root.fileIt(path, 3);
 
         path = ["2012", "00", "01"].list();
-        assertEquals(3.0, root.pullIt(path, true));
+        assertEquals(3.0, root.pullNode(path).avg);
 
         path = ["2012", "00"].list();
-        assertEquals(3.0/31.0, root.pullIt(path, true));
+        assertEquals(3.0/31.0, root.pullNode(path).avg);
 
         path = ["2012"].list();
-        assertEquals(3.0/366.0, root.pullIt(path, true));
+        assertEquals(3.0/366.0, root.pullNode(path).avg);
 
         //trace(Node.prettyPrint(root));
         assertEquals("root=3, 2012=3, 00=3, 01=3", Lambda.map(root, function(ii) return ii.toString()).join(", "));
@@ -94,16 +94,16 @@ class TestNode extends haxe.unit.TestCase
         //trace(Node.prettyPrint(root));
 
         path = ["2012", "00", "01"].list();
-        assertEquals(3.0, root.pullIt(path, false));
+        assertEquals(3.0, root.pullNode(path).value);
 
         path = ["2012", "00", "31"].list();
-        assertEquals(2.0, root.pullIt(path, false));
+        assertEquals(2.0, root.pullNode(path).value);
 
         path = ["2012", "00"].list();
-        assertEquals(5.0, root.pullIt(path, false));
+        assertEquals(5.0, root.pullNode(path).value);
 
         path = ["2012"].list();
-        assertEquals(5.0, root.pullIt(path, false));
+        assertEquals(5.0, root.pullNode(path).value);
 
         assertEquals("root=5, 2012=5, 00=5, 01=3, 31=2", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
@@ -119,19 +119,19 @@ class TestNode extends haxe.unit.TestCase
         //trace(Node.prettyPrint(root));
 
         path = ["2012", "00", "01"].list();
-        assertEquals(3.0, root.pullIt(path, false));
+        assertEquals(3.0, root.pullNode(path).value);
 
         path = ["2012", "02", "01"].list();
-        assertEquals(2.0, root.pullIt(path, false));
+        assertEquals(2.0, root.pullNode(path).value);
 
         path = ["2012", "00"].list();
-        assertEquals(3.0, root.pullIt(path, false));
+        assertEquals(3.0, root.pullNode(path).value);
 
         path = ["2012", "02"].list();
-        assertEquals(2.0, root.pullIt(path, false));
+        assertEquals(2.0, root.pullNode(path).value);
 
         path = ["2012"].list();
-        assertEquals(5.0, root.pullIt(path, false));
+        assertEquals(5.0, root.pullNode(path).value);
 
         assertEquals("root=5, 2012=5, 00=3, 01=3, 02=2, 01=2", Lambda.map(root, function(ii) return ii.toString()).join(", "));
     }
