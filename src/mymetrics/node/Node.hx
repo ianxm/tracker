@@ -74,17 +74,17 @@ class Node
         children.get(childIndex).fileIt(path, val);
     }
 
-    public function pullIt(path :List<String>, avg :Bool)
+    public function pullNode(path :List<String>)
     {
         if( path.length == 0 )
-            return avg? value/maxChildren : value;
+            return this;
         else
         {
             var childIndex = path.pop();
             if( children.exists(childIndex) )
-                return children.get(childIndex).pullIt(path, avg);
+                return children.get(childIndex).pullNode(path);
             else
-                return 0;
+                return null;
         }
     }
 
