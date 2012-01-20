@@ -10,4 +10,9 @@ class Occurrence extends Object
     public var value :Int;
 
     public static var manager = new neko.db.Manager<Occurrence>(Occurrence);
+
+    override public function toString()
+    {
+        return date + ": " + value;
+    }
 }

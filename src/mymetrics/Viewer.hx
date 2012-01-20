@@ -56,6 +56,20 @@ class Viewer
             Lib.println("- "+ metric);
     }
 
+    public function log()
+    {
+        if( Occurrence.manager.count()==0 )
+        {
+            Lib.println("No metrics found");
+            return;
+        }
+
+        var results = Occurrence.manager.objects("SELECT * FROM occurrence WHERE metric='"+metric+"' ORDER BY date", false);
+        Lib.println(metric +":");
+        for( occ in results )
+            Lib.println("  " + occ.toString());
+    }
+
     public function view()
     {
         var rg = new ReportGenerator();

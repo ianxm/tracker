@@ -48,6 +48,12 @@ class Main
                 viewer.view();
                 viewer.close();
             }
+        case LOG:
+            {
+                var viewer = new Viewer(metric);
+                viewer.log();
+                viewer.close();
+            }
         case LIST:
             {
                 var viewer = new Viewer(metric);
@@ -71,6 +77,7 @@ class Main
                 case "-i": mode = INCR;
                 case "-s": { val = Std.parseInt(args.shift()); mode = SET; }
                 case "-g": mode = GET;
+                case "-l": mode = LOG;
                 case "-d": day = Utils.dayStr(Date.fromString(args.shift()));
                 case "-v": printVersion();
                 case "-h": printHelp();
@@ -111,7 +118,8 @@ class Main
         Lib.println("options:");
         Lib.println("  -i           increment value for day");
         Lib.println("  -s [val]     set value for day");
-        Lib.println("  -g [date]    get value for day");
+        Lib.println("  -g           get value for day");
+        Lib.println("  -l           show a log");
         Lib.println("  -d [date]    specify day to modify as YYYY-MM-DD");
         Lib.println("  -v           show version and exit");
         Lib.println("  -h           show usage and exit");
@@ -126,9 +134,10 @@ class Main
 
 enum Mode
 {
-    SET;
-    GET;
-    INCR;
-    VIEW;
-    LIST;
+    SET;  // set the value for a day
+    GET;  // get a value for a day
+    INCR; // increment a day
+    VIEW; // view report
+    LIST; // list metrics
+    LOG;  // show log of entries
 }
