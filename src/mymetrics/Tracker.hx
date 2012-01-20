@@ -41,6 +41,7 @@ class Tracker
         {
             occ.value++;
             occ.update();
+            Lib.println("set " + metric + " to " + occ.value + " for " + day);
         }
         else
             set( day, 1 );
@@ -52,8 +53,17 @@ class Tracker
         var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
         if( occ != null )
         {
-            occ.value = val;
-            occ.update();
+            if( val != 0 )
+            {
+                occ.value = val;
+                occ.update();
+                Lib.println("set " + metric + " to " + val + " for " + day);
+            }
+            else
+            {
+                occ.delete();
+                Lib.println("deleted " + metric + " for " + day);
+            }
         }
         else
         {
@@ -62,6 +72,7 @@ class Tracker
             occ.date = day;
             occ.value = val;
             occ.insert();
+            Lib.println("set " + metric + " to " + val + " for " + day);
         }
     }
 
