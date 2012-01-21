@@ -10,9 +10,9 @@ class Main
     private static var VERSION = "v0.1";
 
     private var metric :String;
-    private var day :String;
-    private var val :Int;
-    private var mode :Mode;
+    private var day    :String;
+    private var val    :Int;
+    private var mode   :Mode;
 
     public function new()
     {
@@ -114,7 +114,7 @@ class Main
         Lib.println("MyMetrics "+ VERSION);
         Lib.println("usage: neko mymetrics [options] [metric]");
         Lib.println("  if metric is omitted, MyMetrics will list all metrics");
-        Lib.println("  if all options are omitted, MyMetrics will display metric results");
+        Lib.println("  if all options are omitted, MyMetrics will display metric report");
         Lib.println("options:");
         Lib.println("  -i           increment value for day");
         Lib.println("  -s [val]     set value for day");

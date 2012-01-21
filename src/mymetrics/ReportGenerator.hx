@@ -117,6 +117,7 @@ class ReportGenerator
                             streakCount++;
                         else                    // gap in on streak
                         {
+                            // new longest on streak
                             if( streakCount >= onStreak.length )
                             {
                                 onStreak.start  = Utils.dayShift(lastDay, -streakCount);
@@ -125,6 +126,7 @@ class ReportGenerator
                             }
                             streakCount=1;
 
+                            // new longest off streak (gap)
                             if( delta-1 >= offStreak.length )
                             {
                                 offStreak.start  = Utils.dayShift(thisDay, -(delta-1));
@@ -143,7 +145,7 @@ class ReportGenerator
             }
         }
 
-        // check most recent streak to end
+        // check most recent on streak to end
         if( streakCount >= onStreak.length )
         {
             onStreak.start  = Utils.dayShift(lastDay, -streakCount);
