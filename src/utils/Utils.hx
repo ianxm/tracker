@@ -9,6 +9,12 @@ class Utils
     // it is properly formatted
     public static function dayStr( ?date :Date, ?str :String ) :String
     {
+        var date = day(date, str);
+        return (date==null) ? null : date.toString().substr(0, 10);
+    }
+
+    public static function day( ?date :Date, ?str :String ) :Date
+    {
         if( date==null && day==null )
             return null;
         if ( str!=null )
@@ -22,12 +28,7 @@ class Utils
                 Sys.exit(1);
             }
         }
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0).toString().substr(0, 10);
-    }
-
-    inline public static function day( date :Date ) :Date
-    {
-        return (date==null) ? null : new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
     }
 
     inline public static function dayToStr( date :Date ) :String

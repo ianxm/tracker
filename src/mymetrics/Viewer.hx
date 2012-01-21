@@ -1,6 +1,7 @@
 package mymetrics;
 
 import neko.Lib;
+import neko.Sys;
 import neko.FileSystem;
 import neko.db.Sqlite;
 import neko.db.Connection;
@@ -56,27 +57,41 @@ class Viewer
             Lib.println("- "+ metric);
     }
 
-    public function log()
+    public function log(range)
     {
-        if( Occurrence.manager.count()==0 )
-        {
-            Lib.println("No metrics found");
-            return;
-        }
+        var results = selectRange(range);
 
-        var results = Occurrence.manager.objects("SELECT * FROM occurrence WHERE metric='"+metric+"' ORDER BY date", false);
         Lib.println(metric +":");
         for( occ in results )
             Lib.println("  " + occ.toString());
     }
 
-    public function view()
+    public function view(range)
     {
-        var rg = new ReportGenerator();
-        var results = Occurrence.manager.search({metric: metric}, false);
+        var report = new ReportGenerator(range);
+        var results = selectRange(range);
+
         for( occ in results )
-            rg.include(occ);
-        rg.print();
+            report.include(occ);
+        report.print();
+    }
+
+    private function selectRange(range)
+    {
+        if( Occurrence.manager.count()==0 )
+        {
+            Lib.println("No metrics found");
+            Sys.exit(0);
+        }
+
+        var whereClause = new StringBuf();
+        whereClause.add("WHERE metric='"+ metric + "'");
+        if( range[0]!=null )                               // start..
+            whereClause.add(" AND date > '"+ range[0] +"'");
+        if( range[1]!=null )                               // ..end
+            whereClause.add(" AND date < '"+ range[1] +"'");
+
+        return Occurrence.manager.objects("SELECT * FROM occurrence "+ whereClause.toString() +" ORDER BY date", false);
     }
 
     public function close()

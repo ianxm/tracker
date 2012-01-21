@@ -1,5 +1,6 @@
 package mymetrics;
 
+using Lambda;
 import neko.Lib;
 import neko.Sys;
 import utils.Utils;
@@ -10,6 +11,7 @@ class Main
     private static var VERSION = "v0.1";
 
     private var metric :String;
+    private var range  :Array<String>;
     private var day    :String;
     private var val    :Int;
     private var mode   :Mode;
@@ -17,6 +19,7 @@ class Main
     public function new()
     {
         mode = VIEW;
+        range = [null, null];
     }
 
     public function run()
@@ -45,13 +48,13 @@ class Main
         case VIEW:
             {
                 var viewer = new Viewer(metric);
-                viewer.view();
+                viewer.view(range);
                 viewer.close();
             }
         case LOG:
             {
                 var viewer = new Viewer(metric);
-                viewer.log();
+                viewer.log(range);
                 viewer.close();
             }
         case LIST:
@@ -83,7 +86,13 @@ class Main
                 case "-h": printHelp();
                 default:
                     {
-                        if( args.length>0 )
+                        // range
+                        if( args.length==1 && arg.indexOf("..")!=-1 )
+                        {
+                            range = arg.split("..").map(function(ii) return Utils.dayStr(ii)).array();
+                            continue;
+                        }
+                        else if( args.length>0 )
                         {
                             Lib.println("unrecognized option: " + arg);
                             printHelp();
@@ -106,16 +115,19 @@ class Main
 
     private static function printVersion()
     {
-        Lib.println("Mymetrics "+ VERSION);
+        Lib.println("MyMetrics "+ VERSION);
         Sys.exit(0);
     }
 
     private static function printHelp()
     {
         Lib.println("MyMetrics "+ VERSION);
-        Lib.println("usage: neko mymetrics [options] [metric]");
+        Lib.println("usage: neko mymetrics [options] [range] [metric]");
         Lib.println("  if metric is omitted, MyMetrics will list all metrics");
         Lib.println("  if all options are omitted, MyMetrics will display metric report");
+        Lib.println("  range is in the form [startdate]..[enddate].");
+        Lib.println("    if either date is omitted the range will extend to the start of");
+        Lib.println("    the data or current day, respectively.");
         Lib.println("options:");
         Lib.println("  -i           increment value for day");
         Lib.println("  -s [val]     set value for day");

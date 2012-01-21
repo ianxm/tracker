@@ -7,6 +7,7 @@ import utils.Utils;
 
 class ReportGenerator
 {
+    private var range :Array<String>;
     private var root :Node;
 
     private var highTot    :ResultBlock;
@@ -22,8 +23,9 @@ class ReportGenerator
     private var streakCount   :Int;
     private var isCurrentStreakOn :Bool;
 
-    public function new()
+    public function new(r)
     {
+        range = r;
         root = new Node(null, 0, "root");
         streakCount = 0;
     }
@@ -154,7 +156,7 @@ class ReportGenerator
         }
 
         // current streak
-        var thisDay = Utils.day(Date.now());
+        var thisDay = (range[1]!=null) ? Utils.day(range[1]) : Utils.day(Date.now());
         isCurrentStreakOn = (thisDay.toString() == lastDay.toString());
         if( isCurrentStreakOn )
         {
@@ -175,9 +177,7 @@ class ReportGenerator
         }
 
         // gather recent data
-        var now = Date.now();
-        var today = Utils.dayStr(now);
-        var todayPath = Node.pathFromDayStr(today).array();
+        var todayPath = Node.pathFromDayStr(Utils.dayStr(thisDay)).array();
         currentTot.day     = root.pullNode(todayPath.list());
         currentTot.month   = root.pullNode(todayPath.slice(0,2).list());
         currentTot.year    = root.pullNode(todayPath.slice(0,1).list());
@@ -186,12 +186,13 @@ class ReportGenerator
         currentCount.month = root.pullNode(todayPath.slice(0,2).list());
         currentCount.year  = root.pullNode(todayPath.slice(0,1).list());
 
-        var aMonthBack = Utils.dayStr(new Date(now.getFullYear(),
-                                               now.getMonth()-1,
-                                               now.getDate(),
-                                               0, 0, 0));
-        var aMonthBackPath = Node.pathFromDayStr(aMonthBack).array();
-        var lastMonth = root.pullNode(aMonthBackPath.slice(0,2).list());
+        // var now = Date.now();
+        // var aMonthBack = Utils.dayStr(new Date(now.getFullYear(),
+        //                                        now.getMonth()-1,
+        //                                        now.getDate(),
+        //                                        0, 0, 0));
+        // var aMonthBackPath = Node.pathFromDayStr(aMonthBack).array();
+        // var lastMonth = root.pullNode(aMonthBackPath.slice(0,2).list());
 
         // produce the report
         var buf = new StringBuf();
@@ -199,7 +200,8 @@ class ReportGenerator
 
         buf.add("info:\n");
         buf.add("  first day: "+ Utils.dayStr(startDay) +"\n");
-        buf.add("  total duration: "+ Utils.dayDelta(startDay, lastDay) +" days\n");
+        buf.add("  last day: "+ Utils.dayStr(lastDay) +"\n");
+        buf.add("  total duration: "+ numDays((Utils.dayDelta(startDay, lastDay)+1)) +"\n");
         buf.add("\n");
 
         buf.add("totals:\n");
@@ -213,7 +215,7 @@ class ReportGenerator
         buf.add("\n");
         buf.add("  this year: "  + printNode(currentCount.year, "value") +"\n");
         buf.add("  this month: " + printNode(currentCount.month, "value") +"\n");
-        buf.add("  last month: " + printNode(lastMonth, "value") +"\n");
+        //buf.add("  last month: " + printNode(lastMonth, "value") +"\n");
         buf.add("  today: "      + printNode(currentCount.day, "value") +"\n");
         buf.add("\n");
 
@@ -226,14 +228,16 @@ class ReportGenerator
         buf.add("\n");
         buf.add("  this year: "  + printNode(currentCount.year, "count") +"\n");
         buf.add("  this month: " + printNode(currentCount.month, "count") +"\n");
-        buf.add("  last month: " + printNode(lastMonth, "count") +"\n");
+        //buf.add("  last month: " + printNode(lastMonth, "count") +"\n");
         buf.add("  today: "      + printNode(currentCount.day, "count") +"\n");
         buf.add("\n");
         
         buf.add("streaks:\n");
         buf.add("  longest on streak: "+ printStreak(onStreak) +"\n");
         buf.add("  longest off streak: "+ printStreak(offStreak) +"\n");
-        buf.add("  current streak: ("+ (isCurrentStreakOn?"on":"off")+") "+ printStreak(currentStreak) +"\n");
+
+        if( range[1]==null )
+            buf.add("  current streak: ("+ (isCurrentStreakOn?"on":"off")+") "+ printStreak(currentStreak) +"\n");
 
         Lib.println(buf.toString());
     }
@@ -250,7 +254,12 @@ class ReportGenerator
 
     inline private function printStreak(streak :Streak)
     {
-        return (streak==null) ? "[none]" : Utils.dayToStr(streak.start) +" to " + Utils.dayToStr(streak.end) +" ("+ streak.length +" days)";
+        return (streak==null) ? "[none]" : Utils.dayToStr(streak.start) +" to " + Utils.dayToStr(streak.end) +" ("+ numDays(streak.length) +")";
+    }
+
+    inline private function numDays(num :Int)
+    {
+        return num +" day"+ ((num>1)?"s":"");
     }
 }
 
