@@ -143,6 +143,14 @@ class ReportGenerator
             }
         }
 
+        // check most recent streak to end
+        if( streakCount >= onStreak.length )
+        {
+            onStreak.start  = Utils.dayShift(lastDay, -streakCount);
+            onStreak.end    = lastDay;
+            onStreak.length = streakCount;
+        }
+
         // current streak
         var thisDay = Utils.day(Date.now());
         isCurrentStreakOn = (thisDay.toString() == lastDay.toString());
