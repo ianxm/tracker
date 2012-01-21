@@ -78,7 +78,7 @@ class Main
                 case "-s": { val = Std.parseInt(args.shift()); mode = SET; }
                 case "-g": mode = GET;
                 case "-l": mode = LOG;
-                case "-d": day = Utils.dayStr(Date.fromString(args.shift()));
+                case "-d": day = Utils.dayStr(args.shift());
                 case "-v": printVersion();
                 case "-h": printHelp();
                 default:
@@ -88,6 +88,7 @@ class Main
                             Lib.println("unrecognized option: " + arg);
                             printHelp();
                         }
+                        // metric
                         metric = arg;
                     }
                 }

@@ -1,20 +1,38 @@
 package utils;
 
+import neko.Lib;
+import neko.Sys;
+
 class Utils
 {
-    inline public static function dayStr( date :Date ) :String
+    // get a dayStr (YYYY-MM-DD) from a date or string (parse the string to ensure 
+    // it is properly formatted
+    public static function dayStr( ?date :Date, ?str :String ) :String
     {
+        if( date==null && day==null )
+            return null;
+        if ( str!=null )
+        {
+            if( str=="" )
+                return null;
+            try {
+                date = Date.fromString(str);
+            } catch ( e:Dynamic ) {
+                Lib.println("ERROR: date must be YYYY-MM-DD");
+                Sys.exit(1);
+            }
+        }
         return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0).toString().substr(0, 10);
     }
 
     inline public static function day( date :Date ) :Date
     {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+        return (date==null) ? null : new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
     }
 
     inline public static function dayToStr( date :Date ) :String
     {
-        return date.toString().substr(0, 10);
+        return (date==null) ? null : date.toString().substr(0, 10);
     }
 
     inline public static function dayShift( date :Date, days :Int )
