@@ -68,12 +68,13 @@ class Viewer
 
     public function view(range)
     {
-        var report = new ReportGenerator(range);
+        var reportGenerator = new ReportGenerator(range);
+        reportGenerator.setReport("streaks");
         var results = selectRange(range);
 
         for( occ in results )
-            report.include(occ);
-        report.print();
+            reportGenerator.include(occ);
+        reportGenerator.print();
     }
 
     private function selectRange(range)

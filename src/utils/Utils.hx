@@ -9,11 +9,11 @@ class Utils
     // it is properly formatted
     public static function dayStr( ?date :Date, ?str :String ) :String
     {
-        var date = day(date, str);
+        var date = day(str, date);
         return (date==null) ? null : date.toString().substr(0, 10);
     }
 
-    public static function day( ?date :Date, ?str :String ) :Date
+    public static function day( ?str :String, ?date :Date ) :Date
     {
         if( date==null && day==null )
             return null;
