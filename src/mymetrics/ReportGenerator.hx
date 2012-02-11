@@ -22,6 +22,7 @@ class ReportGenerator
         {
         case "streaks":
             {
+                reports.add(new mymetrics.report.DurationReport());
                 reports.add(new mymetrics.report.StreakOnReport());
                 reports.add(new mymetrics.report.StreakOffReport());
                 reports.add(new mymetrics.report.StreakCurrentReport());
@@ -29,10 +30,8 @@ class ReportGenerator
         }
     }
 
-    public function include( occ )
+    public function include( date, val )
     {
-        var val = occ.value;
-        var date = Utils.day(occ.date);
         for( report in reports )
             report.include(date, val);
     }

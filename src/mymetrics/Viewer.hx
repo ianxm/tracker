@@ -7,6 +7,7 @@ import neko.db.Sqlite;
 import neko.db.Connection;
 import neko.db.Manager;
 import utils.Set;
+import utils.Utils;
 
 class Viewer
 {
@@ -72,8 +73,14 @@ class Viewer
         reportGenerator.setReport("streaks");
         var results = selectRange(range);
 
+        if( range[0] != null )                               // start..
+            reportGenerator.include(Utils.day(range[0]), 0);
         for( occ in results )
-            reportGenerator.include(occ);
+            reportGenerator.include(Utils.day(occ.date), occ.value);
+        if( range[1] != null )                               // ..end
+            reportGenerator.include(Utils.day(range[1]), 0);
+        else
+            reportGenerator.include(Utils.day(Date.now()), 0);
         reportGenerator.print();
     }
 
