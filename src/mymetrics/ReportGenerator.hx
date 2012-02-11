@@ -3,6 +3,7 @@ package mymetrics;
 using Lambda;
 import neko.Lib;
 import utils.Utils;
+import mymetrics.Main;
 import mymetrics.report.Report;
 
 class ReportGenerator
@@ -16,17 +17,24 @@ class ReportGenerator
         reports = new List<Report>();
     }
 
-    public function setReport(reportName)
+    public function setReport(mode)
     {
-        switch(reportName)
+        switch(mode)
         {
-        case "streaks":
+        case VIEW, STREAKS:
             {
                 reports.add(new mymetrics.report.DurationReport());
                 reports.add(new mymetrics.report.StreakOnReport());
                 reports.add(new mymetrics.report.StreakOffReport());
                 reports.add(new mymetrics.report.StreakCurrentReport());
             }
+        case LOG:
+            {
+                reports.add(new mymetrics.report.DurationReport());
+                reports.add(new mymetrics.report.LogReport());
+            }
+        default:
+            throw "unknown report mode";
         }
     }
 

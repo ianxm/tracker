@@ -58,29 +58,23 @@ class Viewer
             Lib.println("- "+ metric);
     }
 
-    public function log(range)
-    {
-        var results = selectRange(range);
-
-        Lib.println(metric +":");
-        for( occ in results )
-            Lib.println("  " + occ.toString());
-    }
-
-    public function view(range)
+    public function view(range, mode)
     {
         var reportGenerator = new ReportGenerator(range);
-        reportGenerator.setReport("streaks");
+        reportGenerator.setReport(mode);
         var results = selectRange(range);
 
         if( range[0] != null )                               // start..
             reportGenerator.include(Utils.day(range[0]), 0);
+
         for( occ in results )
             reportGenerator.include(Utils.day(occ.date), occ.value);
+
         if( range[1] != null )                               // ..end
             reportGenerator.include(Utils.day(range[1]), 0);
         else
             reportGenerator.include(Utils.day(Date.now()), 0);
+
         reportGenerator.print();
     }
 

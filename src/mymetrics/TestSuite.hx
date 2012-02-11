@@ -9,6 +9,7 @@ class TestSuite
     {
         var r = new haxe.unit.TestRunner();
         r.add(new mymetrics.report.TestDurationReport());
+        r.add(new mymetrics.report.TestLogReport());
         r.add(new mymetrics.report.TestStreakOnReport());
         r.add(new mymetrics.report.TestStreakOffReport());
         r.add(new mymetrics.report.TestStreakCurrentReport());
