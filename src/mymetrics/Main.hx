@@ -50,10 +50,16 @@ class Main
                 tracker.clear(range);
                 tracker.close();
             }
-        case CAL, RECORDS, STREAKS, GRAPH:
+        case CAL, STREAKS, GRAPH:
             {
                 var viewer = new Viewer(metric);
                 viewer.view(range, STREAKS);
+                viewer.close();
+            }
+        case RECORDS:
+            {
+                var viewer = new Viewer(metric);
+                viewer.view(range, RECORDS);
                 viewer.close();
             }
         case LOG:
