@@ -17,11 +17,11 @@ class ReportGenerator
         reports = new List<Report>();
     }
 
-    public function setReport(mode)
+    public function setReport(cmd)
     {
-        switch(mode)
+        switch(cmd)
         {
-        case VIEW, STREAKS:
+        case RECORDS:
             {
                 reports.add(new mymetrics.report.DurationReport());
                 reports.add(new mymetrics.report.StreakOnReport());
@@ -33,13 +33,13 @@ class ReportGenerator
                 reports.add(new mymetrics.report.DurationReport());
                 reports.add(new mymetrics.report.LogReport());
             }
-        case STREAKLOG:
+        case STREAKS:
             {
                 reports.add(new mymetrics.report.DurationReport());
                 reports.add(new mymetrics.report.StreakLogReport());
             }
         default:
-            throw "unknown report mode";
+            throw "unknown report command";
         }
     }
 

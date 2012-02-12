@@ -5,6 +5,7 @@ import neko.FileSystem;
 import neko.db.Sqlite;
 import neko.db.Connection;
 import neko.db.Manager;
+import utils.Utils;
 
 class Tracker
 {
@@ -34,45 +35,82 @@ class Tracker
     }
 
     // increment day
-    public function incr(day)
+    public function incr(range)
     {
-        var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
-        if( occ != null )
+        var day = range[0];
+        while( true )
         {
-            occ.value++;
-            occ.update();
-            Lib.println("set " + metric + " to " + occ.value + " for " + day);
+            var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
+            if( occ != null )
+            {
+                occ.value++;
+                occ.update();
+                Lib.println("set " + metric + " to " + occ.value + " for " + day);
+            }
+            else
+                set( [day, null], 1 );
+
+            day = Utils.dayToStr(Utils.dayShift(Utils.day(day), 1));
+            if( range[1]==null || Utils.dayDelta(Utils.day(day), Utils.day(range[1])) < 0 )
+                break;
         }
-        else
-            set( day, 1 );
     }
 
     // set day to val
-    public function set(day, val)
+    public function set(range, val)
     {
-        var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
-        if( occ != null )
+        var day = range[0];
+        while( true )
         {
-            if( val != 0 )
+            var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
+            if( occ != null )
             {
-                occ.value = val;
-                occ.update();
-                Lib.println("set " + metric + " to " + val + " for " + day);
+                if( val != 0 )
+                {
+                    occ.value = val;
+                    occ.update();
+                    Lib.println("set " + metric + " to " + val + " for " + day);
+                }
+                else
+                {
+                    occ.delete();
+                    Lib.println("deleted " + metric + " for " + day);
+                }
             }
             else
             {
-                occ.delete();
-                Lib.println("deleted " + metric + " for " + day);
+                if( val != 0 )
+                {
+                    occ = new Occurrence();
+                    occ.metric = metric;
+                    occ.date = day;
+                    occ.value = val;
+                    occ.insert();
+                    Lib.println("set " + metric + " to " + val + " for " + day);
+                }
             }
+
+            day = Utils.dayToStr(Utils.dayShift(Utils.day(day), 1));
+            if( range[1]==null || Utils.dayDelta(Utils.day(day), Utils.day(range[1])) < 0 )
+                break;
         }
-        else
+    }
+
+    // set day to val
+    public function clear(range)
+    {
+        var whereClause = new StringBuf();
+        whereClause.add("WHERE metric='"+ metric + "'");
+        if( range[0]!=null )                               // start..
+            whereClause.add(" AND date >= '"+ range[0] +"'");
+        if( range[1]!=null )                               // ..end
+            whereClause.add(" AND date < '"+ range[1] +"'");
+
+        var results = Occurrence.manager.objects("SELECT * FROM occurrence "+ whereClause.toString() +" ORDER BY date", false);
+        for( occ in results )
         {
-            occ = new Occurrence();
-            occ.metric = metric;
-            occ.date = day;
-            occ.value = val;
-            occ.insert();
-            Lib.println("set " + metric + " to " + val + " for " + day);
+            occ.delete();
+            Lib.println("deleted " + metric + " for " + occ.date);
         }
     }
 

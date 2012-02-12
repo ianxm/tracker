@@ -12,55 +12,54 @@ class Main
 
     private var metric :String;
     private var range  :Array<String>;
-    private var day    :String;
     private var val    :Int;
-    private var mode   :Mode;
+    private var cmd    :Command;
 
     public function new()
     {
-        mode = VIEW;
+        cmd = null;
         range = [null, null];
     }
 
     public function run()
     {
         parseArgs();
-        switch (mode)
+        switch (cmd)
         {
-        case SET:
-            {
-                var tracker = new Tracker(metric);
-                tracker.set(day, val);
-                tracker.close();
-            }
-        case GET:
+        case LIST:
             {
                 var viewer = new Viewer(metric);
-                viewer.get(day);
+                viewer.list();
                 viewer.close();
             }
         case INCR: 
             {
                 var tracker = new Tracker(metric);
-                tracker.incr(day);
+                tracker.incr(range);
                 tracker.close();
             }
-        case VIEW, STREAKS, STREAKLOG:
+        case SET:
+            {
+                var tracker = new Tracker(metric);
+                tracker.set(range, val);
+                tracker.close();
+            }
+        case CLEAR:
+            {
+                var tracker = new Tracker(metric);
+                tracker.clear(range);
+                tracker.close();
+            }
+        case CAL, RECORDS, STREAKS, GRAPH:
             {
                 var viewer = new Viewer(metric);
-                viewer.view(range, STREAKLOG);
+                viewer.view(range, STREAKS);
                 viewer.close();
             }
         case LOG:
             {
                 var viewer = new Viewer(metric);
                 viewer.view(range, LOG);
-                viewer.close();
-            }
-        case LIST:
-            {
-                var viewer = new Viewer(metric);
-                viewer.list();
                 viewer.close();
             }
         }
@@ -77,36 +76,53 @@ class Main
                 var arg = args.shift();
                 switch( arg )
                 {
-                case "-i": mode = INCR;
-                case "-s": { val = Std.parseInt(args.shift()); mode = SET; }
-                case "-g": mode = GET;
-                case "-l": mode = LOG;
-                case "-d": day = Utils.dayStr(args.shift());
-                case "-v": printVersion();
-                case "-h": printHelp();
+                case "list":        cmd = LIST;
+                case "incr":        cmd = INCR;
+                case "set":         cmd = SET;
+                case "--val":       val = Std.parseInt(args.shift());
+                case "clear":       cmd = CLEAR;
+                case "cal":         cmd = CAL;
+                case "log":         cmd = LOG;
+                case "records":     cmd = RECORDS;
+                case "streaks":     cmd = STREAKS;
+                case "graph":       cmd = GRAPH;
+                case "-v":          printVersion();
+                case "-h", "help":  printHelp();
                 default:
                     {
+                        if( cmd == null )
+                            throw "unknown command: " + arg;
+
                         // range
-                        if( args.length==1 && arg.indexOf("..")!=-1 )
+                        if( args.length > 0 )
                         {
-                            range = arg.split("..").map(function(ii) return Utils.dayStr(ii)).array();
-                            continue;
+                            var dateFix = function(ii) {
+                                return switch(ii){
+                                case "today":     Utils.dayStr(Date.now());
+                                case "yesterday": Utils.dayStr(Utils.dayShift(Date.now(),-1));
+                                default:          Utils.dayStr(ii);
+                                }
+                            }
+                            if( arg.indexOf("..")!=-1 )
+                                range = arg.split("..").map(dateFix).array();
+                            else
+                            {
+                                var date = dateFix(arg);
+                                range = [date, date];
+                            }
                         }
-                        else if( args.length>0 )
-                        {
-                            Lib.println("unrecognized option: " + arg);
-                            printHelp();
-                        }
+
                         // metric
                         metric = arg;
                     }
                 }
             }
-            if( day == null )
-                day = Utils.dayStr(Date.now());
             if( metric == null )
-                mode = LIST;
-
+                cmd = LIST;
+            if( range[0] == null && ( cmd==INCR || cmd==SET ) )
+                throw "INCR and SET not allowed with open date range";
+            if( range[1] == null )
+                range[1] = Utils.dayStr(Date.now());
         } catch ( e:Dynamic ) {
             Lib.println("ERROR: problem processing args: " + e);
             Sys.exit(1);
@@ -129,10 +145,8 @@ class Main
         Lib.println("    if either date is omitted the range will extend to the start of");
         Lib.println("    the data or current day, respectively.");
         Lib.println("options:");
-        Lib.println("  -i           increment value for day");
-        Lib.println("  -s [val]     set value for day");
-        Lib.println("  -g           get value for day");
-        Lib.println("  -l           show a log");
+        Lib.println("  -i           increment value(s)");
+        Lib.println("  -s [val]     set value(s)");
         Lib.println("  -d [date]    specify day to modify as YYYY-MM-DD");
         Lib.println("  -v           show version and exit");
         Lib.println("  -h           show usage and exit");
@@ -145,14 +159,15 @@ class Main
     }
 }
 
-enum Mode
+enum Command
 {
-    SET;  // set the value for a day
-    GET;  // get a value for a day
-    INCR; // increment a day
-    VIEW; // view report
-    LIST; // list metrics
-    LOG;  // show log of entries
-    STREAKLOG; // uh?
-    STREAKS; // uh?
+    LIST;                                                   // list metrics
+    INCR;                                                   // increment a day
+    SET;                                                    // set the value for a day
+    CLEAR;                                                  // clear a value for a day
+    CAL;                                                    // show calendar
+    LOG;                                                    // show log of entries
+    RECORDS;                                                // view report
+    STREAKS;                                                // show streaks
+    GRAPH;                                                  // show graph
 }

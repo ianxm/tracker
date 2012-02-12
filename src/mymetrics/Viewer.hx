@@ -30,16 +30,6 @@ class Viewer
         neko.db.Manager.initialize();
     }
 
-    // get day val
-    public function get(day)
-    {
-        var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
-        if( occ == null )
-            Lib.println("no occurrence that day");
-        else
-            Lib.println("Value for '"+ metric +"' on "+ occ.date +" is: "+  occ.value);
-    }
-
     public function list()
     {
         if( Occurrence.manager.count()==0 )
@@ -58,10 +48,10 @@ class Viewer
             Lib.println("- "+ metric);
     }
 
-    public function view(range, mode)
+    public function view(range, cmd)
     {
         var reportGenerator = new ReportGenerator(range);
-        reportGenerator.setReport(mode);
+        reportGenerator.setReport(cmd);
         var results = selectRange(range);
 
         if( range[0] != null )                               // start..
@@ -70,10 +60,7 @@ class Viewer
         for( occ in results )
             reportGenerator.include(Utils.day(occ.date), occ.value);
 
-        if( range[1] != null )                               // ..end
-            reportGenerator.include(Utils.day(range[1]), 0);
-        else
-            reportGenerator.include(Utils.day(Date.now()), 0);
+        reportGenerator.include(Utils.day(range[1]), 0); // ..end (cant be null)
 
         reportGenerator.print();
     }
@@ -89,7 +76,7 @@ class Viewer
         var whereClause = new StringBuf();
         whereClause.add("WHERE metric='"+ metric + "'");
         if( range[0]!=null )                               // start..
-            whereClause.add(" AND date > '"+ range[0] +"'");
+            whereClause.add(" AND date >= '"+ range[0] +"'");
         if( range[1]!=null )                               // ..end
             whereClause.add(" AND date < '"+ range[1] +"'");
 
