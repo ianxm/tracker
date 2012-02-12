@@ -1,4 +1,4 @@
-package mymetrics.report;
+package tracker.report;
 
 class TestStreakOnReport extends haxe.unit.TestCase
 {

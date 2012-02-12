@@ -1,10 +1,10 @@
-package mymetrics;
+package tracker;
 
 using Lambda;
 import neko.Lib;
 import utils.Utils;
-import mymetrics.Main;
-import mymetrics.report.Report;
+import tracker.Main;
+import tracker.report.Report;
 
 class ReportGenerator
 {
@@ -23,20 +23,20 @@ class ReportGenerator
         {
         case RECORDS:
             {
-                reports.add(new mymetrics.report.DurationReport());
-                reports.add(new mymetrics.report.StreakOnReport());
-                reports.add(new mymetrics.report.StreakOffReport());
-                reports.add(new mymetrics.report.StreakCurrentReport());
+                reports.add(new tracker.report.DurationReport());
+                reports.add(new tracker.report.StreakOnReport());
+                reports.add(new tracker.report.StreakOffReport());
+                reports.add(new tracker.report.StreakCurrentReport());
             }
         case LOG:
             {
-                reports.add(new mymetrics.report.DurationReport());
-                reports.add(new mymetrics.report.LogReport());
+                reports.add(new tracker.report.DurationReport());
+                reports.add(new tracker.report.LogReport());
             }
         case STREAKS:
             {
-                reports.add(new mymetrics.report.DurationReport());
-                reports.add(new mymetrics.report.StreakLogReport());
+                reports.add(new tracker.report.DurationReport());
+                reports.add(new tracker.report.StreakLogReport());
             }
         default:
             throw "unknown report command";

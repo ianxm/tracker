@@ -1,6 +1,6 @@
-package mymetrics.report;
+package tracker.report;
 
-import mymetrics.Occurrence;
+import tracker.Occurrence;
 
 interface Report
 {

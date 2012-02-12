@@ -1,7 +1,7 @@
-package mymetrics.report;
+package tracker.report;
 
 import utils.Utils;
-import mymetrics.Occurrence;
+import tracker.Occurrence;
 
 class LogReport implements Report
 {

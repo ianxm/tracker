@@ -1,4 +1,4 @@
-package mymetrics.report;
+package tracker.report;
 
 class TestLogReport extends haxe.unit.TestCase
 {

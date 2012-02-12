@@ -1,4 +1,4 @@
-package mymetrics;
+package tracker;
 
 import neko.db.Object;
 

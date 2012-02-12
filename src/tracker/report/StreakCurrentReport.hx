@@ -1,4 +1,4 @@
-package mymetrics.report;
+package tracker.report;
 
 import utils.Utils;
 

@@ -1,11 +1,11 @@
-package mymetrics.report;
+package tracker.report;
 
 class TestDurationReport extends haxe.unit.TestCase
 {
   public function testEmpty()
   {
       var report = new DurationReport();
-      var ret =   "no occurrences";
+      var ret =   "empty range";
       assertEquals(ret, report.toString());
   }
 

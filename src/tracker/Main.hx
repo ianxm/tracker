@@ -1,4 +1,4 @@
-package mymetrics;
+package tracker;
 
 using Lambda;
 import neko.Lib;
@@ -24,19 +24,19 @@ class Main
     public function run()
     {
         parseArgs();
-        var tracker = new Tracker(metric);
+        var worker = new Tracker(metric);
         switch (cmd)
         {
-        case LIST:    tracker.list();
-        case INCR:    tracker.incr(range);
-        case SET:     tracker.set(range, val);
-        case CLEAR:   tracker.clear(range);
-        case STREAKS: tracker.view(range, STREAKS);
-        case RECORDS: tracker.view(range, RECORDS);
-        case LOG:     tracker.view(range, LOG);
-        default:      tracker.view(range, STREAKS);
+        case LIST:    worker.list();
+        case INCR:    worker.incr(range);
+        case SET:     worker.set(range, val);
+        case CLEAR:   worker.clear(range);
+        case STREAKS: worker.view(range, STREAKS);
+        case RECORDS: worker.view(range, RECORDS);
+        case LOG:     worker.view(range, LOG);
+        default:      worker.view(range, STREAKS);
         }
-        tracker.close();
+        worker.close();
     }
 
     private function parseArgs()
@@ -129,7 +129,7 @@ class Main
 
     public static function main()
     {
-        var tracker = new Main().run();
+        new Main().run();
     }
 }
 
