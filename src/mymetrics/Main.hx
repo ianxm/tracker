@@ -8,7 +8,7 @@ import utils.Utils;
 class Main
 {
     public static var DB_FILE = Sys.environment().get("HOME") + "/.mymetrics.db";
-    private static var VERSION = "v0.1";
+    private static var VERSION = "v0.2";
 
     private var metric :String;
     private var range  :Array<String>;

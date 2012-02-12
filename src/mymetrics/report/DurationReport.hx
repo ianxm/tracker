@@ -24,7 +24,7 @@ class DurationReport implements Report
     public function toString()
     {
         if( firstDate==null || lastDate==null ) 
-            return "no occurrences";
+            return "empty range";
 
         var duration = Utils.dayDelta(firstDate, lastDate)+1;
         if( duration == 1 )
