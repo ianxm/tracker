@@ -10,6 +10,7 @@ class TestSuite
         var r = new haxe.unit.TestRunner();
         r.add(new tracker.report.TestDurationReport());
         r.add(new tracker.report.TestLogReport());
+        r.add(new tracker.report.TestCountReport());
         r.add(new tracker.report.TestStreakOnReport());
         r.add(new tracker.report.TestStreakOffReport());
         r.add(new tracker.report.TestStreakCurrentReport());

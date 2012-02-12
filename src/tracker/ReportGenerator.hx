@@ -33,6 +33,11 @@ class ReportGenerator
                 reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.LogReport());
             }
+        case COUNT:
+            {
+                reports.add(new tracker.report.DurationReport());
+                reports.add(new tracker.report.CountReport());
+            }
         case STREAKS:
             {
                 reports.add(new tracker.report.DurationReport());

@@ -7,7 +7,7 @@ import utils.Utils;
 
 class Main
 {
-    public static var DB_FILE = Sys.environment().get("HOME") + "/.mymetrics.db";
+    public static var DB_FILE = Sys.environment().get("HOME") + "/.tracker.db";
     private static var VERSION = "v0.2";
 
     private var metric :String;
@@ -31,10 +31,7 @@ class Main
         case INCR:    worker.incr(range);
         case SET:     worker.set(range, val);
         case CLEAR:   worker.clear(range);
-        case STREAKS: worker.view(range, STREAKS);
-        case RECORDS: worker.view(range, RECORDS);
-        case LOG:     worker.view(range, LOG);
-        default:      worker.view(range, STREAKS);
+        default:      worker.view(range, cmd);
         }
         worker.close();
     }
@@ -57,6 +54,7 @@ class Main
                 case "clear":       cmd = CLEAR;
                 case "cal":         cmd = CAL;
                 case "log":         cmd = LOG;
+                case "count":       cmd = COUNT;
                 case "records":     cmd = RECORDS;
                 case "streaks":     cmd = STREAKS;
                 case "graph":       cmd = GRAPH;
@@ -105,16 +103,16 @@ class Main
 
     private static function printVersion()
     {
-        Lib.println("MyMetrics "+ VERSION);
+        Lib.println("tracker "+ VERSION);
         Sys.exit(0);
     }
 
     private static function printHelp()
     {
-        Lib.println("MyMetrics "+ VERSION);
-        Lib.println("usage: neko mymetrics [options] [range] [metric]");
-        Lib.println("  if metric is omitted, MyMetrics will list all metrics");
-        Lib.println("  if all options are omitted, MyMetrics will display metric report");
+        Lib.println("tracker "+ VERSION);
+        Lib.println("usage: neko tracker [options] [range] [metric]");
+        Lib.println("  if metric is omitted, tracker will list all metrics");
+        Lib.println("  if all options are omitted, tracker will display metric report");
         Lib.println("  range is in the form [startdate]..[enddate].");
         Lib.println("    if either date is omitted the range will extend to the start of");
         Lib.println("    the data or current day, respectively.");
@@ -140,7 +138,8 @@ enum Command
     SET;                                                    // set the value for a day
     CLEAR;                                                  // clear a value for a day
     CAL;                                                    // show calendar
-    LOG;                                                    // show log of entries
+    LOG;                                                    // show log of occurrences
+    COUNT;                                                  // count occurrences
     RECORDS;                                                // view report
     STREAKS;                                                // show streaks
     GRAPH;                                                  // show graph

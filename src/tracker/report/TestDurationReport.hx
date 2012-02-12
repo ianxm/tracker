@@ -5,8 +5,7 @@ class TestDurationReport extends haxe.unit.TestCase
   public function testEmpty()
   {
       var report = new DurationReport();
-      var ret =   "empty range";
-      assertEquals(ret, report.toString());
+      assertEquals("empty range", report.toString());
   }
 
   public function testOne()
