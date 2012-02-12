@@ -1,11 +1,13 @@
 package mymetrics;
 
 import neko.Lib;
+import neko.Sys;
 import neko.FileSystem;
 import neko.db.Sqlite;
 import neko.db.Connection;
 import neko.db.Manager;
 import utils.Utils;
+import utils.Set;
 
 class Tracker
 {
@@ -18,6 +20,7 @@ class Tracker
         connect();
     }
 
+    // open db file
     private function connect()
     {
         var exists = FileSystem.exists(Main.DB_FILE);
@@ -34,7 +37,44 @@ class Tracker
         neko.db.Manager.initialize();
     }
 
-    // increment day
+    // get list of existing metrics
+    public function list()
+    {
+        if( Occurrence.manager.count()==0 )
+        {
+            Lib.println("No metrics found");
+            return;
+        }
+
+        var metrics = new Set<String>();
+        var occurrences = Occurrence.manager.search({}, false);
+        for( rr in occurrences )
+            metrics.add(rr.metric);
+
+        Lib.println("Current Metrics:");
+        for( metric in metrics )
+            Lib.println("- "+ metric);
+    }
+
+    // run the report generator to view the data
+    public function view(range, cmd)
+    {
+        var reportGenerator = new ReportGenerator(range);
+        reportGenerator.setReport(cmd);
+        var occurrences = selectRange(range);
+
+        if( range[0] != null )                               // start..
+            reportGenerator.include(Utils.day(range[0]), 0);
+
+        for( occ in occurrences )
+            reportGenerator.include(Utils.day(occ.date), occ.value);
+
+        reportGenerator.include(Utils.day(range[1]), 0); // ..end (cant be null)
+
+        reportGenerator.print();
+    }
+
+    // increment values
     public function incr(range)
     {
         var day = range[0];
@@ -56,7 +96,7 @@ class Tracker
         }
     }
 
-    // set day to val
+    // set values (clear if val is 0)
     public function set(range, val)
     {
         var day = range[0];
@@ -96,9 +136,26 @@ class Tracker
         }
     }
 
-    // set day to val
+    // clear values
     public function clear(range)
     {
+        var occurrences = selectRange(range);
+        for( occ in occurrences )
+        {
+            occ.delete();
+            Lib.println("deleted " + metric + " for " + occ.date);
+        }
+    }
+
+    // select a date range from the db
+    private function selectRange(range)
+    {
+        if( Occurrence.manager.count()==0 )
+        {
+            Lib.println("No metrics found");
+            Sys.exit(0);
+        }
+
         var whereClause = new StringBuf();
         whereClause.add("WHERE metric='"+ metric + "'");
         if( range[0]!=null )                               // start..
@@ -106,14 +163,10 @@ class Tracker
         if( range[1]!=null )                               // ..end
             whereClause.add(" AND date <= '"+ range[1] +"'");
 
-        var results = Occurrence.manager.objects("SELECT * FROM occurrence "+ whereClause.toString() +" ORDER BY date", false);
-        for( occ in results )
-        {
-            occ.delete();
-            Lib.println("deleted " + metric + " for " + occ.date);
-        }
+        return Occurrence.manager.objects("SELECT * FROM occurrence "+ whereClause.toString() +" ORDER BY date", false);
     }
 
+    // close db file
     public function close()
     {
         neko.db.Manager.cleanup();

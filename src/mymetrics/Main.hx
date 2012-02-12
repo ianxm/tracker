@@ -24,51 +24,19 @@ class Main
     public function run()
     {
         parseArgs();
+        var tracker = new Tracker(metric);
         switch (cmd)
         {
-        case LIST:
-            {
-                var viewer = new Viewer(metric);
-                viewer.list();
-                viewer.close();
-            }
-        case INCR: 
-            {
-                var tracker = new Tracker(metric);
-                tracker.incr(range);
-                tracker.close();
-            }
-        case SET:
-            {
-                var tracker = new Tracker(metric);
-                tracker.set(range, val);
-                tracker.close();
-            }
-        case CLEAR:
-            {
-                var tracker = new Tracker(metric);
-                tracker.clear(range);
-                tracker.close();
-            }
-        case CAL, STREAKS, GRAPH:
-            {
-                var viewer = new Viewer(metric);
-                viewer.view(range, STREAKS);
-                viewer.close();
-            }
-        case RECORDS:
-            {
-                var viewer = new Viewer(metric);
-                viewer.view(range, RECORDS);
-                viewer.close();
-            }
-        case LOG:
-            {
-                var viewer = new Viewer(metric);
-                viewer.view(range, LOG);
-                viewer.close();
-            }
+        case LIST:    tracker.list();
+        case INCR:    tracker.incr(range);
+        case SET:     tracker.set(range, val);
+        case CLEAR:   tracker.clear(range);
+        case STREAKS: tracker.view(range, STREAKS);
+        case RECORDS: tracker.view(range, RECORDS);
+        case LOG:     tracker.view(range, LOG);
+        default:      tracker.view(range, STREAKS);
         }
+        tracker.close();
     }
 
     private function parseArgs()
