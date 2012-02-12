@@ -78,7 +78,7 @@ class Viewer
         if( range[0]!=null )                               // start..
             whereClause.add(" AND date >= '"+ range[0] +"'");
         if( range[1]!=null )                               // ..end
-            whereClause.add(" AND date < '"+ range[1] +"'");
+            whereClause.add(" AND date <= '"+ range[1] +"'");
 
         return Occurrence.manager.objects("SELECT * FROM occurrence "+ whereClause.toString() +" ORDER BY date", false);
     }

@@ -17,6 +17,15 @@ class TestLogReport extends haxe.unit.TestCase
       assertEquals("  2012-01-01: 1\n", report.toString());
   }
 
+  public function testOneFixedStartStop()
+  {
+      var report = new LogReport();
+      report.include(Date.fromString("2012-01-01"), 0);
+      report.include(Date.fromString("2012-01-01"), 1);
+      report.include(Date.fromString("2012-01-01"), 0);
+      assertEquals("  2012-01-01: 1\n", report.toString());
+  }
+
   public function testTwo()
   {
       var report = new LogReport();
