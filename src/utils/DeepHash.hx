@@ -1,10 +1,10 @@
 package utils;
 
-class SimpleTree<K,V>
+class DeepHash<K,V>
 {
     private var key :K;
     private var val :V;
-    private var children :List<SimpleTree<K,V>>;
+    private var children :List<DeepHash<K,V>>;
 
     // optional so the root doesn't have to have a key
     public function new(?k)
@@ -24,12 +24,12 @@ class SimpleTree<K,V>
         }
 
         if( children == null )
-            children = new List<SimpleTree<K,V>>();
+            children = new List<DeepHash<K,V>>();
         var key = path.pop();
         var child = first(children, function(ii) return ii.key==key);
         if( child == null )
         {
-            child = new SimpleTree<K,V>(key);
+            child = new DeepHash<K,V>(key);
             children.add(child);
         }
         child.set(path, val);
@@ -55,7 +55,7 @@ class SimpleTree<K,V>
     // iterates over nodes, not lazy
     public function iterator()
     {
-        var nodes = new List<SimpleTree<K,V>>();
+        var nodes = new List<DeepHash<K,V>>();
         return nodes.iterator();
     }
 

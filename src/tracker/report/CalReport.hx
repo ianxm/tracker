@@ -2,20 +2,20 @@ package tracker.report;
 
 using Lambda;
 import utils.Utils;
-import utils.SimpleTree;
+import utils.DeepHash;
 
 class CalReport implements Report
 {
     private static var MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    private var tree :SimpleTree<Int,Int>;
+    private var tree :DeepHash<Int,Int>;
     private var firstDay :Date;
     private var lastDay :Date;
 
     public function new()
     {
-        tree = new SimpleTree<Int,Int>();
+        tree = new DeepHash<Int,Int>();
     }
 
     public function include(thisDay :Date, val :Int)
