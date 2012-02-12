@@ -16,6 +16,7 @@ class TestSuite
         r.add(new tracker.report.TestStreakCurrentReport());
         r.add(new tracker.report.TestStreakLogReport());
         r.add(new utils.TestSet());
+        r.add(new utils.TestSimpleTree());
         r.add(new utils.TestUtils());
         r.run();
     }
