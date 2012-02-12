@@ -43,6 +43,10 @@ class ReportGenerator
                 reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.StreakLogReport());
             }
+        case CAL:
+            {
+                reports.add(new tracker.report.CalReport());
+            }
         default:
             throw "unknown report command";
         }

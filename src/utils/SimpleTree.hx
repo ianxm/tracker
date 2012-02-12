@@ -41,6 +41,9 @@ class SimpleTree<K,V>
         if( path.isEmpty() )
             return val;
 
+        if( children == null )
+            return null;
+
         var key = path.pop();
         var child = first(children, function(ii) return ii.key==key);
         return if( child==null )
