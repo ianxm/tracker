@@ -110,18 +110,60 @@ class Main
     private static function printHelp()
     {
         Lib.println("tracker "+ VERSION);
-        Lib.println("usage: neko tracker [options] [range] [metric]");
-        Lib.println("  if metric is omitted, tracker will list all metrics");
-        Lib.println("  if all options are omitted, tracker will display metric report");
-        Lib.println("  range is in the form [startdate]..[enddate].");
-        Lib.println("    if either date is omitted the range will extend to the start of");
-        Lib.println("    the data or current day, respectively.");
-        Lib.println("options:");
-        Lib.println("  -i           increment value(s)");
-        Lib.println("  -s [val]     set value(s)");
-        Lib.println("  -d [date]    specify day to modify as YYYY-MM-DD");
-        Lib.println("  -v           show version and exit");
-        Lib.println("  -h           show usage and exit");
+        Lib.println("
+usage: tracker [command] [range] [options] [metric]
+
+if no command is given, tracker will show usage help.
+if no date or range is specified, the range is all days. 
+if no metric is given, tracker will list all metrics found.
+
+commands:
+  list         show list of existing metrics
+  incr         increment a value
+  set          set a value (must specify --val)
+  clear        clear a value
+  cal          show calendar view
+  log          show a log
+  count        count occurrences
+  records      show high and low records
+  streaks      show streaks
+  graph        draw a graph
+  help         show help
+  
+options:
+  --val [val]  value to set
+  --min [val]  min threshold
+  -v           show version and exit
+  -h           show usage and exit
+
+DATE:
+  today        specify day is today (default)
+  yesterday    specify day is yesterday
+  YYYY-MM-DD   specify a date
+  
+range:
+  DATE         only the specified date
+  DATE..       days from the given date until today
+  ..DATE       days from the start of the data to the specified date
+  DATE..DATE   days between specified dates (inclusive)
+
+examples:
+  > tracker incr today bikecommute
+               increments bikecommute metric for today
+
+  > tracker clear bikecommute
+               clear all bikecommute occurrences
+
+  > tracker log 2012-01-01.. bikecommute
+               show a log of all bikecommute occurrences since jan 1, 2012 
+
+  > tracker set yesterday --val 2 jogging
+               set jogging occurrence to 2 for yesterday
+
+  > tracker cal 2012-01-01.. wastedtime
+               show wastedtime calendars for each month from jan 2012
+               untill the current month
+");
         Sys.exit(0);
     }
 
