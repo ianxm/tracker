@@ -19,7 +19,7 @@ class RecordReport implements Report
         {
         case KEEP_LOWEST:
             {
-                strategyName = "lowest";
+                strategyName = " lowest";
                 checkBest = keepLowest;
                 bestScore = 9999;
             }
@@ -43,7 +43,7 @@ class RecordReport implements Report
 
     public function toString()
     {
-        return strategyName + " "+ reportName +": " + bestScore + " (" + bestDateStr + ")";
+        return strategyName + " "+ reportName +": " + bestDateStr + " (" + bestScore + ")";
     }
 
     private function keepLowest(bestScore :Int, newDateStr :String, newScore :Int) :Bool

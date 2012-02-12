@@ -10,7 +10,7 @@ class StreakOnReport extends StreakReport
 
     public function new()
     {
-        super("longest on streak: ");
+        super("longest on  streak: ");
         startOfStreak = null;
         lastDay = null;
         count = 0;

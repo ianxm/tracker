@@ -26,9 +26,9 @@ class StreakReport implements Report
         return if( startDate == null )
             reportPrefix + "none";
         else if( val == 1 )
-            reportPrefix + "1 day starting on " + Utils.dayToStr(startDate);
+            reportPrefix + "  1 day  starting on " + Utils.dayToStr(startDate);
         else
-            reportPrefix + val + " days starting on " + Utils.dayToStr(startDate);
+            reportPrefix + Utils.spaceFill(Std.string(val),3) + " days starting on " + Utils.dayToStr(startDate);
     }
 
     private function checkBest(checkDate, checkVal)
