@@ -33,6 +33,11 @@ class ReportGenerator
                 reports.add(new mymetrics.report.DurationReport());
                 reports.add(new mymetrics.report.LogReport());
             }
+        case STREAKLOG:
+            {
+                reports.add(new mymetrics.report.DurationReport());
+                reports.add(new mymetrics.report.StreakLogReport());
+            }
         default:
             throw "unknown report mode";
         }

@@ -13,6 +13,7 @@ class TestSuite
         r.add(new mymetrics.report.TestStreakOnReport());
         r.add(new mymetrics.report.TestStreakOffReport());
         r.add(new mymetrics.report.TestStreakCurrentReport());
+        r.add(new mymetrics.report.TestStreakLogReport());
         r.add(new utils.TestSet());
         r.add(new utils.TestUtils());
         r.run();

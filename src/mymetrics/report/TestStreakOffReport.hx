@@ -32,6 +32,14 @@ class TestStreakOffReport extends haxe.unit.TestCase
       assertEquals("longest off streak: 1 day starting on 2012-01-02", report.toString());
   }
 
+  public function testOneWithFixedEndWithOcc()
+  {
+      var report = new StreakOffReport();
+      report.include(Date.fromString("2012-01-01"), 1);
+      report.include(Date.fromString("2012-01-01"), 0);
+      assertEquals("longest off streak: none", report.toString());
+  }
+
   public function testReplaceWithNewer()
   {
       var report = new StreakOffReport();

@@ -45,10 +45,16 @@ class Main
                 tracker.incr(day);
                 tracker.close();
             }
-        case VIEW, LOG, STREAKS:
+        case VIEW, STREAKS, STREAKLOG:
             {
                 var viewer = new Viewer(metric);
-                viewer.view(range, mode);
+                viewer.view(range, STREAKLOG);
+                viewer.close();
+            }
+        case LOG:
+            {
+                var viewer = new Viewer(metric);
+                viewer.view(range, LOG);
                 viewer.close();
             }
         case LIST:
@@ -147,5 +153,6 @@ enum Mode
     VIEW; // view report
     LIST; // list metrics
     LOG;  // show log of entries
+    STREAKLOG; // uh?
     STREAKS; // uh?
 }

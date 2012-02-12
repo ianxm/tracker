@@ -55,6 +55,14 @@ class Utils
         return buf.toString()+str;
     }
 
+    public static function spaceFill( str :String, width :Int ) :String
+    {
+        var buf = new StringBuf();
+        for( ii in 0...(width-str.length) )
+            buf.add(" ");
+        return buf.toString()+str;
+    }
+
     inline public static function tenths(val :Float) :Float
     {
         return Math.round(val*10)/10;
