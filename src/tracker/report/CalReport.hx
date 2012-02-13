@@ -61,13 +61,13 @@ class CalReport implements Report
         {
             var val = tree.get(pathFromDay(day));
             var str = if( val != null )
-                Utils.spaceFill(Std.string(val),2);        
+                Utils.spaceFill(Std.string(val),3);
             else if( Utils.dayDelta(day, firstDay) > 0 || 
                      Utils.dayDelta(day, lastDay) < 0 )
-                " _";
+                "  _";
             else
-                " .";
-            buf.add(" "+ str +" ");
+                "  .";
+            buf.add(str +" ");
             if( day.getDay() == 6 )
                 buf.add("\n");
             day = Utils.dayShift(day, 1);
