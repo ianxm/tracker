@@ -1,5 +1,6 @@
 package tracker.report;
 
+using StringTools;
 import utils.Utils;
 import tracker.Occurrence;
 
@@ -28,7 +29,7 @@ class StreakReport implements Report
         else if( val == 1 )
             reportPrefix + "  1 day  starting on " + Utils.dayToStr(startDate);
         else
-            reportPrefix + Utils.spaceFill(Std.string(val),3) + " days starting on " + Utils.dayToStr(startDate);
+            reportPrefix + Std.string(val).lpad(' ',3) + " days starting on " + Utils.dayToStr(startDate);
     }
 
     private function checkBest(checkDate, checkVal)

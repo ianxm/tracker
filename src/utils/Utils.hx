@@ -46,23 +46,6 @@ class Utils
         return Std.int((date2.getTime()-date1.getTime())/(1000*60*60*24));
     }
 
-    public static function zeroFill( num :Int, width :Int ) :String
-    {
-        var str = Std.string(num);
-        var buf = new StringBuf();
-        for( ii in 0...(width-str.length) )
-            buf.add("0");
-        return buf.toString()+str;
-    }
-
-    public static function spaceFill( str :String, width :Int ) :String
-    {
-        var buf = new StringBuf();
-        for( ii in 0...(width-str.length) )
-            buf.add(" ");
-        return buf.toString()+str;
-    }
-
     inline public static function tenths(val :Float) :Float
     {
         return Math.round(val*10)/10;

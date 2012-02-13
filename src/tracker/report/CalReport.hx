@@ -1,6 +1,7 @@
 package tracker.report;
 
 using Lambda;
+using StringTools;
 import utils.Utils;
 import utils.DeepHash;
 
@@ -61,7 +62,7 @@ class CalReport implements Report
         {
             var val = tree.get(pathFromDay(day));
             var str = if( val != null )
-                Utils.spaceFill(Std.string(val),3);
+                Std.string(val).lpad(' ',3);
             else if( Utils.dayDelta(day, firstDay) > 0 || 
                      Utils.dayDelta(day, lastDay) < 0 )
                 "  _";

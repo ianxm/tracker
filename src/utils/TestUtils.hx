@@ -41,15 +41,6 @@ class TestUtils extends haxe.unit.TestCase
         assertEquals(3, Utils.dayDelta(new Date(2009, 11, 29, 0, 0, 0), new Date(2010, 00, 01, 0, 0, 0)));
     }
 
-    public function testZeroFill()
-    {
-        assertEquals("01", Utils.zeroFill(1, 2));
-        assertEquals("010", Utils.zeroFill(10, 3));
-        assertEquals("13", Utils.zeroFill(13, 2));
-        assertEquals("015", Utils.zeroFill(15, 3));
-        assertEquals("00015", Utils.zeroFill(15, 5));
-    }
-
     public function testTenths()
     {
         assertEquals(1.1, Utils.tenths(1.1));

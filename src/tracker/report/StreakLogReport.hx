@@ -1,5 +1,6 @@
 package tracker.report;
 
+using StringTools;
 import utils.Utils;
 
 class StreakLogReport implements Report
@@ -68,10 +69,10 @@ class StreakLogReport implements Report
         lastDay = occDay;
     }
 
-    private function append(onOrOff, days, from)
+    private function append(onOrOff :String, days, from)
     {
-        var onOrOffStr = Utils.spaceFill(onOrOff, 5);
-        var daysStr = Utils.spaceFill(Std.string(days), 3);
+        var onOrOffStr = onOrOff.lpad(' ', 5);
+        var daysStr = Std.string(days).lpad(' ', 3);
 
         buf.add(onOrOffStr + " " + daysStr + 
                 ((days==1)? " day " : " days") + 
