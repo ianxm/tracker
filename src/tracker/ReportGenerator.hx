@@ -25,12 +25,20 @@ class ReportGenerator
             {
                 reports.add(new tracker.report.DurationReport());
 
-                reports.add(new tracker.report.RecordYearReport(KEEP_HIGHEST));
-                reports.add(new tracker.report.RecordMonthReport(KEEP_HIGHEST));
-                reports.add(new tracker.report.RecordYearReport(KEEP_LOWEST));
-                reports.add(new tracker.report.RecordMonthReport(KEEP_LOWEST));
-                reports.add(new tracker.report.RecordYearReport(KEEP_CURRENT));
-                reports.add(new tracker.report.RecordMonthReport(KEEP_CURRENT));
+                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_HIGHEST));
+                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_HIGHEST));
+                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_HIGHEST));
+                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_HIGHEST));
+
+                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_LOWEST));
+                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_LOWEST));
+                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_LOWEST));
+                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_LOWEST));
+
+                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_CURRENT));
+                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_CURRENT));
+                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_CURRENT));
+                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_CURRENT));
 
                 reports.add(new tracker.report.StreakOnReport());
                 reports.add(new tracker.report.StreakOffReport());

@@ -4,33 +4,59 @@ class RecordReport implements Report
 {
     private var bestScore :Int;
     private var bestDateStr :String;
-    private var reportName :String;
 
     private var bins :Hash<Int>;
-    private var strategyName :String;
-    private var checkBest :Int->String->Int->Bool;
+    private var binName :String;
+    private var filterName :String;
 
-    public function new( s :Strategy )
+    private var checkBest :Int->String->Int->Bool;
+    private var dateToBin :Date->String;
+
+    public function new( bin :BinStrategy, keep :FilterStrategy )
     {
         bestScore = 0;
         bestDateStr = null;
         bins = new Hash<Int>();
-        switch( s )
+        switch( bin )
+        {
+        case BIN_YEAR:
+            {
+                binName = "year";
+                dateToBin = dateToYearBin;
+            }
+        case BIN_MONTH:
+            {
+                binName = "month";
+                dateToBin = dateToMonthBin;
+            }
+        case BIN_WEEK:
+            {
+                binName = "week";
+                dateToBin = dateToWeekBin;
+            }
+        case BIN_DAY:
+            {
+                binName = "day ";
+                dateToBin = dateToDayBin;
+            }
+        }
+
+        switch( keep )
         {
         case KEEP_LOWEST:
             {
-                strategyName = " lowest";
+                filterName = " lowest";
                 checkBest = keepLowest;
                 bestScore = 9999;
             }
         case KEEP_HIGHEST:
             {
-                strategyName = "highest";
+                filterName = "highest";
                 checkBest = keepHighest;
             }
         case KEEP_CURRENT:
             {
-                strategyName = "current";
+                filterName = "current";
                 checkBest = keepCurrent;
             }
         }
@@ -38,14 +64,34 @@ class RecordReport implements Report
 
     public function include(thisDay :Date, val :Int)
     {
-        throw "must override";
+        if( val == 0 )
+            return;
+
+        var binStr = dateToBin(thisDay);
+        if( bins.exists(binStr) )
+            bins.set(binStr, bins.get(binStr)+val);
+        else
+            bins.set(binStr, val);
     }
 
     public function toString()
     {
-        return strategyName + " "+ reportName +": " + bestDateStr + " (" + bestScore + ")";
+        for( key in bins.keys() )
+        {
+            var val = bins.get(key);
+            if( checkBest(bestScore, key, val) )
+            {
+                bestScore = val;
+                bestDateStr = key;
+            }
+        }
+        if( bestScore == 0 )
+            return "no occurrences";
+
+        return filterName + " "+ binName +": " + bestDateStr + " (" + bestScore + ")";
     }
 
+        // which to keep
     private function keepLowest(bestScore :Int, newDateStr :String, newScore :Int) :Bool
     {
         return bestScore > newScore;
@@ -56,14 +102,42 @@ class RecordReport implements Report
         return bestScore < newScore;
     }
 
-    private function keepCurrent(bestScore :Int, newDateStr :String, newScore :Int) :Bool
+    private function keepCurrent(bestScore :Int, newDateStr :String, newScore :Int)
     {
-        throw "must override";
-        return false;
+        return newDateStr != null && newDateStr == dateToBin(Date.now());
+    }
+
+    public function dateToYearBin(date)
+    {
+        return Std.string(date.getFullYear());
+    }
+
+    public function dateToMonthBin(date)
+    {
+        return date.toString().substr(0, 7);
+    }
+
+    public function dateToWeekBin(date)
+    {
+        var startOfWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate()-date.getDay(), 0, 0, 0);
+        return startOfWeek.toString().substr(0, 10);
+    }
+
+    public function dateToDayBin(date)
+    {
+        return date.toString().substr(0, 10);
     }
 }
 
-enum Strategy
+enum BinStrategy
+{
+    BIN_YEAR;
+    BIN_MONTH;
+    BIN_WEEK;
+    BIN_DAY;
+}
+
+enum FilterStrategy
 {
     KEEP_LOWEST;
     KEEP_HIGHEST;
