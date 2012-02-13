@@ -26,8 +26,11 @@ class ReportGenerator
                 reports.add(new tracker.report.DurationReport());
 
                 reports.add(new tracker.report.RecordYearReport(KEEP_HIGHEST));
+                reports.add(new tracker.report.RecordMonthReport(KEEP_HIGHEST));
                 reports.add(new tracker.report.RecordYearReport(KEEP_LOWEST));
+                reports.add(new tracker.report.RecordMonthReport(KEEP_LOWEST));
                 reports.add(new tracker.report.RecordYearReport(KEEP_CURRENT));
+                reports.add(new tracker.report.RecordMonthReport(KEEP_CURRENT));
 
                 reports.add(new tracker.report.StreakOnReport());
                 reports.add(new tracker.report.StreakOffReport());
