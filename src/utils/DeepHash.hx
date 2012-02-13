@@ -4,11 +4,13 @@ class DeepHash<K,V>
 {
     private var key :K;
     private var val :V;
+    private var parent :DeepHash<K,V>;
     private var children :List<DeepHash<K,V>>;
 
     // optional so the root doesn't have to have a key
-    public function new(?k)
+    public function new(?p, ?k)
     {
+        parent = p;
         key = k;
         val = null;
         children = null;
@@ -29,7 +31,7 @@ class DeepHash<K,V>
         var child = first(children, function(ii) return ii.key==key);
         if( child == null )
         {
-            child = new DeepHash<K,V>(key);
+            child = new DeepHash<K,V>(this, key);
             children.add(child);
         }
         child.set(path, val);
@@ -52,18 +54,32 @@ class DeepHash<K,V>
             child.get(path);
     }
 
-    // iterates over nodes, not lazy
-    public function iterator()
+    private function getPath(?path :List<K>)
     {
-        var nodes = new List<DeepHash<K,V>>();
-        return nodes.iterator();
+        if( path == null )
+            path = new List<K>();
+        if( key != null ) // dont care about the root
+        {
+            path.push(key);
+            parent.getPath(path);
+        }
+        return path;
     }
 
-    // iterates over values, not lazy
-    public function getValues()
+    // pre-order traversal of paths, not lazy
+    public function getPaths(?paths)
     {
-        var nodes = new List<V>();
-        return nodes.iterator();
+        if( paths == null )
+            paths = new List<List<K>>();
+        if( parent != null )
+            paths.add(getPath());
+        if( children != null )
+            for( child in children )
+                child.getPaths(paths);
+        return if (parent == null)
+            paths.iterator();
+        else
+            null; // recursion doesnt use the return value
     }
 
     // utility to find the first item that matches in a list

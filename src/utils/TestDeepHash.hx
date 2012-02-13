@@ -61,4 +61,14 @@ class TestDeepHash extends haxe.unit.TestCase
         assertEquals(1.2, tree.get(["one","two"].list()));
     }
 
+    public function testIterateValues()
+    {
+        var tree = new DeepHash<String, Float>();
+        tree.set(["one"].list(), 1.1);
+        tree.set(["one","two"].list(), 1.2);
+        var iter = tree.getPaths();
+        assertEquals('{one}', iter.next().toString());
+        assertEquals('{one, two}', iter.next().toString());
+        assertFalse(iter.hasNext());
+    }
 }
