@@ -32,7 +32,7 @@ class StreakCurrentReport extends StreakReport
             {
                 startOfStreak = occDay;
                 count = 1;
-                reportPrefix = "current streak: on ";
+                reportPrefix = "current streak: on  ";
             }
             else if( delta != 0 )           // end on an off streak
             {

@@ -6,7 +6,7 @@ class RecordReport implements Report
     private var bestDateStr :String;
     private var reportName :String;
 
-    private var bins :IntHash<Int>;
+    private var bins :Hash<Int>;
     private var strategyName :String;
     private var checkBest :Int->String->Int->Bool;
 
@@ -14,7 +14,7 @@ class RecordReport implements Report
     {
         bestScore = 0;
         bestDateStr = null;
-        bins = new IntHash<Int>();
+        bins = new Hash<Int>();
         switch( s )
         {
         case KEEP_LOWEST:

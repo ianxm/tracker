@@ -13,7 +13,7 @@ class TestRecordYearReport extends haxe.unit.TestCase
       var report = new RecordYearReport(KEEP_HIGHEST);
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-01"), 0);
-      assertEquals("highest year: 1 (2012)", report.toString());
+      assertEquals("highest year: 2012 (1)", report.toString());
   }
 
   public function testOneFixedStartStop()
@@ -22,7 +22,7 @@ class TestRecordYearReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-01"), 0);
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-01"), 0);
-      assertEquals("highest year: 1 (2012)", report.toString());
+      assertEquals("highest year: 2012 (1)", report.toString());
   }
 
   public function testTwo()
@@ -31,7 +31,7 @@ class TestRecordYearReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
       report.include(Date.fromString("2012-01-02"), 0);
-      assertEquals("highest year: 3 (2012)", report.toString());
+      assertEquals("highest year: 2012 (3)", report.toString());
   }
 
   public function testTwoYears()
@@ -40,7 +40,7 @@ class TestRecordYearReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("highest year: 2 (2012)", report.toString());
+      assertEquals("highest year: 2012 (2)", report.toString());
   }
 
   public function testTwoYearsIncrement()
@@ -51,7 +51,7 @@ class TestRecordYearReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-05"), 1);
       report.include(Date.fromString("2012-01-08"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("highest year: 3 (2012)", report.toString());
+      assertEquals("highest year: 2012 (3)", report.toString());
   }
 
   public function testFirstYearBigger()
@@ -60,7 +60,7 @@ class TestRecordYearReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 2);
       report.include(Date.fromString("2012-01-02"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("highest year: 2 (2011)", report.toString());
+      assertEquals("highest year: 2011 (2)", report.toString());
   }
 
   public function testLowestYear()
@@ -69,7 +69,7 @@ class TestRecordYearReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 2);
       report.include(Date.fromString("2012-01-02"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("lowest year: 1 (2012)", report.toString());
+      assertEquals(" lowest year: 2012 (1)", report.toString());
   }
 
   public function testLowestFirst()
@@ -78,7 +78,7 @@ class TestRecordYearReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("lowest year: 1 (2011)", report.toString());
+      assertEquals(" lowest year: 2011 (1)", report.toString());
   }
 
     /*
@@ -89,7 +89,7 @@ class TestRecordYearReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 2);
       report.include(Date.fromString("2012-01-02"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("current year: 1 (2012)", report.toString());
+      assertEquals("current year: 2012 (1)", report.toString());
   }
     */
 }

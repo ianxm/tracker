@@ -15,10 +15,11 @@ class RecordYearReport extends RecordReport
         if( val == 0 )
             return;
 
-        if( bins.exists(thisDay.getFullYear()) )
-            bins.set(thisDay.getFullYear(), bins.get(thisDay.getFullYear())+val);
+        var thisYearStr = Std.string(thisDay.getFullYear());
+        if( bins.exists(thisYearStr) )
+            bins.set(thisYearStr, bins.get(thisYearStr)+val);
         else
-            bins.set(thisDay.getFullYear(), val);
+            bins.set(thisYearStr, val);
     }
 
     override public function toString()
@@ -26,10 +27,10 @@ class RecordYearReport extends RecordReport
         for( key in bins.keys() )
         {
             var val = bins.get(key);
-            if( checkBest(bestScore, Std.string(key), val) )
+            if( checkBest(bestScore, key, val) )
             {
                 bestScore = val;
-                bestDateStr = Std.string(key);
+                bestDateStr = key;
             }
         }
         if( bestScore == 0 )
