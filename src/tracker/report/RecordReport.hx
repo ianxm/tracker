@@ -85,13 +85,12 @@ class RecordReport implements Report
                 bestDateStr = key;
             }
         }
-        if( bestScore == 0 )
-            return "no occurrences";
-
-        return filterName + " "+ binName +": " + bestDateStr + " (" + bestScore + ")";
+        return filterName + " "+ binName +": " + (( bestScore == 0 ) ?
+                                                  "none" : 
+                                                  bestDateStr + " (" + bestScore + ")");
     }
 
-        // which to keep
+    // which to keep (chosen by filter strategy)
     private function keepLowest(bestScore :Int, newDateStr :String, newScore :Int) :Bool
     {
         return bestScore > newScore;
@@ -107,6 +106,7 @@ class RecordReport implements Report
         return newDateStr != null && newDateStr == dateToBin(Date.now());
     }
 
+    // how to bin (chosen by bin strategy)
     public function dateToYearBin(date)
     {
         return Std.string(date.getFullYear());
