@@ -37,7 +37,7 @@ class DurationReport implements Report
     }
 
 
-    public function getLabel()
+    inline public function getLabel()
     {
         return "duration: ";
     }

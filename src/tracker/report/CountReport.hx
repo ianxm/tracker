@@ -15,7 +15,7 @@ class CountReport implements Report
             count++;
     }
 
-    public function getLabel()
+    inline public function getLabel()
     {
         return "";
     }

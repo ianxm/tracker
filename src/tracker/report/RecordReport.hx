@@ -1,16 +1,21 @@
 package tracker.report;
 
+using Lambda;
+import utils.Utils;
+
 class RecordReport implements Report
 {
     private var bestScore :Int;
     private var bestDateStr :String;
 
-    private var bins :Hash<Int>;
     private var binName :String;
     private var filterName :String;
+    private var bins :Hash<Int>;
+    private var startOfRange :Date;
 
     private var checkBest :Int->String->Int->Bool;
     private var dateToBin :Date->String;
+    private var oneBack :Date->Date;
 
     public function new( bin :BinStrategy, keep :FilterStrategy )
     {
@@ -44,24 +49,28 @@ class RecordReport implements Report
             {
                 binName = "year";
                 dateToBin = dateToYearBin;
+                oneBack = lastYear;
                 bestDateStr = dateToBin(Date.now());
             }
         case BIN_MONTH:
             {
                 binName = "month";
                 dateToBin = dateToMonthBin;
+                oneBack = lastMonth;
                 bestDateStr = dateToBin(Date.now());
             }
         case BIN_WEEK:
             {
                 binName = "week";
                 dateToBin = dateToWeekBin;
+                oneBack = lastWeek;
                 bestDateStr = dateToBin(Date.now());
             }
         case BIN_DAY:
             {
                 binName = "day";
                 dateToBin = dateToDayBin;
+                oneBack = yesterday;
                 bestDateStr = dateToBin(Date.now());
             }
         }
@@ -69,6 +78,17 @@ class RecordReport implements Report
 
     public function include(thisDay :Date, val :Int)
     {
+        if( startOfRange == null )                          // dont let lowest look past start of range
+            startOfRange = thisDay;
+
+        if( filterName == "lowest" )                        // handle gaps for lowest record
+        {
+            var oneBack = oneBack(thisDay);
+            var oneBackStr = dateToBin(oneBack);
+            if( !bins.exists(oneBackStr) && Utils.dayDelta(oneBack,startOfRange)<0)
+                bins.set(oneBackStr, 0);
+        }
+
         if( val == 0 )
             return;
 
@@ -81,7 +101,12 @@ class RecordReport implements Report
 
     public function toString()
     {
+        var keys = [];                                      // sort keys
         for( key in bins.keys() )
+            keys.push(key);
+        keys.sort(function(a,b) return (a<b)?-1:(a>b)?1:0);
+
+        for( key in keys )
         {
             var val = bins.get(key);
             if( checkBest(bestScore, key, val) )
@@ -93,47 +118,67 @@ class RecordReport implements Report
         return (( bestDateStr == null ) ? "none" : bestDateStr + " (" + bestScore + ")");
     }
 
-    public function getLabel()
+    inline public function getLabel()
     {
         return filterName + " "+ binName +": ";
     }
 
     // which to keep (chosen by filter strategy)
-    private function keepLowest(bestScore :Int, newDateStr :String, newScore :Int) :Bool
+    inline private function keepLowest(bestScore :Int, newDateStr :String, newScore :Int) :Bool
     {
-        return bestScore > newScore;
+        return bestScore >= newScore;
     }
 
-    private function keepHighest(bestScore :Int, newDateStr :String, newScore :Int) :Bool
+    inline private function keepHighest(bestScore :Int, newDateStr :String, newScore :Int) :Bool
     {
-        return bestScore < newScore;
+        return bestScore <= newScore;
     }
 
-    private function keepCurrent(bestScore :Int, newDateStr :String, newScore :Int)
+    inline private function keepCurrent(bestScore :Int, newDateStr :String, newScore :Int)
     {
         return newDateStr != null && newDateStr == dateToBin(Date.now());
     }
 
     // how to bin (chosen by bin strategy)
-    public function dateToYearBin(date)
+    inline public function dateToYearBin(date)
     {
         return Std.string(date.getFullYear());
     }
 
-    public function dateToMonthBin(date)
+    inline public function dateToMonthBin(date)
     {
         return date.toString().substr(0, 7);
     }
 
-    public function dateToWeekBin(date)
+    inline public function dateToWeekBin(date)
     {
-        var startOfWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate()-date.getDay(), 0, 0, 0);
-        return startOfWeek.toString().substr(0, 10);
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate()-date.getDay(), 0, 0, 0).toString().substr(0, 10);
     }
 
-    public function dateToDayBin(date)
+    inline public function dateToDayBin(date)
     {
         return date.toString().substr(0, 10);
+    }
+
+    // how to bin (chosen by bin strategy)
+    inline public function lastYear(date)
+    {
+        return new Date(date.getFullYear()-1, date.getMonth(), date.getDate(), 0, 0, 0);
+    }
+
+    inline public function lastMonth(date)
+    {
+        return new Date(date.getFullYear(), date.getMonth()-1, 1, 0, 0, 0);
+    }
+
+    inline public function lastWeek(date)
+    {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate()-date.getDay()-7, 0, 0, 0);
+    }
+
+    inline public function yesterday(date)
+    {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate()-1, 0, 0, 0);
     }
 }
 

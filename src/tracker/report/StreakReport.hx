@@ -66,7 +66,7 @@ class StreakReport implements Report
             Std.string(bestStreakLength).lpad(' ',3) + " days starting on " + Utils.dayToStr(bestStartDate) + onOrOff;
     }
 
-    public function getLabel()
+    inline public function getLabel()
     {
         return filterName;
     }

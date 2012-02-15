@@ -26,7 +26,7 @@ class LogReport implements Report
             "no occurrences";
     }
 
-    public function getLabel()
+    inline public function getLabel()
     {
         return "";
     }

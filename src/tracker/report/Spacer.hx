@@ -5,15 +5,15 @@ class Spacer implements Report
     public function new()
     {}
 
-    public function include(thisDay :Date, val :Int)
+    inline public function include(thisDay :Date, val :Int)
     {}
 
-    public function getLabel()
+    inline public function getLabel()
     {
         return "";
     }
 
-    public function toString()
+    inline public function toString()
     {
         return "";
     }
