@@ -85,9 +85,7 @@ class RecordReport implements Report
                 bestDateStr = key;
             }
         }
-        return (( bestScore == 0 ) ?
-                                                  "none" : 
-                                                  bestDateStr + " (" + bestScore + ")");
+        return (( bestScore == 0 || bestScore == 9999 ) ? "none" : bestDateStr + " (" + bestScore + ")");
     }
 
     public function getLabel()
