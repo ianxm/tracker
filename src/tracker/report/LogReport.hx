@@ -25,4 +25,9 @@ class LogReport implements Report
         else
             "no occurrences";
     }
+
+    public function getLabel()
+    {
+        return "";
+    }
 }

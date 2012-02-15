@@ -36,7 +36,7 @@ class RecordReport implements Report
             }
         case BIN_DAY:
             {
-                binName = "day ";
+                binName = "day";
                 dateToBin = dateToDayBin;
             }
         }
@@ -45,7 +45,7 @@ class RecordReport implements Report
         {
         case KEEP_LOWEST:
             {
-                filterName = " lowest";
+                filterName = "lowest";
                 checkBest = keepLowest;
                 bestScore = 9999;
             }
@@ -85,9 +85,14 @@ class RecordReport implements Report
                 bestDateStr = key;
             }
         }
-        return filterName + " "+ binName +": " + (( bestScore == 0 ) ?
+        return (( bestScore == 0 ) ?
                                                   "none" : 
                                                   bestDateStr + " (" + bestScore + ")");
+    }
+
+    public function getLabel()
+    {
+        return filterName + " "+ binName +": ";
     }
 
     // which to keep (chosen by filter strategy)

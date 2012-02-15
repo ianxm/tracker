@@ -28,11 +28,17 @@ class DurationReport implements Report
 
         var duration = Utils.dayDelta(firstDate, lastDate)+1;
         if( duration == 1 )
-            return "duration: " + (Utils.dayDelta(firstDate, lastDate)+1) + " day: " +
+            return (Utils.dayDelta(firstDate, lastDate)+1) + " day: " +
                 Utils.dayToStr(firstDate);
         else
-            return "duration: " + (Utils.dayDelta(firstDate, lastDate)+1) + " days" +
-            " from " + Utils.dayToStr(firstDate) +
-            " to " + Utils.dayToStr(lastDate);
+            return (Utils.dayDelta(firstDate, lastDate)+1) + " days" +
+                " from " + Utils.dayToStr(firstDate) +
+                " to " + Utils.dayToStr(lastDate);
+    }
+
+
+    public function getLabel()
+    {
+        return "duration: ";
     }
 }

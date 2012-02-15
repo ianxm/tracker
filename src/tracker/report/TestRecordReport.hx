@@ -5,7 +5,7 @@ class TestRecordReport extends haxe.unit.TestCase
   public function testYearEmpty()
   {
       var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST);
-      assertEquals("highest year: none", report.toString());
+      assertEquals("none", report.toString());
   }
 
   public function testYearOne()
@@ -13,7 +13,7 @@ class TestRecordReport extends haxe.unit.TestCase
       var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST);
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-01"), 0);
-      assertEquals("highest year: 2012 (1)", report.toString());
+      assertEquals("2012 (1)", report.toString());
   }
 
   public function testYearOneFixedStartStop()
@@ -22,7 +22,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-01"), 0);
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-01"), 0);
-      assertEquals("highest year: 2012 (1)", report.toString());
+      assertEquals("2012 (1)", report.toString());
   }
 
   public function testYearTwo()
@@ -31,7 +31,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
       report.include(Date.fromString("2012-01-02"), 0);
-      assertEquals("highest year: 2012 (3)", report.toString());
+      assertEquals("2012 (3)", report.toString());
   }
 
   public function testYearTwoYears()
@@ -40,7 +40,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("highest year: 2012 (2)", report.toString());
+      assertEquals("2012 (2)", report.toString());
   }
 
   public function testYearTwoYearsIncrement()
@@ -51,7 +51,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-05"), 1);
       report.include(Date.fromString("2012-01-08"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("highest year: 2012 (3)", report.toString());
+      assertEquals("2012 (3)", report.toString());
   }
 
   public function testYearFirstYearBigger()
@@ -60,7 +60,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 2);
       report.include(Date.fromString("2012-01-02"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("highest year: 2011 (2)", report.toString());
+      assertEquals("2011 (2)", report.toString());
   }
 
   public function testYearLowestYear()
@@ -69,7 +69,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 2);
       report.include(Date.fromString("2012-01-02"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals(" lowest year: 2012 (1)", report.toString());
+      assertEquals("2012 (1)", report.toString());
   }
 
   public function testYearLowestFirst()
@@ -78,7 +78,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals(" lowest year: 2011 (1)", report.toString());
+      assertEquals("2011 (1)", report.toString());
   }
 
     /*
@@ -89,7 +89,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 2);
       report.include(Date.fromString("2012-01-02"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("current year: 2012 (1)", report.toString());
+      assertEquals("2012 (1)", report.toString());
   }
     */
 
@@ -98,7 +98,7 @@ class TestRecordReport extends haxe.unit.TestCase
   public function testMonthEmpty()
   {
       var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST);
-      assertEquals("highest month: none", report.toString());
+      assertEquals("none", report.toString());
   }
 
   public function testMonthOne()
@@ -106,7 +106,7 @@ class TestRecordReport extends haxe.unit.TestCase
       var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST);
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-01"), 0);
-      assertEquals("highest month: 2012-01 (1)", report.toString());
+      assertEquals("2012-01 (1)", report.toString());
   }
 
   public function testMonthOneFixedStartStop()
@@ -115,7 +115,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-01"), 0);
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-01"), 0);
-      assertEquals("highest month: 2012-01 (1)", report.toString());
+      assertEquals("2012-01 (1)", report.toString());
   }
 
   public function testMonthTwo()
@@ -124,7 +124,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
       report.include(Date.fromString("2012-01-02"), 0);
-      assertEquals("highest month: 2012-01 (3)", report.toString());
+      assertEquals("2012-01 (3)", report.toString());
   }
 
   public function testMonthTwoMonths()
@@ -133,7 +133,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-02-02"), 2);
       report.include(Date.fromString("2012-02-05"), 0);
-      assertEquals("highest month: 2012-02 (2)", report.toString());
+      assertEquals("2012-02 (2)", report.toString());
   }
 
   public function testMonthTwoYears()
@@ -142,7 +142,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-12-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("highest month: 2012-01 (2)", report.toString());
+      assertEquals("2012-01 (2)", report.toString());
   }
 
   public function testMonthTwoMonthsIncrement()
@@ -153,7 +153,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-02-05"), 1);
       report.include(Date.fromString("2012-02-08"), 1);
       report.include(Date.fromString("2012-02-05"), 0);
-      assertEquals("highest month: 2012-02 (3)", report.toString());
+      assertEquals("2012-02 (3)", report.toString());
   }
 
   public function testMonthFirstMonthBigger()
@@ -162,7 +162,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-12-01"), 2);
       report.include(Date.fromString("2012-01-02"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals("highest month: 2011-12 (2)", report.toString());
+      assertEquals("2011-12 (2)", report.toString());
   }
 
   public function testMonthLowestMonth()
@@ -171,7 +171,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-12-01"), 2);
       report.include(Date.fromString("2012-01-02"), 1);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals(" lowest month: 2012-01 (1)", report.toString());
+      assertEquals("2012-01 (1)", report.toString());
   }
 
   public function testMonthLowestFirst()
@@ -180,7 +180,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-12-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
       report.include(Date.fromString("2012-01-05"), 0);
-      assertEquals(" lowest month: 2011-12 (1)", report.toString());
+      assertEquals("2011-12 (1)", report.toString());
   }
 
     /*
@@ -191,7 +191,7 @@ class TestRecordReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-11-01"), 2);
       report.include(Date.fromString("2012-02-02"), 1);
       report.include(Date.fromString("2012-02-05"), 0);
-      assertEquals("current month: 2012-02 (1)", report.toString());
+      assertEquals("2012-02 (1)", report.toString());
   }
 */
 }

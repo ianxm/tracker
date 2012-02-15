@@ -86,4 +86,9 @@ class StreakLogReport implements Report
         else
             "no occurrences";
     }
+
+    public function getLabel()
+    {
+        return "";
+    }
 }

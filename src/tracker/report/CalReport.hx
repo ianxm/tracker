@@ -28,6 +28,11 @@ class CalReport implements Report
             tree.set(pathFromDay(thisDay), val);
     }
 
+    public function getLabel()
+    {
+        return "";
+    }
+
     public function toString()
     {
         if( firstDay == null )

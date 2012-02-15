@@ -5,14 +5,14 @@ class TestStreakCurrentReport extends haxe.unit.TestCase
   public function testEmpty()
   {
       var report = new StreakCurrentReport();
-      assertEquals("current streak: none", report.toString());
+      assertEquals("none", report.toString());
   }
 
   public function testOneOn()
   {
       var report = new StreakCurrentReport();
       report.include(Date.fromString("2012-01-01"), 1);
-      assertEquals("current streak: on    1 day  starting on 2012-01-01", report.toString());
+      assertEquals("on    1 day  starting on 2012-01-01", report.toString());
   }
 
   public function testTwoOn()
@@ -20,7 +20,7 @@ class TestStreakCurrentReport extends haxe.unit.TestCase
       var report = new StreakCurrentReport();
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-02"), 1);
-      assertEquals("current streak: on    2 days starting on 2012-01-01", report.toString());
+      assertEquals("on    2 days starting on 2012-01-01", report.toString());
   }
 
   public function testOneOff()
@@ -28,7 +28,7 @@ class TestStreakCurrentReport extends haxe.unit.TestCase
       var report = new StreakCurrentReport();
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-02"), 0);
-      assertEquals("current streak: off   1 day  starting on 2012-01-02", report.toString());
+      assertEquals("off   1 day  starting on 2012-01-02", report.toString());
   }
 
   public function testTwoOff()
@@ -36,7 +36,7 @@ class TestStreakCurrentReport extends haxe.unit.TestCase
       var report = new StreakCurrentReport();
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-03"), 0);
-      assertEquals("current streak: off   2 days starting on 2012-01-02", report.toString());
+      assertEquals("off   2 days starting on 2012-01-02", report.toString());
   }
 
   public function testReplaceWithNewerOn()
@@ -44,7 +44,7 @@ class TestStreakCurrentReport extends haxe.unit.TestCase
       var report = new StreakCurrentReport();
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-03"), 1);
-      assertEquals("current streak: on    1 day  starting on 2012-01-03", report.toString());
+      assertEquals("on    1 day  starting on 2012-01-03", report.toString());
   }
 
   public function testReplaceWithNewerOff()
@@ -53,7 +53,7 @@ class TestStreakCurrentReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-03"), 1);
       report.include(Date.fromString("2012-01-04"), 0);
-      assertEquals("current streak: off   1 day  starting on 2012-01-04", report.toString());
+      assertEquals("off   1 day  starting on 2012-01-04", report.toString());
   }
 
   public function testEndOnOffDay()
@@ -62,6 +62,6 @@ class TestStreakCurrentReport extends haxe.unit.TestCase
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-03"), 1);
       report.include(Date.fromString("2012-01-03"), 0);
-      assertEquals("current streak: on    1 day  starting on 2012-01-03", report.toString());
+      assertEquals("on    1 day  starting on 2012-01-03", report.toString());
   }
 }

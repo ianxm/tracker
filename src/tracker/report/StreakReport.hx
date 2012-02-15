@@ -9,12 +9,14 @@ class StreakReport implements Report
     private var val :Int;
     private var startDate :Date;
     private var reportPrefix :String;
+    private var label :String;
 
-    public function new(prefix)
+    public function new(l)
     {
         val = 0;
         startDate = null;
-        reportPrefix = prefix;
+        label = l;
+        reportPrefix = "";
     }
 
     public function include(thisDay :Date, val :Int)
@@ -25,11 +27,16 @@ class StreakReport implements Report
     public function toString()
     {
         return if( startDate == null )
-            reportPrefix + "none";
+            "none";
         else if( val == 1 )
             reportPrefix + "  1 day  starting on " + Utils.dayToStr(startDate);
         else
             reportPrefix + Std.string(val).lpad(' ',3) + " days starting on " + Utils.dayToStr(startDate);
+    }
+
+    public function getLabel()
+    {
+        return label;
     }
 
     private function checkBest(checkDate, checkVal)

@@ -15,6 +15,11 @@ class CountReport implements Report
             count++;
     }
 
+    public function getLabel()
+    {
+        return "";
+    }
+
     public function toString()
     {
         return count + ((count==1) ? " occurrence" : " occurrences");

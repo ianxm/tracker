@@ -32,13 +32,13 @@ class StreakCurrentReport extends StreakReport
             {
                 startOfStreak = occDay;
                 count = 1;
-                reportPrefix = "current streak: on  ";
+                reportPrefix = "on  ";
             }
             else if( delta != 0 )           // end on an off streak
             {
                 startOfStreak = Utils.dayShift(lastDay, 1);
                 count = delta;
-                reportPrefix = "current streak: off ";
+                reportPrefix = "off ";
             }
         }
         checkBest(startOfStreak, count);    // check for new best
