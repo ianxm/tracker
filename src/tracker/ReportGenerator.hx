@@ -50,9 +50,9 @@ class ReportGenerator
                 reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_CURRENT));
                 reports.add(new tracker.report.Spacer());
 
-                reports.add(new tracker.report.StreakOnReport());
-                reports.add(new tracker.report.StreakOffReport());
-                reports.add(new tracker.report.StreakCurrentReport());
+                reports.add(new tracker.report.StreakReport(KEEP_HIGHEST));
+                reports.add(new tracker.report.StreakReport(KEEP_LOWEST));
+                reports.add(new tracker.report.StreakReport(KEEP_CURRENT));
             }
         case LOG:
             {

@@ -2,54 +2,140 @@ package tracker.report;
 
 using StringTools;
 import utils.Utils;
-import tracker.Occurrence;
+import tracker.report.RecordReport;
 
 class StreakReport implements Report
 {
-    private var val :Int;
-    private var startDate :Date;
-    private var reportPrefix :String;
-    private var label :String;
+    private var startOfStreak :Date;
+    private var lastDay :Date;
+    private var count :Int;
 
-    public function new(l)
-    {
-        val = 0;
-        startDate = null;
-        label = l;
-        reportPrefix = "";
-    }
+    private var bestStreakLength :Int;
+    private var bestStartDate :Date;
 
-    public function include(thisDay :Date, val :Int)
+    private var filterName :String;
+    private var isStreakOn :Bool;
+    public var include :Date -> Int -> Void;
+    private var isBest :Int -> Int -> Bool;
+
+    public function new(keep :FilterStrategy)
     {
-        throw "StreakReport must be subclassed";
+        bestStreakLength = 0;
+        bestStartDate = null;
+
+        startOfStreak = null;
+        lastDay = null;
+        count = 0;
+
+        switch( keep )
+        {
+        case KEEP_LOWEST:
+            {
+                filterName = "longest off streak: ";
+                isBest = function(a,b) return a>=b;
+                include = includeOff;
+            }
+        case KEEP_HIGHEST:
+            {
+                filterName = "longest on streak: ";
+                isBest = function(a,b) return a>=b;
+                include = includeOn;
+            }
+        case KEEP_CURRENT:
+            {
+                filterName = "current streak: ";
+                isBest = function(a,b) return true;
+                include = includeCurrent;
+            }
+        }
     }
 
     public function toString()
     {
-        return if( startDate == null )
-            "none";
-        else if( val == 1 )
-            reportPrefix + "  1 day  starting on " + Utils.dayToStr(startDate);
+        var onOrOff = if( isStreakOn == null )
+            "";
+        else if( isStreakOn == true )
+            " (on)";
         else
-            reportPrefix + Std.string(val).lpad(' ',3) + " days starting on " + Utils.dayToStr(startDate);
+            " (off)";
+        return if( bestStartDate == null )
+            "none";
+        else if( bestStreakLength == 1 )
+            "  1 day  starting on " + Utils.dayToStr(bestStartDate) + onOrOff;
+        else
+            Std.string(bestStreakLength).lpad(' ',3) + " days starting on " + Utils.dayToStr(bestStartDate) + onOrOff;
     }
 
     public function getLabel()
     {
-        return label;
+        return filterName;
     }
 
-    private function checkBest(checkDate, checkVal)
+    private function checkBest(checkDate, checkLength)
     {
-        if( isBest(checkVal, val) )
+        if( isBest(checkLength, bestStreakLength) )
         {
-            startDate = checkDate;
-            val = checkVal;
+            bestStartDate = checkDate;
+            bestStreakLength = checkLength;
         }
     }
 
-    private function isBest(val1, val2)
+    // val may be zero for first and last call
+    public function includeOff(occDay :Date, occVal :Int)
     {
-        return val1 >= val2;
+        if( lastDay == null )
+            lastDay = occDay;
+
+        var delta = Utils.dayDelta(lastDay, occDay);
+        checkBest(Utils.dayShift(lastDay, 1), delta-1);
+        lastDay = occDay;
+    }
+
+    // val may be zero for first and last call
+    public function includeOn(occDay :Date, occVal :Int)
+    {
+        if( lastDay == null )
+            lastDay = occDay;
+
+        var delta = Utils.dayDelta(lastDay, occDay);
+
+        if( delta == 1 )                    // extend current on streak
+            count++;
+        else if( occVal > 0 )               // start new streak
+        {
+            startOfStreak = occDay;
+            count = 1;
+        }
+        checkBest(startOfStreak, count);    // check for new best
+        lastDay = occDay;
+    }
+
+    // val may be zero for first and last call
+    public function includeCurrent(occDay :Date, occVal :Int)
+    {
+        if( lastDay == null )
+            lastDay = occDay;
+
+        var delta = Utils.dayDelta(lastDay, occDay);
+
+        if( delta == 1 && occVal > 0 )      // extend current on streak
+            count++;
+        else
+        {
+            if( occVal > 0 )                // start new on streak
+            {
+                startOfStreak = occDay;
+                count = 1;
+                isStreakOn = true;
+            }
+            else if( delta != 0 )           // end on an off streak
+            {
+                startOfStreak = Utils.dayShift(lastDay, 1);
+                count = delta;
+                isStreakOn = false;
+            }
+        }
+        checkBest(startOfStreak, count);    // check for new best
+        lastDay = occDay;
     }
 }
