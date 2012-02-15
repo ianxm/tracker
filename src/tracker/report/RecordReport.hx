@@ -17,29 +17,6 @@ class RecordReport implements Report
         bestScore = 0;
         bestDateStr = null;
         bins = new Hash<Int>();
-        switch( bin )
-        {
-        case BIN_YEAR:
-            {
-                binName = "year";
-                dateToBin = dateToYearBin;
-            }
-        case BIN_MONTH:
-            {
-                binName = "month";
-                dateToBin = dateToMonthBin;
-            }
-        case BIN_WEEK:
-            {
-                binName = "week";
-                dateToBin = dateToWeekBin;
-            }
-        case BIN_DAY:
-            {
-                binName = "day";
-                dateToBin = dateToDayBin;
-            }
-        }
 
         switch( keep )
         {
@@ -58,6 +35,34 @@ class RecordReport implements Report
             {
                 filterName = "current";
                 checkBest = keepCurrent;
+            }
+        }
+
+        switch( bin )
+        {
+        case BIN_YEAR:
+            {
+                binName = "year";
+                dateToBin = dateToYearBin;
+                bestDateStr = dateToBin(Date.now());
+            }
+        case BIN_MONTH:
+            {
+                binName = "month";
+                dateToBin = dateToMonthBin;
+                bestDateStr = dateToBin(Date.now());
+            }
+        case BIN_WEEK:
+            {
+                binName = "week";
+                dateToBin = dateToWeekBin;
+                bestDateStr = dateToBin(Date.now());
+            }
+        case BIN_DAY:
+            {
+                binName = "day";
+                dateToBin = dateToDayBin;
+                bestDateStr = dateToBin(Date.now());
             }
         }
     }
@@ -85,7 +90,7 @@ class RecordReport implements Report
                 bestDateStr = key;
             }
         }
-        return (( bestScore == 0 || bestScore == 9999 ) ? "none" : bestDateStr + " (" + bestScore + ")");
+        return (( bestDateStr == null ) ? "none" : bestDateStr + " (" + bestScore + ")");
     }
 
     public function getLabel()
