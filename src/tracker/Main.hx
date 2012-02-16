@@ -10,21 +10,22 @@ class Main
     public static var DB_FILE = Sys.environment().get("HOME") + "/.tracker.db";
     private static var VERSION = "v0.2";
 
-    private var metric :String;
-    private var range  :Array<String>;
-    private var val    :Int;
-    private var cmd    :Command;
+    private var metrics :List<String>;
+    private var range   :Array<String>;
+    private var val     :Int;
+    private var cmd     :Command;
 
     public function new()
     {
         cmd = null;
+        metrics = new List<String>();
         range = [null, null];
     }
 
     public function run()
     {
         parseArgs();
-        var worker = new Tracker(metric);
+        var worker = new Tracker(metrics);
         switch (cmd)
         {
         case LIST:    worker.list();
@@ -58,38 +59,35 @@ class Main
                 case "records":     cmd = RECORDS;
                 case "streaks":     cmd = STREAKS;
                 case "graph":       cmd = GRAPH;
-                case "-v":          printVersion();
-                case "-h", "help":  printHelp();
-                default:
+                case "-d":                                  // date range
                     {
+                        arg = args.shift();
                         if( cmd == null )
                             throw "unknown command: " + arg;
 
-                        // range
-                        if( args.length > 0 )
-                        {
-                            var dateFix = function(ii) {
-                                return switch(ii){
-                                case "today":     Utils.dayStr(Date.now());
-                                case "yesterday": Utils.dayStr(Utils.dayShift(Date.now(),-1));
-                                default:          Utils.dayStr(ii);
-                                }
-                            }
-                            if( arg.indexOf("..")!=-1 )
-                                range = arg.split("..").map(dateFix).array();
-                            else
-                            {
-                                var date = dateFix(arg);
-                                range = [date, date];
+                        // try to handle it like a daterange
+                        var dateFix = function(ii) {
+                            return switch(ii){
+                            case "today":     Utils.dayStr(Date.now());
+                            case "yesterday": Utils.dayStr(Utils.dayShift(Date.now(),-1));
+                            default:          Utils.dayStr(ii);
                             }
                         }
-
-                        // metric
-                        metric = arg;
+                        if( arg.indexOf("..")!=-1 )
+                            range = arg.split("..").map(dateFix).array();
+                        else
+                        {
+                            var date = dateFix(arg);
+                            range = [date, date];
+                        }
                     }
+                case "-v":          printVersion();
+                case "-h", "help":  printHelp();
+                default:                                    // else it must be a metric
+                    metrics.add(arg);
                 }
             }
-            if( metric == null )
+            if( metrics.isEmpty() )
                 cmd = LIST;
             if( range[0] == null && ( cmd==INCR || cmd==SET ) )
                 throw "INCR and SET not allowed with open date range";
@@ -111,10 +109,10 @@ class Main
     {
         Lib.println("tracker "+ VERSION);
         Lib.println("
-usage: tracker [command] [range] [options] [metric]
+usage: tracker [command] [options] [metric [metric..]] 
 
 if no command is given, tracker will show usage help.
-if no date or range is specified, the range is all days. 
+if no date range is specified, the range is all days. 
 if no metric is given, tracker will list all metrics found.
 
 commands:
@@ -122,31 +120,32 @@ commands:
   incr         increment a value
   set          set a value (must specify --val)
   clear        clear a value
-  cal          show calendar view
   log          show a log
   count        count occurrences
+  cal          show calendar view
   records      show high and low records
   streaks      show streaks
   graph        draw a graph
   help         show help
   
 options:
-  --val [val]  value to set
-  --min [val]  min threshold
+  -d range     specify date range
   -v           show version and exit
   -h           show usage and exit
+  --val val    value to set
+  --min val    min threshold
 
-DATE:
-  today        specify day is today (default)
-  yesterday    specify day is yesterday
-  YYYY-MM-DD   specify a date
-  
 range:
   DATE         only the specified date
   DATE..       days from the given date until today
   ..DATE       days from the start of the data to the specified date
   DATE..DATE   days between specified dates (inclusive)
 
+DATE:
+  today        specify day is today (default)
+  yesterday    specify day is yesterday
+  YYYY-MM-DD   specify a date
+  
 examples:
   > tracker incr today bikecommute
                increments bikecommute metric for today
@@ -154,13 +153,13 @@ examples:
   > tracker clear bikecommute
                clear all bikecommute occurrences
 
-  > tracker log 2012-01-01.. bikecommute
+  > tracker log -d 2012-01-01.. bikecommute
                show a log of all bikecommute occurrences since jan 1, 2012 
 
-  > tracker set yesterday --val 2 jogging
+  > tracker set -d yesterday --val 2 jogging
                set jogging occurrence to 2 for yesterday
 
-  > tracker cal 2012-01-01.. wastedtime
+  > tracker cal -d 2012-01-01.. wastedtime
                show wastedtime calendars for each month from jan 2012
                untill the current month
 ");
@@ -175,7 +174,7 @@ examples:
 
 enum Command
 {
-    LIST;                                                   // list metrics
+    LIST;                                                   // list existing metrics
     INCR;                                                   // increment a day
     SET;                                                    // set the value for a day
     CLEAR;                                                  // clear a value for a day

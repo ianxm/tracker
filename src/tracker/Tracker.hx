@@ -11,12 +11,12 @@ import utils.Set;
 
 class Tracker
 {
-    private var metric :String;
+    private var metrics :List<String>;
     private var db :Connection;
 
     public function new(m)
     {
-        metric = m;
+        metrics = m;
         connect();
     }
 
@@ -27,7 +27,7 @@ class Tracker
         db = Sqlite.open(Main.DB_FILE);
         if( !exists )
         {
-            trace("creating table");
+            //trace("creating table");
             db.request("CREATE TABLE occurrence ("
                        + "metric TEXT NOT NULL, "
                        + "date TEXT NOT NULL, "
@@ -46,13 +46,13 @@ class Tracker
             return;
         }
 
-        var metrics = new Set<String>();
+        var allMetrics = new Set<String>();
         var occurrences = Occurrence.manager.search({}, false);
         for( rr in occurrences )
-            metrics.add(rr.metric);
+            allMetrics.add(rr.metric);
 
         Lib.println("Current Metrics:");
-        for( metric in metrics )
+        for( metric in allMetrics )
             Lib.println("- "+ metric);
     }
 
@@ -77,78 +77,82 @@ class Tracker
     // increment values
     public function incr(range)
     {
-        var day = range[0];
-        while( true )
+        for( metric in metrics )
         {
-            var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
-            if( occ != null )
+            var day = range[0];
+            do
             {
-                occ.value++;
-                occ.update();
-                Lib.println("set " + metric + " to " + occ.value + " for " + day);
-            }
-            else
-                set( [day, null], 1 );
+                var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
+                if( occ != null )
+                {
+                    occ.value++;
+                    occ.update();
+                    Lib.println("set " + occ.metric + " to " + occ.value + " for " + day);
+                }
+                else
+                    setNew( metric, day, 1 );
 
-            day = Utils.dayToStr(Utils.dayShift(Utils.day(day), 1));
-            if( range[1]==null || Utils.dayDelta(Utils.day(day), Utils.day(range[1])) < 0 )
-                break;
+                day = Utils.dayToStr(Utils.dayShift(Utils.day(day), 1));
+
+            } while( range[1]!=null && Utils.dayDelta(Utils.day(day), Utils.day(range[1])) >= 0 );
         }
+    }
+
+    private  function setNew(metric, day, val)
+    {
+        var occ = new Occurrence();
+        occ.metric = metric;
+        occ.date = day;
+        occ.value = val;
+        occ.insert();
+        Lib.println("set " + metric + " to " + val + " for " + day);
     }
 
     // set values (clear if val is 0)
     public function set(range, val)
     {
-        var day = range[0];
-        while( true )
+        for( metric in metrics )
         {
-            var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
-            if( occ != null )
+            var day = range[0];
+            do
             {
-                if( val != 0 )
+                var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
+                if( occ != null )
                 {
-                    occ.value = val;
-                    occ.update();
-                    Lib.println("set " + metric + " to " + val + " for " + day);
+                    if( val != 0 )
+                    {
+                        occ.value = val;
+                        occ.update();
+                        Lib.println("set " + metric + " to " + val + " for " + day);
+                    }
+                    else
+                    {
+                        occ.delete();
+                        Lib.println("deleted " + metric + " for " + day);
+                    }
                 }
                 else
-                {
-                    occ.delete();
-                    Lib.println("deleted " + metric + " for " + day);
-                }
-            }
-            else
-            {
-                if( val != 0 )
-                {
-                    occ = new Occurrence();
-                    occ.metric = metric;
-                    occ.date = day;
-                    occ.value = val;
-                    occ.insert();
-                    Lib.println("set " + metric + " to " + val + " for " + day);
-                }
-            }
+                    if( val != 0 )
+                        setNew(metric, day, val);
 
-            day = Utils.dayToStr(Utils.dayShift(Utils.day(day), 1));
-            if( range[1]==null || Utils.dayDelta(Utils.day(day), Utils.day(range[1])) < 0 )
-                break;
+                day = Utils.dayToStr(Utils.dayShift(Utils.day(day), 1));
+            } while( range[1]!=null && Utils.dayDelta(Utils.day(day), Utils.day(range[1])) >= 0 );
         }
     }
 
     // clear values
     public function clear(range)
     {
-        var occurrences = selectRange(range);
+        var occurrences = selectRange(range, false);
         for( occ in occurrences )
         {
             occ.delete();
-            Lib.println("deleted " + metric + " for " + occ.date);
+            Lib.println("deleted " + occ.metric + " for " + occ.date);
         }
     }
 
     // select a date range from the db
-    private function selectRange(range)
+    private function selectRange(range, ?shouldCombine = true)
     {
         if( Occurrence.manager.count()==0 )
         {
@@ -156,14 +160,20 @@ class Tracker
             Sys.exit(0);
         }
 
-        var whereClause = new StringBuf();
-        whereClause.add("WHERE metric='"+ metric + "'");
+        var select = new StringBuf();
+        select.add("SELECT ");
+        select.add((shouldCombine) ? "date, sum(value) as value" : "*");
+        select.add(" FROM occurrence ");
+        select.add("WHERE ("+ metrics.map(function(ii) return "metric='"+ii+"'").join(" or ") +")");
         if( range[0]!=null )                               // start..
-            whereClause.add(" AND date >= '"+ range[0] +"'");
+            select.add(" AND date >= '"+ range[0] +"'");
         if( range[1]!=null )                               // ..end
-            whereClause.add(" AND date <= '"+ range[1] +"'");
+            select.add(" AND date <= '"+ range[1] +"'");
+        select.add((shouldCombine) ? " GROUP BY date" : " ");
+        select.add(" ORDER BY date");
 
-        return Occurrence.manager.objects("SELECT * FROM occurrence "+ whereClause.toString() +" ORDER BY date", false);
+        //trace("select: " + select);
+        return Occurrence.manager.objects(select.toString(), false);
     }
 
     // close db file
