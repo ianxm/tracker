@@ -63,13 +63,13 @@ class CalReport implements Report
         for( ii in 0...month.getDay() )
             buf.add("    ");
 
+        var today = Date.now();
         do
         {
             var val = tree.get(pathFromDay(day));
             var str = if( val != null )
                 Std.string(val).lpad(' ',3);
-            else if( Utils.dayDelta(day, firstDay) > 0 || 
-                     Utils.dayDelta(day, lastDay) < 0 )
+            else if( Utils.dayDelta(day, today) < 0 )
                 "  _";
             else
                 "  .";

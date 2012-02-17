@@ -93,6 +93,13 @@ class Main
                 throw "INCR and SET not allowed with open date range";
             if( range[1] == null )
                 range[1] = Utils.dayStr(Date.now());
+            if( cmd == CAL )                                // always cal by full month
+            {
+                var r0 = (range[0]==null) ? Utils.day(Date.now()) : Utils.day(range[0]);
+                var r1 = Utils.day(range[1]);
+                range[0] = Utils.dayStr(new Date(r0.getFullYear(), r0.getMonth(), 1, 0, 0, 0));
+                range[1] = Utils.dayStr(new Date(r1.getFullYear(), r1.getMonth()+1, 0, 0, 0, 0));
+            }
         } catch ( e:Dynamic ) {
             Lib.println("ERROR: problem processing args: " + e);
             Sys.exit(1);
@@ -129,13 +136,13 @@ commands:
   help         show help
   
 options:
-  -d range     specify date range
+  -d RANGE     specify date range
   -v           show version and exit
   -h           show usage and exit
-  --val val    value to set
-  --min val    min threshold
+  --val VAL    value to set
+  --min VAL    min threshold
 
-range:
+RANGE:
   DATE         only the specified date
   DATE..       days from the given date until today
   ..DATE       days from the start of the data to the specified date
