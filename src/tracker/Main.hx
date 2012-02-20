@@ -17,7 +17,7 @@ class Main
 
     public function new()
     {
-        cmd = null;
+        cmd = RECORDS;
         metrics = new List<String>();
         range = [null, null];
     }
