@@ -90,7 +90,7 @@ class Main
             if( metrics.isEmpty() )
                 cmd = LIST;
             if( range[0] == null && ( cmd==INCR || cmd==SET ) )
-                throw "INCR and SET not allowed with open date range";
+                range[0] = Utils.dayStr(Date.now());
             if( range[1] == null )
                 range[1] = Utils.dayStr(Date.now());
             if( cmd == CAL )                                // always cal by full month
