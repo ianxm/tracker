@@ -1,7 +1,6 @@
 package tracker;
 
 import utils.TestUtils;
-import utils.TestSet;
 
 class TestSuite
 {
@@ -15,7 +14,6 @@ class TestSuite
         r.add(new tracker.report.TestStreakLogReport());
         r.add(new tracker.report.TestCalReport());
         r.add(new tracker.report.TestRecordReport());
-        r.add(new utils.TestSet());
         r.add(new utils.TestDeepHash());
         r.add(new utils.TestUtils());
         r.run();

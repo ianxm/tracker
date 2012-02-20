@@ -16,11 +16,11 @@ class TestCalReport extends haxe.unit.TestCase
       assertEquals("
           Feb 2012
  Su  Mo  Tu  We  Th  Fr  Sa
-              1   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _ 
+              1   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   . 
 ", report.toString());
   }
 
@@ -33,11 +33,11 @@ class TestCalReport extends haxe.unit.TestCase
       assertEquals("
           Jan 2012
  Su  Mo  Tu  We  Th  Fr  Sa
-  1   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _ 
+  1   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   . 
 ", report.toString());
   }
 
@@ -50,11 +50,11 @@ class TestCalReport extends haxe.unit.TestCase
       assertEquals("
           Jan 2012
  Su  Mo  Tu  We  Th  Fr  Sa
-  1   .   2   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _ 
+  1   .   2   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   . 
 ", report.toString());
   }
 
@@ -67,11 +67,11 @@ class TestCalReport extends haxe.unit.TestCase
       assertEquals("
           Jan 2012
  Su  Mo  Tu  We  Th  Fr  Sa
-  1   2   .   .   .   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _ 
+  1   2   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   . 
 ", report.toString());
   }
 
@@ -84,7 +84,7 @@ class TestCalReport extends haxe.unit.TestCase
       assertEquals("
           Jan 2012
  Su  Mo  Tu  We  Th  Fr  Sa
-  _   _   _   1   .   .   . 
+  .   .   .   1   .   .   . 
   .   .   .   .   .   .   . 
   .   .   .   .   .   .   . 
   .   .   .   .   .   .   . 
@@ -93,10 +93,10 @@ class TestCalReport extends haxe.unit.TestCase
           Feb 2012
  Su  Mo  Tu  We  Th  Fr  Sa
               .   2   .   . 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _   _   _   _ 
-  _   _   _   _ 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   .   .   .   . 
+  .   .   .   . 
 ", report.toString());
   }
 }

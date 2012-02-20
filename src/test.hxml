@@ -1,3 +1,4 @@
 -neko test.n
+-lib hxSet
 -main tracker.TestSuite
 -cmd neko test.n

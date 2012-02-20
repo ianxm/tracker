@@ -5,7 +5,7 @@ class TestRecordReport extends haxe.unit.TestCase
   public function testYearEmpty()
   {
       var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST);
-      assertEquals("none", report.toString());
+      assertEquals("2012 (0)", report.toString());
   }
 
   public function testYearOne()
@@ -98,7 +98,7 @@ class TestRecordReport extends haxe.unit.TestCase
   public function testMonthEmpty()
   {
       var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST);
-      assertEquals("none", report.toString());
+      assertEquals("2012-02 (0)", report.toString());
   }
 
   public function testMonthOne()
