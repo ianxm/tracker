@@ -54,7 +54,11 @@ class Main
                 case "--val":       val = Std.parseInt(args.shift());
                 case "clear":       cmd = CLEAR;
                 case "cal":         cmd = CAL;
-                case "log":         cmd = LOG;
+                case "log":         cmd = DLOG;
+                case "dlog":        cmd = DLOG;
+                case "wlog":        cmd = WLOG;
+                case "mlog":        cmd = MLOG;
+                case "ylog":        cmd = YLOG;
                 case "count":       cmd = COUNT;
                 case "records":     cmd = RECORDS;
                 case "streaks":     cmd = STREAKS;
@@ -127,7 +131,10 @@ commands:
   incr         increment a value
   set          set a value (must specify --val)
   clear        clear a value
-  log          show a log
+  dlog,log     show a log by day
+  wlog         show a log by week
+  mlog         show a log by month
+  ylog         show a log by year
   count        count occurrences
   cal          show calendar view
   records      show high and low records
@@ -186,7 +193,10 @@ enum Command
     SET;                                                    // set the value for a day
     CLEAR;                                                  // clear a value for a day
     CAL;                                                    // show calendar
-    LOG;                                                    // show log of occurrences
+    DLOG;                                                   // show log by day
+    WLOG;                                                   // show log by week
+    MLOG;                                                   // show log by month
+    YLOG;                                                   // show log by year
     COUNT;                                                  // count occurrences
     RECORDS;                                                // view report
     STREAKS;                                                // show streaks

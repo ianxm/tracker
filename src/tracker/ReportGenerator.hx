@@ -54,10 +54,10 @@ class ReportGenerator
                 reports.add(new tracker.report.StreakReport(KEEP_LOWEST));
                 reports.add(new tracker.report.StreakReport(KEEP_CURRENT));
             }
-        case LOG:
+        case DLOG,WLOG,MLOG,YLOG:
             {
                 reports.add(new tracker.report.DurationReport());
-                reports.add(new tracker.report.LogReport());
+                reports.add(new tracker.report.LogReport(cmd));
             }
         case COUNT:
             {

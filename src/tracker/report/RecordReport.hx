@@ -140,43 +140,43 @@ class RecordReport implements Report
     }
 
     // how to bin (chosen by bin strategy)
-    inline public function dateToYearBin(date)
+    inline public static function dateToYearBin(date)
     {
         return Std.string(date.getFullYear());
     }
 
-    inline public function dateToMonthBin(date)
+    inline public static function dateToMonthBin(date)
     {
         return date.toString().substr(0, 7);
     }
 
-    inline public function dateToWeekBin(date)
+    inline public static function dateToWeekBin(date)
     {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate()-date.getDay(), 0, 0, 0).toString().substr(0, 10);
     }
 
-    inline public function dateToDayBin(date)
+    inline public static function dateToDayBin(date)
     {
         return date.toString().substr(0, 10);
     }
 
     // how to bin (chosen by bin strategy)
-    inline public function lastYear(date)
+    inline private function lastYear(date)
     {
         return new Date(date.getFullYear()-1, date.getMonth(), date.getDate(), 0, 0, 0);
     }
 
-    inline public function lastMonth(date)
+    inline private function lastMonth(date)
     {
         return new Date(date.getFullYear(), date.getMonth()-1, 1, 0, 0, 0);
     }
 
-    inline public function lastWeek(date)
+    inline private function lastWeek(date)
     {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate()-date.getDay()-7, 0, 0, 0);
     }
 
-    inline public function yesterday(date)
+    inline private function yesterday(date)
     {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate()-1, 0, 0, 0);
     }
