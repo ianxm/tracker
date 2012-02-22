@@ -2,8 +2,8 @@ package tracker.report;
 
 using Lambda;
 using StringTools;
+import DeepHash;
 import utils.Utils;
-import utils.DeepHash;
 
 class CalReport implements Report
 {

@@ -1,4 +1,5 @@
 -neko test.n
 -lib hxSet
+-lib DeepHash
 -main tracker.TestSuite
 -cmd neko test.n
