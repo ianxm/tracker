@@ -61,7 +61,7 @@ class Main
             case "list":        cmd = LIST;
             case "incr":        cmd = INCR;
             case "set":         cmd = SET;
-            case "--val":       val = Std.parseInt(args.shift());
+            case "-v":          val = Std.parseInt(args.shift());
             case "clear":       cmd = CLEAR;
             case "cal":         cmd = CAL;
             case "log":         cmd = DLOG;
@@ -95,10 +95,12 @@ class Main
                         range = [date, date];
                     }
                 }
-            case "-f": dbFile = args.shift();          // set filename
-            case "-v": printVersion();
-            case "-h", "help":  printHelp();
-            default:                                    // else assume it is a metric
+            case "--file":    dbFile = args.shift();        // set filename
+            case "--version": printVersion();
+            case "-h", "--help", "help":  printHelp();
+            default:                                        // else assume it is a metric
+                if( StringTools.startsWith(arg, "-") )
+                    throw "invalid option: " + arg;
                 metrics.add(arg);
             }
         }
@@ -143,7 +145,7 @@ commands:
   init         initialize a repository
   list         show list of existing metrics
   incr         increment a value
-  set          set a value (must specify --val)
+  set          set a value (must specify -v also)
   clear        clear a value
   dlog,log     show a log by day
   wlog         show a log by week
@@ -158,11 +160,11 @@ commands:
   
 options:
   -d RANGE     specify date range
-  -f FILE      specify a repository filename
-  -v           show version and exit
-  -h           show usage and exit
-  --val VAL    value to set
+  -v VAL       value to set
+  --file FILE  specify a repository filename
   --min VAL    min threshold
+  --version    show version
+  -h, --help   show help
 
 RANGE:
   DATE         only the specified date
