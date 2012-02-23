@@ -7,7 +7,7 @@ import utils.Utils;
 
 class Main
 {
-    private static var VERSION = "v0.2";
+    private static var VERSION = "v0.3";
 
     private var dbFile :String;
     private var metrics :List<String>;
@@ -64,8 +64,7 @@ class Main
             case "-v":          val = Std.parseInt(args.shift());
             case "clear":       cmd = CLEAR;
             case "cal":         cmd = CAL;
-            case "log":         cmd = DLOG;
-            case "dlog":        cmd = DLOG;
+            case "log", "dlog": cmd = DLOG;
             case "wlog":        cmd = WLOG;
             case "mlog":        cmd = MLOG;
             case "ylog":        cmd = YLOG;
@@ -76,10 +75,6 @@ class Main
             case "-d":                                  // date range
                 {
                     arg = args.shift();
-                    if( cmd == null )
-                        throw "unknown command: " + arg;
-
-                    // try to handle it like a daterange
                     var dateFix = function(ii) {
                         return switch(ii){
                         case "today":     Utils.dayStr(Date.now());
