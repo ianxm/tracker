@@ -7,9 +7,9 @@ import utils.Utils;
 
 class Main
 {
-    public static var DB_FILE = Sys.environment().get("HOME") + "/.tracker.db";
     private static var VERSION = "v0.2";
 
+    private var dbFile :String;
     private var metrics :List<String>;
     private var range   :Array<String>;
     private var val     :Int;
@@ -24,90 +24,103 @@ class Main
 
     public function run()
     {
-        parseArgs();
-        var worker = new Tracker(metrics);
-        switch (cmd)
-        {
-        case LIST:    worker.list();
-        case INCR:    worker.incr(range);
-        case SET:     worker.set(range, val);
-        case CLEAR:   worker.clear(range);
-        default:      worker.view(range, cmd);
+        try {
+            parseArgs();
+        } catch ( e:Dynamic ) {
+            Lib.println("ERROR: invalid args: " + e);
+            Sys.exit(1);
         }
-        worker.close();
+
+        try {
+            var worker = new Tracker(dbFile, metrics, range);
+            switch (cmd)
+            {
+            case INIT:    worker.init();
+            case LIST:    worker.list();
+            case INCR:    worker.incr();
+            case SET:     worker.set(val);
+            case CLEAR:   worker.clear();
+            default:      worker.view(cmd);
+            }
+            worker.close();
+        } catch ( e:Dynamic ) {
+            Lib.println("ERROR: " + e);
+            Sys.exit(1);
+        }
     }
 
     private function parseArgs()
     {
         var args = Sys.args();
-
-        try
+        while( args.length>0 )
         {
-            while( args.length>0 )
+            var arg = args.shift();
+            switch( arg )
             {
-                var arg = args.shift();
-                switch( arg )
+            case "init":        cmd = INIT;
+            case "list":        cmd = LIST;
+            case "incr":        cmd = INCR;
+            case "set":         cmd = SET;
+            case "--val":       val = Std.parseInt(args.shift());
+            case "clear":       cmd = CLEAR;
+            case "cal":         cmd = CAL;
+            case "log":         cmd = DLOG;
+            case "dlog":        cmd = DLOG;
+            case "wlog":        cmd = WLOG;
+            case "mlog":        cmd = MLOG;
+            case "ylog":        cmd = YLOG;
+            case "count":       cmd = COUNT;
+            case "records":     cmd = RECORDS;
+            case "streaks":     cmd = STREAKS;
+            case "graph":       cmd = GRAPH;
+            case "-d":                                  // date range
                 {
-                case "list":        cmd = LIST;
-                case "incr":        cmd = INCR;
-                case "set":         cmd = SET;
-                case "--val":       val = Std.parseInt(args.shift());
-                case "clear":       cmd = CLEAR;
-                case "cal":         cmd = CAL;
-                case "log":         cmd = DLOG;
-                case "dlog":        cmd = DLOG;
-                case "wlog":        cmd = WLOG;
-                case "mlog":        cmd = MLOG;
-                case "ylog":        cmd = YLOG;
-                case "count":       cmd = COUNT;
-                case "records":     cmd = RECORDS;
-                case "streaks":     cmd = STREAKS;
-                case "graph":       cmd = GRAPH;
-                case "-d":                                  // date range
-                    {
-                        arg = args.shift();
-                        if( cmd == null )
-                            throw "unknown command: " + arg;
+                    arg = args.shift();
+                    if( cmd == null )
+                        throw "unknown command: " + arg;
 
-                        // try to handle it like a daterange
-                        var dateFix = function(ii) {
-                            return switch(ii){
-                            case "today":     Utils.dayStr(Date.now());
-                            case "yesterday": Utils.dayStr(Utils.dayShift(Date.now(),-1));
-                            default:          Utils.dayStr(ii);
-                            }
-                        }
-                        if( arg.indexOf("..")!=-1 )
-                            range = arg.split("..").map(dateFix).array();
-                        else
-                        {
-                            var date = dateFix(arg);
-                            range = [date, date];
+                    // try to handle it like a daterange
+                    var dateFix = function(ii) {
+                        return switch(ii){
+                        case "today":     Utils.dayStr(Date.now());
+                        case "yesterday": Utils.dayStr(Utils.dayShift(Date.now(),-1));
+                        default:          Utils.dayStr(ii);
                         }
                     }
-                case "-v":          printVersion();
-                case "-h", "help":  printHelp();
-                default:                                    // else it must be a metric
-                    metrics.add(arg);
+                    if( arg.indexOf("..")!=-1 )
+                        range = arg.split("..").map(dateFix).array();
+                    else
+                    {
+                        var date = dateFix(arg);
+                        range = [date, date];
+                    }
                 }
+            case "-f": dbFile = args.shift();          // set filename
+            case "-v": printVersion();
+            case "-h", "help":  printHelp();
+            default:                                    // else assume it is a metric
+                metrics.add(arg);
             }
-            if( metrics.isEmpty() )
-                cmd = LIST;
-            if( range[0] == null && ( cmd==INCR || cmd==SET ) )
-                range[0] = Utils.dayStr(Date.now());
-            if( range[1] == null )
-                range[1] = Utils.dayStr(Date.now());
-            if( cmd == CAL )                                // always cal by full month
-            {
-                var r0 = (range[0]==null) ? Utils.day(Date.now()) : Utils.day(range[0]);
-                var r1 = Utils.day(range[1]);
-                range[0] = Utils.dayStr(new Date(r0.getFullYear(), r0.getMonth(), 1, 0, 0, 0));
-                range[1] = Utils.dayStr(new Date(r1.getFullYear(), r1.getMonth()+1, 0, 0, 0, 0));
-            }
-        } catch ( e:Dynamic ) {
-            Lib.println("ERROR: problem processing args: " + e);
-            Sys.exit(1);
         }
+
+        // done reading args, set defaults
+        if( metrics.isEmpty() && cmd != INIT )
+            cmd = LIST;
+        if( range[0] == null && ( cmd==INCR || cmd==SET ) )
+            range[0] = Utils.dayStr(Date.now());
+        if( range[1] == null )
+            range[1] = Utils.dayStr(Date.now());
+        if( cmd == CAL )                                // always cal by full month
+        {
+            var r0 = (range[0]==null) ? Utils.day(Date.now()) : Utils.day(range[0]);
+            var r1 = Utils.day(range[1]);
+            range[0] = Utils.dayStr(new Date(r0.getFullYear(), r0.getMonth(), 1, 0, 0, 0));
+            range[1] = Utils.dayStr(new Date(r1.getFullYear(), r1.getMonth()+1, 0, 0, 0, 0));
+        }
+        if( dbFile == null )
+            dbFile = Sys.environment().get("HOME") + "/.tracker.db";
+        if( cmd == SET && val == null )
+            throw "set requires '--val' option";
     }
 
     private static function printVersion()
@@ -127,6 +140,7 @@ if no date range is specified, the range is all days.
 if no metric is given, tracker will list all metrics found.
 
 commands:
+  init         initialize a repository
   list         show list of existing metrics
   incr         increment a value
   set          set a value (must specify --val)
@@ -144,6 +158,7 @@ commands:
   
 options:
   -d RANGE     specify date range
+  -f FILE      specify a repository filename
   -v           show version and exit
   -h           show usage and exit
   --val VAL    value to set
@@ -188,6 +203,7 @@ examples:
 
 enum Command
 {
+    INIT;                                                   // initialize a db file
     LIST;                                                   // list existing metrics
     INCR;                                                   // increment a day
     SET;                                                    // set the value for a day

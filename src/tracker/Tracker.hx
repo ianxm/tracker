@@ -10,28 +10,38 @@ import utils.Utils;
 
 class Tracker
 {
+    private var dbFile  :String;
     private var metrics :List<String>;
-    private var db :Connection;
+    private var range   :Array<String>;
+    private var db      :Connection;
 
-    public function new(m)
+
+    public function new(f, m, r)
     {
+        dbFile = f;
         metrics = m;
-        connect();
+        range = r;
+    }
+
+    // create db file
+    public function init()
+    {
+        if( FileSystem.exists(dbFile) )
+            throw "cannot init an existing repository";
+        db = Sqlite.open(dbFile);
+        Lib.println("creating repository: " + neko.FileSystem.fullPath(dbFile));
+        db.request("CREATE TABLE occurrence ("
+                   + "metric TEXT NOT NULL, "
+                   + "date TEXT NOT NULL, "
+                   + "value INT NOT NULL);");
     }
 
     // open db file
     private function connect()
     {
-        var exists = FileSystem.exists(Main.DB_FILE);
-        db = Sqlite.open(Main.DB_FILE);
-        if( !exists )
-        {
-            //trace("creating table");
-            db.request("CREATE TABLE occurrence ("
-                       + "metric TEXT NOT NULL, "
-                       + "date TEXT NOT NULL, "
-                       + "value INT NOT NULL);");
-        }
+        if( !FileSystem.exists(dbFile) )
+            throw "repository doesn't exist, you must run 'init' first";
+        db = Sqlite.open(dbFile);
         neko.db.Manager.cnx = db;
         neko.db.Manager.initialize();
     }
@@ -39,6 +49,7 @@ class Tracker
     // get list of existing metrics
     public function list()
     {
+        connect();
         if( Occurrence.manager.count()==0 )
         {
             Lib.println("No metrics found");
@@ -56,8 +67,9 @@ class Tracker
     }
 
     // run the report generator to view the data
-    public function view(range, cmd)
+    public function view(cmd)
     {
+        connect();
         var reportGenerator = new ReportGenerator(range);
         reportGenerator.setReport(cmd);
         var occurrences = selectRange(range);
@@ -74,8 +86,9 @@ class Tracker
     }
 
     // increment values
-    public function incr(range)
+    public function incr()
     {
+        connect();
         for( metric in metrics )
         {
             var day = range[0];
@@ -108,8 +121,9 @@ class Tracker
     }
 
     // set values (clear if val is 0)
-    public function set(range, val)
+    public function set(val)
     {
+        connect();
         for( metric in metrics )
         {
             var day = range[0];
@@ -140,8 +154,9 @@ class Tracker
     }
 
     // clear values
-    public function clear(range)
+    public function clear()
     {
+        connect();
         var occurrences = selectRange(range, false);
         for( occ in occurrences )
         {
