@@ -43,7 +43,7 @@ class Utils
 
     inline public static function dayDelta( date1 :Date, date2 :Date ) :Int
     {
-        return Std.int((date2.getTime()-date1.getTime())/(1000*60*60*24));
+        return Std.int(Math.ceil((date2.getTime()-date1.getTime())/(1000*60*60*24)));
     }
 
     inline public static function tenths(val :Float) :Float
