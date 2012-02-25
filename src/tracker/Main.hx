@@ -8,7 +8,7 @@ import utils.Utils;
 class Main
 {
     public static var NO_DATA = -9999;
-    private static var VERSION = "v0.3";
+    private static var VERSION = "v0.4";
 
     private var dbFile :String;
     private var metrics :List<String>;
@@ -27,12 +27,7 @@ class Main
     {
         try {
             parseArgs();
-        } catch ( e:Dynamic ) {
-            Lib.println("ERROR: invalid args: " + e);
-            Sys.exit(1);
-        }
 
-        try {
             var worker = new Tracker(dbFile, metrics, range);
             switch (cmd)
             {
@@ -62,8 +57,7 @@ class Main
             case "init":        cmd = INIT;
             case "list":        cmd = LIST;
             case "incr":        cmd = INCR;
-            case "set":         cmd = SET;
-            case "-v":          val = Std.parseInt(args.shift());
+            case "set":         { cmd = SET; val = Std.parseInt(args.shift()); }
             case "clear":       cmd = CLEAR;
             case "cal":         cmd = CAL;
             case "log", "dlog": cmd = DLOG;
@@ -121,7 +115,7 @@ class Main
         if( dbFile == null )
             dbFile = Sys.environment().get("HOME") + "/.tracker.db";
         if( cmd == SET && val == null )
-            throw "set requires '--val' option";
+            throw "set must be followed by a number";
     }
 
     private static function printVersion()
@@ -144,7 +138,7 @@ commands:
   init         initialize a repository
   list         show list of existing metrics
   incr         increment a value
-  set          set a value (must specify -v also)
+  set VAL      set a value
   clear        remove occurrences
   dlog,log     show a log by day
   wlog         show a log by week
@@ -160,7 +154,6 @@ commands:
   
 options:
   -d RANGE     specify date range (see details below)
-  -v VAL       value to set
   -o FILE      write output to a file
   --all        select all existing metrics
   --repo FILE  specify a repository filename
