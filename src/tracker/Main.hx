@@ -10,17 +10,21 @@ class Main
     public static var NO_DATA = -9999;
     private static var VERSION = "v0.4";
 
-    private var dbFile :String;
+    private var dbFile  :String;
     private var metrics :List<String>;
     private var range   :Array<String>;
     private var val     :Int;
     private var cmd     :Command;
+    private var outFile :String;
+    private var tail    :Int;
 
     public function new()
     {
         cmd = RECORDS;
         metrics = new List<String>();
         range = [null, null];
+        tail = null;
+        outFile = null;
     }
 
     public function run()
@@ -60,7 +64,8 @@ class Main
             case "set":         { cmd = SET; val = Std.parseInt(args.shift()); }
             case "clear":       cmd = CLEAR;
             case "cal":         cmd = CAL;
-            case "log", "dlog": cmd = DLOG;
+            case "log",
+                "dlog":         cmd = DLOG;
             case "wlog":        cmd = WLOG;
             case "mlog":        cmd = MLOG;
             case "ylog":        cmd = YLOG;
@@ -68,7 +73,8 @@ class Main
             case "count":       cmd = COUNT;
             case "records":     cmd = RECORDS;
             case "streaks":     cmd = STREAKS;
-            case "graph":       cmd = GRAPH;
+            case "graph":       throw "graphs have not been implemented yet";
+
             case "-d":                                  // date range
                 {
                     arg = args.shift();
@@ -88,12 +94,16 @@ class Main
                     }
                 }
             case "--all":     metrics.add("*");             // select all metrics
+            case "--min":     throw "the min option has not been implemented yet";
             case "--repo":    dbFile = args.shift();        // set filename
-            case "--version": printVersion();
-            case "-h", "--help", "help":  printHelp();
+            case "-v",
+                "--version":  printVersion();
+            case "-h",
+                "--help",
+                "help":       printHelp();
             default:                                        // else assume it is a metric
                 if( StringTools.startsWith(arg, "-") )
-                    throw "invalid option: " + arg;
+                    throw "unrecognized option: " + arg;
                 metrics.add(arg);
             }
         }
@@ -135,31 +145,32 @@ if no date range is specified, the range is all days.
 if no metric is given, tracker will list all metrics found.
 
 commands:
-  init         initialize a repository
-  list         show list of existing metrics
-  incr         increment a value
-  set VAL      set a value
-  clear        remove occurrences
-  dlog,log     show a log by day
-  wlog         show a log by week
-  mlog         show a log by month
-  ylog         show a log by year
-  csv          generate csv data
-  count        count occurrences
-  cal          show calendar view
-  records      show high and low records
-  streaks      show consecutive days with or without occurrences
-  graph        draw a graph
-  help         show help
+  init           initialize a repository
+  list           show list of existing metrics
+  incr           increment a value
+  set VAL        set a value
+  clear          remove occurrences
+  dlog,log       show a log by day
+  wlog           show a log by week
+  mlog           show a log by month
+  ylog           show a log by year
+  csv            generate csv data
+  count          count occurrences
+  cal            show calendar view
+  records        show high and low records
+  streaks        show consecutive days with or without occurrences
+  graph          draw a graph
+  help           show help
   
 options:
-  -d RANGE     specify date range (see details below)
-  -o FILE      write output to a file
-  --all        select all existing metrics
-  --repo FILE  specify a repository filename
-  --min VAL    min threshold
-  --version    show version
-  -h, --help   show help
+  -d RANGE       specify date range (see details below)
+  -o FILE        write output to a file
+  -N             limit output to the last N items
+  --all          select all existing metrics
+  --repo FILE    specify a repository filename
+  --min VAL      min threshold
+  -v, --version  show version
+  -h, --help     show help
 
 RANGE:
   DATE         only the specified date
