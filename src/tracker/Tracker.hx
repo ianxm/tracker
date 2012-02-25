@@ -56,31 +56,44 @@ class Tracker
             return;
         }
 
-        var allMetrics = new Set<String>();
-        var occurrences = Occurrence.manager.search({}, false);
-        for( rr in occurrences )
-            allMetrics.add(rr.metric);
+        var allMetrics = getAllMetrics();
 
         Lib.println("Current Metrics:");
         for( metric in allMetrics )
             Lib.println("- "+ metric);
     }
 
+    // get a set of all metrics in the db
+    private function getAllMetrics()
+    {
+        var allMetrics = new Set<String>();
+        var occurrences = Occurrence.manager.search({}, false);
+        for( rr in occurrences )
+            allMetrics.add(rr.metric);
+        return allMetrics;
+    }
+
     // run the report generator to view the data
     public function view(cmd)
     {
         connect();
+
+        var allMetrics = getAllMetrics();
+        for( metric in metrics )
+            if( !allMetrics.has(metric) )
+                throw "unknown metric: " + metric;
+
         var reportGenerator = new ReportGenerator(range);
         reportGenerator.setReport(cmd);
         var occurrences = selectRange(range);
 
-        if( range[0] != null )                               // start..
+        if( range[0] != null )                              // start..
             reportGenerator.include(Utils.day(range[0]), 0);
 
         for( occ in occurrences )
             reportGenerator.include(Utils.day(occ.date), occ.value);
 
-        reportGenerator.include(Utils.day(range[1]), 0); // ..end (cant be null)
+        reportGenerator.include(Utils.day(range[1]), 0);    // ..end (cant be null)
 
         reportGenerator.print();
     }
