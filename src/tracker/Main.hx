@@ -16,7 +16,7 @@ class Main
     private var range    :Array<String>;
     private var val      :Int;
     private var cmd      :Command;
-    private var imgFname :String;
+    private var fname    :String;
     private var tail     :Int;
 
     public function new()
@@ -35,13 +35,14 @@ class Main
             var worker = new Tracker(dbFile, metrics, range);
             switch (cmd)
             {
-            case INIT:    worker.init();
-            case LIST:    worker.list();
-            case INCR:    worker.incr();
-            case SET:     worker.set(val);
-            case CLEAR:   worker.clear();
-            case CSV:     worker.csv();
-            default:      worker.view(cmd);
+            case INIT:       worker.init();
+            case LIST:       worker.list();
+            case INCR:       worker.incr();
+            case SET:        worker.set(val);
+            case CLEAR:      worker.clear();
+            case CSV_EXPORT: worker.exportCsv(fname);
+            case CSV_IMPORT: worker.importCsv(fname);
+            default:         worker.view(cmd);
             }
             worker.close();
         } catch ( e:Dynamic ) {
@@ -68,12 +69,12 @@ class Main
             case "wlog":        cmd = WLOG;
             case "mlog":        cmd = MLOG;
             case "ylog":        cmd = YLOG;
-            case "csv":         cmd = CSV;
+            case "export":      cmd = CSV_EXPORT;
+            case "import":      { cmd = CSV_IMPORT; fname = args.shift(); }
             case "count":       cmd = COUNT;
             case "records":     cmd = RECORDS;
             case "streaks":     cmd = STREAKS;
             case "graph":       throw "graphs have not been implemented yet";
-
             case "-d":                                  // date range
                 {
                     arg = args.shift();
@@ -92,12 +93,7 @@ class Main
                         range = [date, date];
                     }
                 }
-            case "-o":                                      // save image file
-                {
-                    imgFname = args.shift();
-                    if( FileSystem.exists(imgFname) )
-                        throw "file exists: " + FileSystem.fullPath(imgFname);
-                }
+            case "-o":        fname = args.shift();         // save image file
             case "--all":     metrics.add("*");             // select all metrics
             case "--min":     throw "the min option has not been implemented yet";
             case "--repo":    dbFile = args.shift();        // set filename
@@ -121,7 +117,7 @@ class Main
     // set defaults after args have been processed
     private function setDefaults()
     {
-        if( metrics.isEmpty() && cmd != INIT )              // list metrics if no metrics specified
+        if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT ) // list metrics if no metrics specified
             cmd = LIST;
 
         if( range[0] == null && ( cmd==INCR || cmd==SET ) ) // fix range if not specified
@@ -143,11 +139,13 @@ class Main
         if( cmd == SET && val == null )                     // check that set has a val
             throw "set must be followed by a number";
 
-        if( imgFname != null )
+        if( fname != null )
             if( cmd == GRAPH )
-                Lib.println("saving graph to " + imgFname);
-            else
-                throw "command must be graph to write a graph image";
+                Lib.println("saving graph to: " + fname);
+            else if( cmd == CSV_IMPORT )
+                Lib.println("reading: " + FileSystem.fullPath(fname));
+            else if( cmd == CSV_EXPORT )
+                Lib.println("writing csv to: " + fname);
     }
 
     private static function printVersion()
@@ -176,7 +174,10 @@ commands:
   wlog           show a log by week
   mlog           show a log by month
   ylog           show a log by year
-  csv            generate csv data
+  export         export data to csv format
+                 this will write to stdout unless -o is given
+  import FILE    import data from a csv file
+                 with the columns: date,metric,value
   count          count occurrences
   cal            show calendar view
   records        show high and low records
@@ -246,7 +247,8 @@ enum Command
     WLOG;                                                   // show log by week
     MLOG;                                                   // show log by month
     YLOG;                                                   // show log by year
-    CSV;                                                    // generate csv
+    CSV_EXPORT;                                             // export to csv
+    CSV_IMPORT;                                             // import from csv
     COUNT;                                                  // count occurrences
     RECORDS;                                                // view report
     STREAKS;                                                // show streaks

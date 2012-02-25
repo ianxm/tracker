@@ -1,7 +1,9 @@
 package tracker;
 
+using Lambda;
 import neko.Lib;
 import neko.Sys;
+import neko.io.File;
 import neko.FileSystem;
 import neko.db.Sqlite;
 import neko.db.Connection;
@@ -65,15 +67,64 @@ class Tracker
     }
 
     // output all metrics as a csv
-    public function csv()
+    public function exportCsv(fname)
     {
         connect();
         checkMetrics();                                     // check that all requested metrics exist
 
+        var fout = if( fname != null )
+        {
+            if( FileSystem.exists(fname) )
+                throw "file exists: " + FileSystem.fullPath(fname);
+            else
+                try {
+                    File.write(fname);
+                } catch( e:Dynamic ) {
+                    throw "couldn't open output file: " + fname;
+                }
+        }
+        else
+            File.stdout();
+
         var occurrences = selectRange(range, false);
-        Lib.println("date,metric,value");
+        fout.writeString("date,metric,value\n");
         for( rr in occurrences )
-            Lib.println(rr.date +","+ rr.metric +","+ rr.value);
+            fout.writeString(rr.date +","+ rr.metric +","+ rr.value +"\n");
+        fout.close();
+    }
+
+    // import metrics from a csv
+    public function importCsv(fname)
+    {
+        connect();
+
+        if( !FileSystem.exists(fname) )
+            throw "file not found: " + fname;
+        var fin = File.read(fname);
+        try
+        {
+            while( true )
+            {
+                var line = fin.readLine();
+                var fields = line.split(",").map(function(ii) return StringTools.trim(ii)).array();
+                var dayStr;
+                try {
+                    dayStr = Utils.dayStr(fields[0]);
+                } catch( e:String ) {
+                    Lib.println("bad date, skipping line: " + line);
+                    continue;
+                }
+                var val = Std.parseInt(fields[2]);
+                if( val == null )
+                {
+                    Lib.println("bad value, skipping line: " + line);
+                    continue;
+                }
+                setOrUpdate(fields[1], dayStr, val);
+            }
+        } catch( e:haxe.io.Eof ) {
+        }
+        fin.close();
     }
 
     // run the report generator to view the data
@@ -122,16 +173,6 @@ class Tracker
         }
     }
 
-    private  function setNew(metric, dayStr, val)
-    {
-        var occ = new Occurrence();
-        occ.metric = metric;
-        occ.date = dayStr;
-        occ.value = val;
-        occ.insert();
-        Lib.println("set " + metric + " to " + val + " for " + dayStr);
-    }
-
     // set values
     public function set(val)
     {
@@ -141,19 +182,33 @@ class Tracker
             var dayStr = range[0];
             do
             {
-                var occ = Occurrence.manager.getWithKeys({metric: metric, date: dayStr});
-                if( occ != null )
-                {
-                    occ.value = val;
-                    occ.update();
-                    Lib.println("set " + metric + " to " + val + " for " + dayStr);
-                }
-                else
-                    setNew(metric, dayStr, val);
-
+                setOrUpdate(metric, dayStr, val);
                 dayStr = Utils.dayToStr(Utils.dayShift(Utils.day(dayStr), 1));
             } while( range[1]!=null && Utils.dayDelta(Utils.day(dayStr), Utils.day(range[1])) >= 0 );
         }
+    }
+
+    private function setOrUpdate(metric, dayStr, val)
+    {
+        var occ = Occurrence.manager.getWithKeys({metric: metric, date: dayStr});
+        if( occ != null )
+        {
+            occ.value = val;
+            occ.update();
+            Lib.println("set " + metric + " to " + val + " for " + dayStr);
+        }
+        else
+            setNew(metric, dayStr, val);
+    }
+
+    private function setNew(metric, dayStr, val)
+    {
+        var occ = new Occurrence();
+        occ.metric = metric;
+        occ.date = dayStr;
+        occ.value = val;
+        occ.insert();
+        Lib.println("set " + metric + " to " + val + " for " + dayStr);
     }
 
     // clear values

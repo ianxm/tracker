@@ -24,8 +24,7 @@ class Utils
             try {
                 date = Date.fromString(str);
             } catch ( e:Dynamic ) {
-                Lib.println("ERROR: date must be YYYY-MM-DD");
-                Sys.exit(1);
+                throw "date must be YYYY-MM-DD";
             }
         }
         return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
