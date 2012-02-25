@@ -38,6 +38,7 @@ class Main
             case INIT:    worker.init();
             case LIST:    worker.list();
             case INCR:    worker.incr();
+            case CSV:     worker.csv();
             case SET:     worker.set(val);
             case CLEAR:   worker.clear();
             default:      worker.view(cmd);
@@ -68,6 +69,7 @@ class Main
             case "wlog":        cmd = WLOG;
             case "mlog":        cmd = MLOG;
             case "ylog":        cmd = YLOG;
+            case "csv":         cmd = CSV;
             case "count":       cmd = COUNT;
             case "records":     cmd = RECORDS;
             case "streaks":     cmd = STREAKS;
@@ -141,21 +143,23 @@ commands:
   list         show list of existing metrics
   incr         increment a value
   set          set a value (must specify -v also)
-  clear        clear a value
+  clear        remove occurrences
   dlog,log     show a log by day
   wlog         show a log by week
   mlog         show a log by month
   ylog         show a log by year
+  csv          generate csv data
   count        count occurrences
   cal          show calendar view
   records      show high and low records
-  streaks      show streaks
+  streaks      show consecutive days with or without occurrences
   graph        draw a graph
   help         show help
   
 options:
-  -d RANGE     specify date range
+  -d RANGE     specify date range (see details below)
   -v VAL       value to set
+  -o FILE      write output to a file
   --file FILE  specify a repository filename
   --min VAL    min threshold
   --version    show version
@@ -173,6 +177,9 @@ DATE:
   YYYY-MM-DD   specify a date
   
 examples:
+  > tracker init
+               initialize the default repo
+
   > tracker incr today bikecommute
                increments bikecommute metric for today
 
@@ -210,6 +217,7 @@ enum Command
     WLOG;                                                   // show log by week
     MLOG;                                                   // show log by month
     YLOG;                                                   // show log by year
+    CSV;                                                    // generate csv
     COUNT;                                                  // count occurrences
     RECORDS;                                                // view report
     STREAKS;                                                // show streaks

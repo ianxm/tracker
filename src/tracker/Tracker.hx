@@ -6,6 +6,8 @@ import neko.FileSystem;
 import neko.db.Sqlite;
 import neko.db.Connection;
 import neko.db.Manager;
+
+import tracker.Main;
 import utils.Utils;
 
 class Tracker
@@ -63,14 +65,25 @@ class Tracker
             Lib.println("- "+ metric);
     }
 
-    // get a set of all metrics in the db
-    private function getAllMetrics()
+    // output all metrics as a csv
+    public function csv()
     {
-        var allMetrics = new Set<String>();
-        var occurrences = Occurrence.manager.search({}, false);
+        connect();
+        if( Occurrence.manager.count()==0 )
+        {
+            Lib.println("No metrics found");
+            return;
+        }
+
+        var allMetrics = getAllMetrics();
+        for( metric in metrics )
+            if( !allMetrics.has(metric) )
+                throw "unknown metric: " + metric;
+
+        var occurrences = selectRange(range, false);
+        Lib.println("date,metric,value");
         for( rr in occurrences )
-            allMetrics.add(rr.metric);
-        return allMetrics;
+            Lib.println(rr.date +","+ rr.metric +","+ rr.value);
     }
 
     // run the report generator to view the data
@@ -176,6 +189,16 @@ class Tracker
             occ.delete();
             Lib.println("deleted " + occ.metric + " for " + occ.date);
         }
+    }
+
+    // get a set of all metrics in the db
+    private function getAllMetrics()
+    {
+        var allMetrics = new Set<String>();
+        var occurrences = Occurrence.manager.search({}, false);
+        for( rr in occurrences )
+            allMetrics.add(rr.metric);
+        return allMetrics;
     }
 
     // select a date range from the db
