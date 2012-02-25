@@ -69,16 +69,7 @@ class Tracker
     public function csv()
     {
         connect();
-        if( Occurrence.manager.count()==0 )
-        {
-            Lib.println("No metrics found");
-            return;
-        }
-
-        var allMetrics = getAllMetrics();
-        for( metric in metrics )
-            if( !allMetrics.has(metric) )
-                throw "unknown metric: " + metric;
+        checkMetrics();                                     // check that all requested metrics exist
 
         var occurrences = selectRange(range, false);
         Lib.println("date,metric,value");
@@ -90,11 +81,7 @@ class Tracker
     public function view(cmd)
     {
         connect();
-
-        var allMetrics = getAllMetrics();
-        for( metric in metrics )
-            if( !allMetrics.has(metric) )
-                throw "unknown metric: " + metric;
+        checkMetrics();                                     // check that all requested metrics exist
 
         var reportGenerator = new ReportGenerator(range);
         reportGenerator.setReport(cmd);
@@ -188,6 +175,19 @@ class Tracker
         {
             occ.delete();
             Lib.println("deleted " + occ.metric + " for " + occ.date);
+        }
+    }
+
+    private function checkMetrics()
+    {
+        if( Lambda.exists(metrics, function(ii) return ii=="*") )
+            metrics = Lambda.list(getAllMetrics());
+        else
+        {
+            var allMetrics = getAllMetrics();
+            for( metric in metrics )
+                if( !allMetrics.has(metric) )
+                    throw "unknown metric: " + metric;
         }
     }
 

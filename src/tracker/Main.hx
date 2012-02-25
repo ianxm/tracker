@@ -38,9 +38,9 @@ class Main
             case INIT:    worker.init();
             case LIST:    worker.list();
             case INCR:    worker.incr();
-            case CSV:     worker.csv();
             case SET:     worker.set(val);
             case CLEAR:   worker.clear();
+            case CSV:     worker.csv();
             default:      worker.view(cmd);
             }
             worker.close();
@@ -92,6 +92,7 @@ class Main
                         range = [date, date];
                     }
                 }
+            case "--all":     metrics.add("*");             // select all metrics
             case "--repo":    dbFile = args.shift();        // set filename
             case "--version": printVersion();
             case "-h", "--help", "help":  printHelp();
@@ -160,6 +161,7 @@ options:
   -d RANGE     specify date range (see details below)
   -v VAL       value to set
   -o FILE      write output to a file
+  --all        select all existing metrics
   --repo FILE  specify a repository filename
   --min VAL    min threshold
   --version    show version
