@@ -7,6 +7,7 @@ import utils.Utils;
 
 class Main
 {
+    public static var NO_DATA = -9999;
     private static var VERSION = "v0.3";
 
     private var dbFile :String;

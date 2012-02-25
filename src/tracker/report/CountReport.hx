@@ -1,5 +1,7 @@
 package tracker.report;
 
+import tracker.Main;
+
 class CountReport implements Report
 {
     private var count :Int;
@@ -11,7 +13,7 @@ class CountReport implements Report
 
     public function include(thisDay :Date, val :Int)
     {
-        if( val > 0 )
+        if( val != Main.NO_DATA )
             count++;
     }
 

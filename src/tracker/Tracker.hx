@@ -17,7 +17,6 @@ class Tracker
     private var range   :Array<String>;
     private var db      :Connection;
 
-
     public function new(f, m, r)
     {
         dbFile = f;
@@ -52,7 +51,7 @@ class Tracker
     public function list()
     {
         connect();
-        if( Occurrence.manager.count()==0 )
+        if( Occurrence.manager.count() == 0 )
         {
             Lib.println("No metrics found");
             return;
@@ -88,12 +87,13 @@ class Tracker
         var occurrences = selectRange(range);
 
         if( range[0] != null )                              // start..
-            reportGenerator.include(Utils.day(range[0]), 0);
+            reportGenerator.include(Utils.day(range[0]), Main.NO_DATA);
 
         for( occ in occurrences )
             reportGenerator.include(Utils.day(occ.date), occ.value);
 
-        reportGenerator.include(Utils.day(range[1]), 0);    // ..end (cant be null)
+                                                            // ..end (cant be null)
+        reportGenerator.include(Utils.day(range[1]), Main.NO_DATA);
 
         reportGenerator.print();
     }
@@ -104,65 +104,55 @@ class Tracker
         connect();
         for( metric in metrics )
         {
-            var day = range[0];
+            var dayStr = range[0];
             do
             {
-                var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
+                var occ = Occurrence.manager.getWithKeys({metric: metric, date: dayStr});
                 if( occ != null )
                 {
                     occ.value++;
                     occ.update();
-                    Lib.println("set " + occ.metric + " to " + occ.value + " for " + day);
+                    Lib.println("set " + occ.metric + " to " + occ.value + " for " + dayStr);
                 }
                 else
-                    setNew( metric, day, 1 );
+                    setNew( metric, dayStr, 1 );
 
-                day = Utils.dayToStr(Utils.dayShift(Utils.day(day), 1));
-
-            } while( range[1]!=null && Utils.dayDelta(Utils.day(day), Utils.day(range[1])) >= 0 );
+                dayStr = Utils.dayToStr(Utils.dayShift(Utils.day(dayStr), 1));
+            } while( range[1]!=null && Utils.dayDelta(Utils.day(dayStr), Utils.day(range[1])) >= 0 );
         }
     }
 
-    private  function setNew(metric, day, val)
+    private  function setNew(metric, dayStr, val)
     {
         var occ = new Occurrence();
         occ.metric = metric;
-        occ.date = day;
+        occ.date = dayStr;
         occ.value = val;
         occ.insert();
-        Lib.println("set " + metric + " to " + val + " for " + day);
+        Lib.println("set " + metric + " to " + val + " for " + dayStr);
     }
 
-    // set values (clear if val is 0)
+    // set values
     public function set(val)
     {
         connect();
         for( metric in metrics )
         {
-            var day = range[0];
+            var dayStr = range[0];
             do
             {
-                var occ = Occurrence.manager.getWithKeys({metric: metric, date: day});
+                var occ = Occurrence.manager.getWithKeys({metric: metric, date: dayStr});
                 if( occ != null )
                 {
-                    if( val != 0 )
-                    {
-                        occ.value = val;
-                        occ.update();
-                        Lib.println("set " + metric + " to " + val + " for " + day);
-                    }
-                    else
-                    {
-                        occ.delete();
-                        Lib.println("deleted " + metric + " for " + day);
-                    }
+                    occ.value = val;
+                    occ.update();
+                    Lib.println("set " + metric + " to " + val + " for " + dayStr);
                 }
                 else
-                    if( val != 0 )
-                        setNew(metric, day, val);
+                    setNew(metric, dayStr, val);
 
-                day = Utils.dayToStr(Utils.dayShift(Utils.day(day), 1));
-            } while( range[1]!=null && Utils.dayDelta(Utils.day(day), Utils.day(range[1])) >= 0 );
+                dayStr = Utils.dayToStr(Utils.dayShift(Utils.day(dayStr), 1));
+            } while( range[1]!=null && Utils.dayDelta(Utils.day(dayStr), Utils.day(range[1])) >= 0 );
         }
     }
 

@@ -28,11 +28,11 @@ class LogReport implements Report
 
     public function include(thisDay :Date, val :Int)
     {
-        if( val == 0 )
+        if( val == Main.NO_DATA )
             return;
 
         var binStr = dateToBin(thisDay);
-        if( lastBin==null )
+        if( lastBin == null )
         {
             lastBin = binStr;
             lastVal = val;

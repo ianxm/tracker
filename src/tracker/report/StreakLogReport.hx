@@ -1,6 +1,7 @@
 package tracker.report;
 
 using StringTools;
+import tracker.Main;
 import utils.Utils;
 
 class StreakLogReport implements Report
@@ -24,7 +25,7 @@ class StreakLogReport implements Report
         if( lastDay == null )        // first
         {
             lastDay = occDay;
-            if( occVal > 0 )
+            if( occVal != Main.NO_DATA )
             {
                 startOfStreak = occDay;
                 count = 1;
@@ -35,7 +36,7 @@ class StreakLogReport implements Report
         var delta = Utils.dayDelta(lastDay, occDay);
         //trace("delta: " + delta + " " +lastDay + " "  + occDay);
 
-        if( occVal==0 && lastDay!=null )        // last
+        if( occVal==Main.NO_DATA && lastDay!=null )        // last
         {
             if( count > 0 )
                 append("on", count, startOfStreak);

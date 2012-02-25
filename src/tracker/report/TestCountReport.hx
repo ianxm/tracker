@@ -1,5 +1,7 @@
 package tracker.report;
 
+import tracker.Main;
+
 class TestCountReport extends haxe.unit.TestCase
 {
   public function testEmpty()
@@ -12,16 +14,16 @@ class TestCountReport extends haxe.unit.TestCase
   {
       var report = new CountReport();
       report.include(Date.fromString("2012-01-01"), 1);
-      report.include(Date.fromString("2012-01-01"), 0);
+      report.include(Date.fromString("2012-01-01"), Main.NO_DATA);
       assertEquals("1 occurrence", report.toString());
   }
 
   public function testOneFixedStartStop()
   {
       var report = new CountReport();
-      report.include(Date.fromString("2012-01-01"), 0);
+      report.include(Date.fromString("2012-01-01"), Main.NO_DATA);
       report.include(Date.fromString("2012-01-01"), 1);
-      report.include(Date.fromString("2012-01-01"), 0);
+      report.include(Date.fromString("2012-01-01"), Main.NO_DATA);
       assertEquals("1 occurrence", report.toString());
   }
 
@@ -30,7 +32,7 @@ class TestCountReport extends haxe.unit.TestCase
       var report = new CountReport();
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
-      report.include(Date.fromString("2012-01-02"), 0);
+      report.include(Date.fromString("2012-01-02"), Main.NO_DATA);
       assertEquals("2 occurrences", report.toString());
   }
 
@@ -40,7 +42,7 @@ class TestCountReport extends haxe.unit.TestCase
       var report = new CountReport();
       report.include(Date.fromString("2012-01-01"), 1);
       report.include(Date.fromString("2012-01-02"), 2);
-      report.include(Date.fromString("2012-01-05"), 0);
+      report.include(Date.fromString("2012-01-05"), Main.NO_DATA);
       assertEquals("2 occurrences", report.toString());
   }
 }

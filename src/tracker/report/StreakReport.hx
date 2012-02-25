@@ -1,6 +1,7 @@
 package tracker.report;
 
 using StringTools;
+import tracker.Main;
 import utils.Utils;
 import tracker.report.RecordReport;
 
@@ -99,14 +100,14 @@ class StreakReport implements Report
 
         var delta = Utils.dayDelta(lastDay, occDay);
 
-        if( delta == 1 )                    // extend current on streak
+        if( delta == 1 )                                    // extend current on streak
             count++;
-        else if( occVal > 0 )               // start new streak
+        else if( occVal != Main.NO_DATA )                   // start new streak
         {
             startOfStreak = occDay;
             count = 1;
         }
-        checkBest(startOfStreak, count);    // check for new best
+        checkBest(startOfStreak, count);                    // check for new best
         lastDay = occDay;
     }
 
@@ -118,24 +119,24 @@ class StreakReport implements Report
 
         var delta = Utils.dayDelta(lastDay, occDay);
 
-        if( delta == 1 && occVal > 0 )      // extend current on streak
+        if( delta == 1 && occVal != Main.NO_DATA )          // extend current on streak
             count++;
         else
         {
-            if( occVal > 0 )                // start new on streak
+            if( occVal != Main.NO_DATA )                    // start new on streak
             {
                 startOfStreak = occDay;
                 count = 1;
                 isStreakOn = true;
             }
-            else if( delta != 0 )           // end on an off streak
+            else if( delta != 0 )                           // end on an off streak
             {
                 startOfStreak = Utils.dayShift(lastDay, 1);
                 count = delta;
                 isStreakOn = false;
             }
         }
-        checkBest(startOfStreak, count);    // check for new best
+        checkBest(startOfStreak, count);                    // check for new best
         lastDay = occDay;
     }
 }

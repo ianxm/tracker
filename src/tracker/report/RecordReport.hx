@@ -1,6 +1,7 @@
 package tracker.report;
 
 using Lambda;
+import tracker.Main;
 import utils.Utils;
 
 class RecordReport implements Report
@@ -89,7 +90,7 @@ class RecordReport implements Report
                 bins.set(oneBackStr, 0);
         }
 
-        if( val == 0 )
+        if( val == Main.NO_DATA )
             return;
 
         var binStr = dateToBin(thisDay);

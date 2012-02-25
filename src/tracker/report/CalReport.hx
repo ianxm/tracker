@@ -4,6 +4,7 @@ using Lambda;
 using StringTools;
 import DeepHash;
 import utils.Utils;
+import tracker.Main;
 
 class CalReport implements Report
 {
@@ -24,7 +25,7 @@ class CalReport implements Report
         if( firstDay == null )
             firstDay = thisDay;
         lastDay = thisDay;
-        if( val > 0 )
+        if( val != Main.NO_DATA )
             tree.set(pathFromDay(thisDay), val);
     }
 

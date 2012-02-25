@@ -1,5 +1,6 @@
 package tracker.report;
 
+import tracker.Main;
 import utils.Utils;
 
 class DurationReport implements Report
@@ -17,7 +18,7 @@ class DurationReport implements Report
     {
         if( firstDate == null )
             firstDate = thisDay;
-        else if( val == 0 )
+        else if( val == Main.NO_DATA )
             lastDate = thisDay;
     }
 
