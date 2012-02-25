@@ -3,6 +3,7 @@ package tracker;
 using Lambda;
 import neko.Lib;
 import neko.Sys;
+import neko.FileSystem;
 import utils.Utils;
 
 class Main
@@ -10,27 +11,26 @@ class Main
     public static var NO_DATA = -9999;
     private static var VERSION = "v0.4";
 
-    private var dbFile  :String;
-    private var metrics :List<String>;
-    private var range   :Array<String>;
-    private var val     :Int;
-    private var cmd     :Command;
-    private var outFile :String;
-    private var tail    :Int;
+    private var dbFile   :String;
+    private var metrics  :List<String>;
+    private var range    :Array<String>;
+    private var val      :Int;
+    private var cmd      :Command;
+    private var imgFname :String;
+    private var tail     :Int;
 
     public function new()
     {
         cmd = RECORDS;
         metrics = new List<String>();
         range = [null, null];
-        tail = null;
-        outFile = null;
     }
 
     public function run()
     {
         try {
             parseArgs();
+            setDefaults();
 
             var worker = new Tracker(dbFile, metrics, range);
             switch (cmd)
@@ -46,7 +46,6 @@ class Main
             worker.close();
         } catch ( e:Dynamic ) {
             Lib.println("ERROR: " + e);
-            Sys.exit(1);
         }
     }
 
@@ -93,6 +92,12 @@ class Main
                         range = [date, date];
                     }
                 }
+            case "-o":                                      // save image file
+                {
+                    imgFname = args.shift();
+                    if( FileSystem.exists(imgFname) )
+                        throw "file exists: " + FileSystem.fullPath(imgFname);
+                }
             case "--all":     metrics.add("*");             // select all metrics
             case "--min":     throw "the min option has not been implemented yet";
             case "--repo":    dbFile = args.shift();        // set filename
@@ -103,29 +108,46 @@ class Main
                 "help":       printHelp();
             default:                                        // else assume it is a metric
                 if( StringTools.startsWith(arg, "-") )
-                    throw "unrecognized option: " + arg;
+                {
+                    tail = Std.parseInt(arg.substr(1));     // see if its a tail arg
+                    if( tail == null )
+                        throw "unrecognized option: " + arg;
+                }
                 metrics.add(arg);
             }
         }
+    }
 
-        // done reading args, set defaults
-        if( metrics.isEmpty() && cmd != INIT )
+    // set defaults after args have been processed
+    private function setDefaults()
+    {
+        if( metrics.isEmpty() && cmd != INIT )              // list metrics if no metrics specified
             cmd = LIST;
-        if( range[0] == null && ( cmd==INCR || cmd==SET ) )
+
+        if( range[0] == null && ( cmd==INCR || cmd==SET ) ) // fix range if not specified
             range[0] = Utils.dayStr(Date.now());
         if( range[1] == null )
             range[1] = Utils.dayStr(Date.now());
-        if( cmd == CAL )                                // always cal by full month
+
+        if( cmd == CAL )                                    // always cal by full month
         {
             var r0 = (range[0]==null) ? Utils.day(Date.now()) : Utils.day(range[0]);
             var r1 = Utils.day(range[1]);
             range[0] = Utils.dayStr(new Date(r0.getFullYear(), r0.getMonth(), 1, 0, 0, 0));
             range[1] = Utils.dayStr(new Date(r1.getFullYear(), r1.getMonth()+1, 0, 0, 0, 0));
         }
-        if( dbFile == null )
+
+        if( dbFile == null )                                // use default repo
             dbFile = Sys.environment().get("HOME") + "/.tracker.db";
-        if( cmd == SET && val == null )
+
+        if( cmd == SET && val == null )                     // check that set has a val
             throw "set must be followed by a number";
+
+        if( imgFname != null )
+            if( cmd == GRAPH )
+                Lib.println("saving graph to " + imgFname);
+            else
+                throw "command must be graph to write a graph image";
     }
 
     private static function printVersion()
@@ -164,7 +186,7 @@ commands:
   
 options:
   -d RANGE       specify date range (see details below)
-  -o FILE        write output to a file
+  -o FILE        write graph image to a file
   -N             limit output to the last N items
   --all          select all existing metrics
   --repo FILE    specify a repository filename
