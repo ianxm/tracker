@@ -42,7 +42,7 @@ class Main
             case CLEAR:      worker.clear();
             case CSV_EXPORT: worker.exportCsv(fname);
             case CSV_IMPORT: worker.importCsv(fname);
-            default:         worker.view(cmd);
+            default:         worker.view(cmd, tail);
             }
             worker.close();
         } catch ( e:Dynamic ) {
@@ -109,7 +109,8 @@ class Main
                     if( tail == null )
                         throw "unrecognized option: " + arg;
                 }
-                metrics.add(arg);
+                else
+                    metrics.add(arg);
             }
         }
     }
@@ -189,6 +190,7 @@ options:
   -d RANGE       specify date range (see details below)
   -o FILE        write graph image to a file
   -N             limit output to the last N items
+                 this affects streaks and the log commands
   --all          select all existing metrics
   --repo FILE    specify a repository filename
   --min VAL      min threshold

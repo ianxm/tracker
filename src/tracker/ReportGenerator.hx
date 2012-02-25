@@ -9,13 +9,15 @@ import tracker.report.Report;
 
 class ReportGenerator
 {
-    private var range :Array<String>;
+    private var range   :Array<String>;
     private var reports :List<Report>;
-    private var indent : Bool;
+    private var indent  :Bool;
+    private var tail    :Int;
 
-    public function new(r)
+    public function new(r, t)
     {
         range = r;
+        tail = t;
         reports = new List<Report>();
         indent = false;
     }
@@ -53,6 +55,7 @@ class ReportGenerator
                 reports.add(new tracker.report.StreakReport(KEEP_HIGHEST));
                 reports.add(new tracker.report.StreakReport(KEEP_LOWEST));
                 reports.add(new tracker.report.StreakReport(KEEP_CURRENT));
+                tail = null;
             }
         case DLOG,WLOG,MLOG,YLOG:
             {
@@ -73,6 +76,7 @@ class ReportGenerator
             {
                 reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.CalReport());
+                tail = null;
             }
         default:
             throw "unknown report command";
@@ -92,7 +96,24 @@ class ReportGenerator
         else
             0;
 
+        var fifo = new List<String>();
         for( report in reports )
-            Lib.println(report.getLabel().lpad(' ', Std.int(labelWidth)) + report.toString());
+        {
+            var line = report.getLabel().lpad(' ', Std.int(labelWidth)) + report.toString();
+            if( tail == null )
+                Lib.println(line);                          // just write to stdout
+            else
+            {
+                for( ii in line.split("\n") )               // add each line to the fifo
+                {
+                    if( ii != "" )
+                        fifo.add(ii);
+                    if( fifo.length > tail )
+                        fifo.pop();
+                }
+            }
+            while( !fifo.isEmpty() )                            // dump the fifo to stdout
+                Lib.println(fifo.pop());
+        }
     }
 }
