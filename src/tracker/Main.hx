@@ -92,7 +92,7 @@ class Main
                         range = [date, date];
                     }
                 }
-            case "--file":    dbFile = args.shift();        // set filename
+            case "--repo":    dbFile = args.shift();        // set filename
             case "--version": printVersion();
             case "-h", "--help", "help":  printHelp();
             default:                                        // else assume it is a metric
@@ -160,7 +160,7 @@ options:
   -d RANGE     specify date range (see details below)
   -v VAL       value to set
   -o FILE      write output to a file
-  --file FILE  specify a repository filename
+  --repo FILE  specify a repository filename
   --min VAL    min threshold
   --version    show version
   -h, --help   show help
