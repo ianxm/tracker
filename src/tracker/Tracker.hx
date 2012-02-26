@@ -36,16 +36,16 @@ class Tracker
         Lib.println("creating repository: " + neko.FileSystem.fullPath(dbFile));
         db.request("CREATE TABLE metrics (" +
                    "id INTEGER PRIMARY KEY, " +
-                   "name TEXT UNIQUE NOT NULL);");
+                   "name TEXT UNIQUE NOT NULL)");
         db.request("CREATE TABLE occurrences (" +
                    "metricId INTEGER NOT NULL REFERENCES metric (id) ON DELETE SET NULL, " +
                    "date DATE NOT NULL, " +
                    "value REAL NOT NULL, " +
-                   "CONSTRAINT key PRIMARY KEY (metricId, date));");
+                   "CONSTRAINT key PRIMARY KEY (metricId, date))");
         db.request("CREATE VIEW full AS SELECT " +
                    "metrics.id as metricId, metrics.name as metric, occurrences.date, occurrences.value " +
                    "from metrics, occurrences " +
-                   "where occurrences.metricId=metrics.id;");
+                   "where occurrences.metricId=metrics.id");
     }
 
     // open db file
@@ -188,7 +188,7 @@ class Tracker
             var dayStr = range[0];
             do
             {
-                var rs = db.request("SELECT value FROM occurrences WHERE metricId='"+ metricId +"' AND date='"+ dayStr +"';");
+                var rs = db.request("SELECT value FROM occurrences WHERE metricId='"+ metricId +"' AND date='"+ dayStr +"'");
                 var val = if( rs.length != 0 )
                     rs.next().value+1;
                 else
@@ -219,12 +219,12 @@ class Tracker
     // get a metric id, create it if it doesn't exist
     private function getOrCreateMetric(metric :String) :Int
     {
-        var rs = db.request("SELECT id FROM metrics WHERE name='"+ metric +"';");
+        var rs = db.request("SELECT id FROM metrics WHERE name='"+ metric +"'");
         return if( rs.length != 0 )
             rs.next().id;
         else
         {                                                   // add metric if its new
-            db.request("INSERT INTO metrics VALUES (null, '"+ metric +"');");
+            db.request("INSERT INTO metrics VALUES (null, '"+ metric +"')");
             getOrCreateMetric(metric);
         }
     }
@@ -276,14 +276,14 @@ class Tracker
     // get a set of all metrics in the db
     private function getAllMetrics()
     {
-        var rs = db.request("SELECT name FROM metrics;");
+        var rs = db.request("SELECT name FROM metrics");
         return rs.results().map(function(ii) return ii.name);
     }
 
     // select a date range from the db
     private function selectRange(range, ?shouldCombine = true)
     {
-        var rs = db.request("SELECT name FROM metrics;");
+        var rs = db.request("SELECT name FROM metrics");
         if( rs.length == 0 )
         {
             Lib.println("No metrics found");
