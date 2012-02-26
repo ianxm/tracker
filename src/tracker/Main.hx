@@ -43,7 +43,7 @@ class Main
             case INFO:       worker.info();
             case INCR:       worker.incr(val);
             case SET:        worker.set(val);
-            case CLEAR:      worker.clear();
+            case REMOVE:     worker.remove();
             case CSV_EXPORT: worker.exportCsv(fname);
             case CSV_IMPORT: worker.importCsv(fname);
             default:         worker.view(cmd, groupType, valType, tail);
@@ -68,7 +68,7 @@ class Main
 
             case "incr":        { cmd = INCR; val = Std.parseFloat(args.shift()); }
             case "set":         { cmd = SET; val = Std.parseFloat(args.shift()); }
-            case "clear":       cmd = CLEAR;
+            case "rm":          cmd = REMOVE;
 
             case "cal":         cmd = CAL;
             case "log":         cmd = LOG;
@@ -194,7 +194,7 @@ commands:
   modify repository:
     incr VAL       increment a value
     set VAL        set a value
-    clear          remove occurrences
+    rm             remove occurrences
 
   import/export:
     export         export data to csv format
@@ -253,8 +253,8 @@ examples:
   > tracker incr today bikecommute
                increments bikecommute metric for today
 
-  > tracker clear bikecommute
-               clear all bikecommute occurrences
+  > tracker rm bikecommute
+               remove all bikecommute occurrences
 
   > tracker log -d 2012-01-01.. bikecommute
                show a log of all bikecommute occurrences since jan 1, 2012 
@@ -281,7 +281,7 @@ enum Command
     INFO;                                                   // metrics list and duration
     INCR;                                                   // increment a day
     SET;                                                    // set the value for a day
-    CLEAR;                                                  // clear a value for a day
+    REMOVE;                                                 // clear a value for a day
     CAL;                                                    // show calendar
     LOG;                                                    // show log by day
     CSV_EXPORT;                                             // export to csv

@@ -237,26 +237,31 @@ class Tracker
     }
 
     // clear values
-    public function clear()
+    public function remove()
     {
+        var count = 0;
         connect();
         checkMetrics();
         var occurrences = selectRange(range, false).results().map(function(ii) return {metricId: ii.metricId, metric: ii.metric, date: ii.date});
         for( occ in occurrences )
         {
             db.request("DELETE FROM occurrences WHERE metricId='"+ occ.metricId +"' AND date='"+ occ.date +"'");
-            Lib.println("deleted " + occ.metric + " for " + occ.date);
+            Lib.println("removed " + occ.metric + " for " + occ.date);
+            count++;
         }
-        for( metric in metrics )                            // remove metrics with no occurrences
-        {
-            var metricId = getOrCreateMetric(metric);
-            var count = db.request("SELECT count(metricId) FROM occurrences WHERE metricId='"+ metricId +"'").getIntResult(0);
-            if( count == 0 )
+        if( count == 0 )
+            Lib.println("didn't find anything to remove");
+        else
+            for( metric in metrics )                        // remove metrics with no occurrences
             {
-                db.request("DELETE FROM metrics WHERE id='"+ metricId + "'");
-                Lib.println("deleted the last occurrence for " + metric);
+                var metricId = getOrCreateMetric(metric);
+                var count = db.request("SELECT count(metricId) FROM occurrences WHERE metricId='"+ metricId +"'").getIntResult(0);
+                if( count == 0 )
+                {
+                    db.request("DELETE FROM metrics WHERE id='"+ metricId + "'");
+                    Lib.println("removed the last occurrence for " + metric);
+                }
             }
-        }
     }
 
     // check that metrics exist, replace splat
