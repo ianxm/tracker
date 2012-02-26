@@ -4,8 +4,13 @@ import neko.db.Object;
 
 class Occurrence extends Object
 {
-    static var TABLE_IDS = ["metric", "date"];
-    public var metric :String;
+    static function RELATIONS()
+    {
+        return [{prop: "metric", key: "metricId", manager: Occurrence.manager}];
+    }
+    //static var TABLE_IDS = ["metricId", "date"];
+    private var metricId :Int;
+    public var metric(dynamic,dynamic) :Metric;
     public var date :String;
     public var value :Int;
 

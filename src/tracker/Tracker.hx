@@ -33,10 +33,18 @@ class Tracker
             throw "cannot init an existing repository";
         db = Sqlite.open(dbFile);
         Lib.println("creating repository: " + neko.FileSystem.fullPath(dbFile));
-        db.request("CREATE TABLE occurrence ("
-                   + "metric TEXT NOT NULL, "
-                   + "date TEXT NOT NULL, "
-                   + "value INT NOT NULL);");
+        db.request("CREATE TABLE metrics (" +
+                   "id INTEGER PRIMARY KEY, " +
+                   "name TEXT UNIQUE NOT NULL);");
+        db.request("CREATE TABLE occurrences (" +
+                   "metricId INTEGER NOT NULL REFERENCES metric (id) ON DELETE SET NULL, " +
+                   "date DATE NOT NULL, " +
+                   "value REAL NOT NULL, " +
+                   "CONSTRAINT key PRIMARY KEY (metricId, date));");
+        db.request("CREATE VIEW full AS SELECT " +
+                   "metrics.id as metricId, metrics.name as metric, occurrences.date, occurrences.value " +
+                   "from metrics, occurrences " +
+                   "where occurrences.metricId=metrics.id;");
     }
 
     // open db file
@@ -45,24 +53,21 @@ class Tracker
         if( !FileSystem.exists(dbFile) )
             throw "repository doesn't exist, you must run 'init' first";
         db = Sqlite.open(dbFile);
-        neko.db.Manager.cnx = db;
-        neko.db.Manager.initialize();
     }
 
     // get list of existing metrics
     public function list()
     {
         connect();
-        if( Occurrence.manager.count() == 0 )
+        var allMetrics = getAllMetrics();
+        if( allMetrics.isEmpty() )
         {
             Lib.println("No metrics found");
             return;
         }
 
-        var allMetrics = getAllMetrics();
-
         Lib.println("Current Metrics:");
-        for( metric in allMetrics )
+        for( metric in allMetrics  )
             Lib.println("- "+ metric);
     }
 
@@ -120,7 +125,8 @@ class Tracker
                     Lib.println("bad value, skipping line: " + line);
                     continue;
                 }
-                setOrUpdate(fields[1], dayStr, val);
+                var metricId = getOrCreateMetric(fields[1]);
+                setOrUpdate(fields[1], metricId, dayStr, val);
             }
         } catch( e:haxe.io.Eof ) {
         }
@@ -155,18 +161,16 @@ class Tracker
         connect();
         for( metric in metrics )
         {
+            var metricId = getOrCreateMetric(metric);
             var dayStr = range[0];
             do
             {
-                var occ = Occurrence.manager.getWithKeys({metric: metric, date: dayStr});
-                if( occ != null )
-                {
-                    occ.value++;
-                    occ.update();
-                    Lib.println("set " + occ.metric + " to " + occ.value + " for " + dayStr);
-                }
+                var rs = db.request("SELECT value FROM occurrences WHERE metricId='"+ metricId +"' AND date='"+ dayStr +"';");
+                var val = if( rs.length != 0 )
+                    rs.next().value+1;
                 else
-                    setNew( metric, dayStr, 1 );
+                    1;
+                setOrUpdate( metric,  metricId, dayStr, val );
 
                 dayStr = Utils.dayToStr(Utils.dayShift(Utils.day(dayStr), 1));
             } while( range[1]!=null && Utils.dayDelta(Utils.day(dayStr), Utils.day(range[1])) >= 0 );
@@ -179,54 +183,61 @@ class Tracker
         connect();
         for( metric in metrics )
         {
+            var metricId = getOrCreateMetric(metric);
             var dayStr = range[0];
             do
             {
-                setOrUpdate(metric, dayStr, val);
+                setOrUpdate( metric, metricId, dayStr, val );
                 dayStr = Utils.dayToStr(Utils.dayShift(Utils.day(dayStr), 1));
             } while( range[1]!=null && Utils.dayDelta(Utils.day(dayStr), Utils.day(range[1])) >= 0 );
         }
     }
 
-    private function setOrUpdate(metric, dayStr, val)
+    private function getOrCreateMetric(metric :String) :Int
     {
-        var occ = Occurrence.manager.getWithKeys({metric: metric, date: dayStr});
-        if( occ != null )
-        {
-            occ.value = val;
-            occ.update();
-            Lib.println("set " + metric + " to " + val + " for " + dayStr);
-        }
+        var rs = db.request("SELECT id FROM metrics WHERE name='"+ metric +"';");
+        return if( rs.length != 0 )
+            rs.next().id;
         else
-            setNew(metric, dayStr, val);
+        {                                                   // add metric if its new
+            db.request("INSERT INTO metrics VALUES (null, '"+ metric +"');");
+            getOrCreateMetric(metric);
+        }
     }
 
-    private function setNew(metric, dayStr, val)
+    private function setOrUpdate(metric :String, metricId :Int, dayStr :String, val :Float)
     {
-        var occ = new Occurrence();
-        occ.metric = metric;
-        occ.date = dayStr;
-        occ.value = val;
-        occ.insert();
+        db.request("INSERT OR REPLACE INTO occurrences VALUES ('"+ metricId +"','"+ dayStr +"','"+ val +"')");
         Lib.println("set " + metric + " to " + val + " for " + dayStr);
-    }
+   }
 
     // clear values
     public function clear()
     {
         connect();
-        var occurrences = selectRange(range, false);
+        checkMetrics();
+        var occurrences = selectRange(range, false).results().map(function(ii) return {metricId: ii.metricId, metric: ii.metric, date: ii.date});
         for( occ in occurrences )
         {
-            occ.delete();
+            db.request("DELETE FROM occurrences WHERE metricId='"+ occ.metricId +"' AND date='"+ occ.date +"'");
             Lib.println("deleted " + occ.metric + " for " + occ.date);
+        }
+        for( metric in metrics )                            // remove metrics with no occurrences
+        {
+            var metricId = getOrCreateMetric(metric);
+            var count = db.request("SELECT count(metricId) FROM occurrences WHERE metricId='"+ metricId +"'").getIntResult(0);
+            if( count == 0 )
+            {
+                db.request("DELETE FROM metrics WHERE id='"+ metricId + "'");
+                Lib.println("deleted the last occurrence for " + metric);
+            }
         }
     }
 
     private function checkMetrics()
     {
-        if( Lambda.exists(metrics, function(ii) return ii=="*") )
-            metrics = Lambda.list(getAllMetrics());
+        if( metrics.exists(function(ii) return ii=="*") )
+            metrics = getAllMetrics().list();
         else
         {
             var allMetrics = getAllMetrics();
@@ -239,17 +250,15 @@ class Tracker
     // get a set of all metrics in the db
     private function getAllMetrics()
     {
-        var allMetrics = new Set<String>();
-        var occurrences = Occurrence.manager.search({}, false);
-        for( rr in occurrences )
-            allMetrics.add(rr.metric);
-        return allMetrics;
+        var rs = db.request("SELECT name FROM metrics;");
+        return rs.results().map(function(ii) return ii.name);
     }
 
     // select a date range from the db
     private function selectRange(range, ?shouldCombine = true)
     {
-        if( Occurrence.manager.count()==0 )
+        var rs = db.request("SELECT name FROM metrics;");
+        if( rs.length == 0 )
         {
             Lib.println("No metrics found");
             Sys.exit(0);
@@ -257,24 +266,20 @@ class Tracker
 
         var select = new StringBuf();
         select.add("SELECT ");
-        select.add((shouldCombine) ? "date, sum(value) as value" : "*");
-        select.add(" FROM occurrence ");
-        select.add("WHERE ("+ metrics.map(function(ii) return "metric='"+ii+"'").join(" or ") +")");
+        select.add((shouldCombine) ? "metric, date, sum(value) as value " : "* ");
+        select.add("FROM full WHERE ("+ metrics.map(function(ii) return "metric='"+ii+"'").join(" OR ") +") ");
         if( range[0]!=null )                               // start..
-            select.add(" AND date >= '"+ range[0] +"'");
+            select.add("AND date >= '"+ range[0] +"' ");
         if( range[1]!=null )                               // ..end
-            select.add(" AND date <= '"+ range[1] +"'");
-        select.add((shouldCombine) ? " GROUP BY date" : " ");
-        select.add(" ORDER BY date");
+            select.add("AND date <= '"+ range[1] +"' ");
+        select.add((shouldCombine) ? "GROUP BY date " : " ");
+        select.add("ORDER BY date");
 
-        //trace("select: " + select);
-        return Occurrence.manager.objects(select.toString(), false);
+        return db.request(select.toString());
     }
 
     // close db file
     public function close()
     {
-        neko.db.Manager.cleanup();
-        db.close();
     }
 }

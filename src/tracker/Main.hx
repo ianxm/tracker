@@ -9,7 +9,7 @@ import utils.Utils;
 class Main
 {
     public static var NO_DATA = -9999;
-    private static var VERSION = "v0.4";
+    private static var VERSION = "v0.5";
 
     private var dbFile   :String;
     private var metrics  :List<String>;
@@ -44,9 +44,10 @@ class Main
             case CSV_IMPORT: worker.importCsv(fname);
             default:         worker.view(cmd, tail);
             }
-            worker.close();
+            //worker.close();
         } catch ( e:Dynamic ) {
             Lib.println("ERROR: " + e);
+            Lib.println(haxe.Stack.toString(haxe.Stack.exceptionStack()));
         }
     }
 
