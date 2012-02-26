@@ -119,7 +119,7 @@ class Tracker
                     Lib.println("bad date, skipping line: " + line);
                     continue;
                 }
-                var val = Std.parseInt(fields[2]);
+                var val = Std.parseFloat(fields[2]);
                 if( val == null )
                 {
                     Lib.println("bad value, skipping line: " + line);

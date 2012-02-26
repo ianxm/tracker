@@ -14,7 +14,7 @@ class Main
     private var dbFile   :String;
     private var metrics  :List<String>;
     private var range    :Array<String>;
-    private var val      :Int;
+    private var val      :Float;
     private var cmd      :Command;
     private var fname    :String;
     private var tail     :Int;
@@ -62,7 +62,7 @@ class Main
             case "init":        cmd = INIT;
             case "list":        cmd = LIST;
             case "incr":        cmd = INCR;
-            case "set":         { cmd = SET; val = Std.parseInt(args.shift()); }
+            case "set":         { cmd = SET; val = Std.parseFloat(args.shift()); }
             case "clear":       cmd = CLEAR;
             case "cal":         cmd = CAL;
             case "log",

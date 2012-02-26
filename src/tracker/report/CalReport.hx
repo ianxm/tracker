@@ -56,24 +56,24 @@ class CalReport implements Report
     {
         var monthNum = month.getMonth();
 
-        buf.add("\n          " + MONTH_NAMES[monthNum] + " " + month.getFullYear() + "\n" +
-                " Su  Mo  Tu  We  Th  Fr  Sa\n");
+        buf.add("\n             " + MONTH_NAMES[monthNum] + " " + month.getFullYear() + "\n" +
+                "  Su   Mo   Tu   We   Th   Fr   Sa\n");
 
         // print given month
         var day = month;
         for( ii in 0...month.getDay() )
-            buf.add("    ");
+            buf.add("     ");
 
         var today = Date.now();
         do
         {
             var val = tree.get(pathFromDay(day));
             var str = if( val != null )
-                Std.string(val).lpad(' ',3);
+                Std.string(val).lpad(' ',4);
             else if( Utils.dayDelta(day, today) <= 0 )
-                "  _";
+                "   _";
             else
-                "  .";
+                "   .";
             buf.add(str +" ");
             if( day.getDay() == 6 )
                 buf.add("\n");
