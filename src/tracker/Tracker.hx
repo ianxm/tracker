@@ -120,7 +120,7 @@ class Tracker
                     continue;
                 }
                 var val = Std.parseFloat(fields[2]);
-                if( val == null )
+                if( Math.isNaN(val) )
                 {
                     Lib.println("bad value, skipping line: " + line);
                     continue;

@@ -138,7 +138,7 @@ class Main
         if( dbFile == null )                                // use default repo
             dbFile = Sys.environment().get("HOME") + "/.tracker.db";
 
-        if( cmd == SET && val == null )                     // check that set has a val
+        if( cmd == SET && val == null || cmd == SET && Math.isNaN(val) ) // check that set has a val
             throw "set must be followed by a number";
 
         if( fname != null )
