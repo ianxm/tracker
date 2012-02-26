@@ -145,7 +145,8 @@ class Main
         if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT ) // list metrics if no metrics specified
             cmd = INFO;
 
-        if( range[0] == null && ( cmd==INCR || cmd==SET ) ) // fix range if not specified
+                                                            // fix range if not specified
+        if( range[0] == null && ( cmd==INCR || cmd==SET || cmd==REMOVE ) )
             range[0] = Utils.dayStr(Date.now());
         if( range[1] == null )
             range[1] = Utils.dayStr(Date.now());
