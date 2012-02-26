@@ -134,7 +134,7 @@ class Main
     private function setDefaults()
     {
         if( cmd == null )
-            throw "a command must be specified";
+            throw "a command must be specified (try -h for help)";
 
         if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT ) // list metrics if no metrics specified
             cmd = INFO;
@@ -188,7 +188,7 @@ commands:
     info           list existing metrics and date ranges
     help           show help
 
-  modify repo:
+  modify repository:
     incr           increment a value
     set VAL        set a value
     clear          remove occurrences
@@ -245,7 +245,7 @@ DATE:
   
 examples:
   > tracker init
-               initialize the default repo
+               initialize the default repository
 
   > tracker incr today bikecommute
                increments bikecommute metric for today

@@ -1,4 +1,3 @@
 -neko tracker.n
--lib hxSet
 -lib DeepHash
 -main tracker.Main
