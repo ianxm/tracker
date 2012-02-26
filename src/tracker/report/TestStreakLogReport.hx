@@ -48,7 +48,7 @@ class TestStreakLogReport extends haxe.unit.TestCase
   {
       var report = new StreakLogReport();
       report.include(Date.fromString("2012-01-01"), Main.NO_DATA);
-      assertEquals("no occurrences", report.toString());
+      assertEquals("no occurrences\n", report.toString());
   }
 
   public function testOffFixed()

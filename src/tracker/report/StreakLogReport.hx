@@ -20,7 +20,7 @@ class StreakLogReport implements Report
     }
 
     // val may be zero for first and last call
-    public function include(occDay :Date, occVal :Int)
+    public function include(occDay :Date, occVal :Float)
     {
         if( lastDay == null )        // first
         {

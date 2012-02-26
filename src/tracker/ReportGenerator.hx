@@ -22,7 +22,7 @@ class ReportGenerator
         indent = false;
     }
 
-    public function setReport(cmd)
+    public function setReport(cmd, valType)
     {
         switch(cmd)
         {
@@ -32,24 +32,24 @@ class ReportGenerator
                 reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.Spacer());
 
-                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_HIGHEST));
-                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_LOWEST));
-                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_CURRENT));
+                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_HIGHEST, valType));
+                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_LOWEST, valType));
+                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_CURRENT, valType));
                 reports.add(new tracker.report.Spacer());
 
-                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_HIGHEST));
-                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_LOWEST));
-                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_CURRENT));
+                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_HIGHEST, valType));
+                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_LOWEST, valType));
+                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_CURRENT, valType));
                 reports.add(new tracker.report.Spacer());
 
-                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_HIGHEST));
-                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_LOWEST));
-                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_CURRENT));
+                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_HIGHEST, valType));
+                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_LOWEST, valType));
+                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_CURRENT, valType));
                 reports.add(new tracker.report.Spacer());
 
-                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_HIGHEST));
-                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_LOWEST));
-                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_CURRENT));
+                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_HIGHEST, valType));
+                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_LOWEST, valType));
+                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_CURRENT, valType));
                 reports.add(new tracker.report.Spacer());
 
                 reports.add(new tracker.report.StreakReport(KEEP_HIGHEST));
@@ -60,13 +60,13 @@ class ReportGenerator
         case DLOG,WLOG,MLOG,YLOG:
             {
                 reports.add(new tracker.report.DurationReport());
-                reports.add(new tracker.report.LogReport(cmd));
+                reports.add(new tracker.report.LogReport(cmd, valType));
             }
-        case COUNT:
-            {
-                reports.add(new tracker.report.DurationReport());
-                reports.add(new tracker.report.CountReport());
-            }
+        // case COUNT:
+        //     {
+        //         reports.add(new tracker.report.DurationReport());
+        //         reports.add(new tracker.report.CountReport());
+        //}
         case STREAKS:
             {
                 reports.add(new tracker.report.DurationReport());
@@ -75,7 +75,7 @@ class ReportGenerator
         case CAL:
             {
                 reports.add(new tracker.report.DurationReport());
-                reports.add(new tracker.report.CalReport());
+                reports.add(new tracker.report.CalReport(valType));
                 tail = null;
             }
         default:

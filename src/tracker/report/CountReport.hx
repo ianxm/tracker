@@ -11,7 +11,7 @@ class CountReport implements Report
         count = 0;
     }
 
-    public function include(thisDay :Date, val :Int)
+    public function include(thisDay :Date, val :Float)
     {
         if( val != Main.NO_DATA )
             count++;

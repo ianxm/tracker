@@ -11,22 +11,29 @@ class CalReport implements Report
     private static var MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    private var tree :DeepHash<Int,Int>;
+    private var tree :DeepHash<Int,Float>;
     private var firstDay :Date;
     private var lastDay :Date;
+    private var valToBin :Float -> Float;
 
-    public function new()
+    public function new(vt)
     {
-        tree = new DeepHash<Int,Int>();
+        tree = new DeepHash<Int,Float>();
+        switch( vt )
+        {
+        case TOTAL: valToBin = function(ii) { return ii; }
+        case COUNT: valToBin = function(ii) { return 1; }
+        default: throw "calendar reports only support 'total' or 'count' values";
+        }
     }
 
-    public function include(thisDay :Date, val :Int)
+    public function include(thisDay :Date, val :Float)
     {
         if( firstDay == null )
             firstDay = thisDay;
         lastDay = thisDay;
         if( val != Main.NO_DATA )
-            tree.set(pathFromDay(thisDay), val);
+            tree.set(pathFromDay(thisDay), valToBin(val));
     }
 
     inline public function getLabel()
@@ -37,14 +44,13 @@ class CalReport implements Report
     public function toString()
     {
         if( firstDay == null )
-            return "no occurrences";
+            return "no occurrences\n";
 
         var buf = new StringBuf();
 
         var month = new Date(firstDay.getFullYear(), firstDay.getMonth(), 1, 0, 0, 0);
         var lastMonth = new Date(lastDay.getFullYear(), lastDay.getMonth(), 1, 0, 0, 0);
-        do
-        {
+        do {
             printMonth(buf, month);
             month = new Date(month.getFullYear(), month.getMonth()+1, 1, 0, 0, 0);
         } while( Utils.dayDelta(month, lastMonth) >= 0 );
@@ -65,8 +71,7 @@ class CalReport implements Report
             buf.add("     ");
 
         var today = Date.now();
-        do
-        {
+        do {
             var val = tree.get(pathFromDay(day));
             var str = if( val != null )
                 Std.string(val).lpad(' ',4);

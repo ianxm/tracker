@@ -6,23 +6,23 @@ import utils.Utils;
 
 class RecordReport implements Report
 {
-    private var bestScore :Int;
+    private var bestScore :Float;
     private var bestDateStr :String;
 
     private var binName :String;
     private var filterName :String;
-    private var bins :Hash<Int>;
+    private var bins :Hash<Float>;
     private var startOfRange :Date;
 
-    private var checkBest :Int->String->Int->Bool;
+    private var checkBest :Float->String->Float->Bool;
     private var dateToBin :Date->String;
     private var oneBack :Date->Date;
 
-    public function new( bin :BinStrategy, keep :FilterStrategy )
+    public function new( bin :BinStrategy, keep :FilterStrategy, vt )
     {
         bestScore = 0;
         bestDateStr = null;
-        bins = new Hash<Int>();
+        bins = new Hash<Float>();
 
         switch( keep )
         {
@@ -77,7 +77,7 @@ class RecordReport implements Report
         }
     }
 
-    public function include(thisDay :Date, val :Int)
+    public function include(thisDay :Date, val :Float)
     {
         if( startOfRange == null )                          // dont let lowest look past start of range
             startOfRange = thisDay;
@@ -116,7 +116,7 @@ class RecordReport implements Report
                 bestDateStr = key;
             }
         }
-        return (( bestDateStr == null ) ? "none" : bestDateStr + " (" + bestScore + ")");
+        return (( bestDateStr == null ) ? "none" : bestDateStr + " (" + bestScore + ")\n");
     }
 
     inline public function getLabel()
@@ -125,17 +125,17 @@ class RecordReport implements Report
     }
 
     // which to keep (chosen by filter strategy)
-    inline private function keepLowest(bestScore :Int, newDateStr :String, newScore :Int) :Bool
+    inline private function keepLowest(bestScore :Float, newDateStr :String, newScore :Float) :Bool
     {
         return bestScore >= newScore;
     }
 
-    inline private function keepHighest(bestScore :Int, newDateStr :String, newScore :Int) :Bool
+    inline private function keepHighest(bestScore :Float, newDateStr :String, newScore :Float) :Bool
     {
         return bestScore <= newScore;
     }
 
-    inline private function keepCurrent(bestScore :Int, newDateStr :String, newScore :Int)
+    inline private function keepCurrent(bestScore :Float, newDateStr :String, newScore :Float)
     {
         return newDateStr != null && newDateStr == dateToBin(Date.now());
     }

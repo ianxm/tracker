@@ -5,7 +5,7 @@ class Spacer implements Report
     public function new()
     {}
 
-    inline public function include(thisDay :Date, val :Int)
+    inline public function include(thisDay :Date, val :Float)
     {}
 
     inline public function getLabel()
@@ -15,6 +15,6 @@ class Spacer implements Report
 
     inline public function toString()
     {
-        return "";
+        return "\n";
     }
 }

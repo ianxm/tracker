@@ -16,12 +16,14 @@ class Main
     private var range    :Array<String>;
     private var val      :Float;
     private var cmd      :Command;
+    private var valType  :ValType;
     private var fname    :String;
     private var tail     :Int;
 
     public function new()
     {
         cmd = RECORDS;
+        valType = TOTAL;
         metrics = new List<String>();
         range = [null, null];
     }
@@ -42,7 +44,7 @@ class Main
             case CLEAR:      worker.clear();
             case CSV_EXPORT: worker.exportCsv(fname);
             case CSV_IMPORT: worker.importCsv(fname);
-            default:         worker.view(cmd, tail);
+            default:         worker.view(cmd, valType, tail);
             }
             //worker.close();
         } catch ( e:Dynamic ) {
@@ -72,7 +74,7 @@ class Main
             case "ylog":        cmd = YLOG;
             case "export":      cmd = CSV_EXPORT;
             case "import":      { cmd = CSV_IMPORT; fname = args.shift(); }
-            case "count":       cmd = COUNT;
+                //            case "count":       cmd = COUNT;
             case "records":     cmd = RECORDS;
             case "streaks":     cmd = STREAKS;
             case "graph":       throw "graphs have not been implemented yet";
@@ -103,6 +105,10 @@ class Main
             case "-h",
                 "--help",
                 "help":       printHelp();
+            case "-total":    valType = TOTAL;
+            case "-count":    valType = COUNT;
+            case "-avg":      valType = AVG;
+            case "-percent":  valType = PERCENT;
             default:                                        // else assume it is a metric
                 if( StringTools.startsWith(arg, "-") )
                 {
@@ -167,36 +173,52 @@ if no date range is specified, the range is all days.
 if no metric is given, tracker will list all metrics found.
 
 commands:
-  init           initialize a repository
-  list           show list of existing metrics
-  incr           increment a value
-  set VAL        set a value
-  clear          remove occurrences
-  dlog,log       show a log by day
-  wlog           show a log by week
-  mlog           show a log by month
-  ylog           show a log by year
-  export         export data to csv format
-                 this will write to stdout unless -o is given
-  import FILE    import data from a csv file
-                 with the columns: date,metric,value
-  count          count occurrences
-  cal            show calendar view
-  records        show high and low records
-  streaks        show consecutive days with or without occurrences
-  graph          draw a graph
-  help           show help
+  general repo info:
+    init           initialize a repository
+    list           show list of existing metrics
+
+  modify repo:
+    incr           increment a value
+    set VAL        set a value
+    clear          remove occurrences
+
+  import/export:
+    export         export data to csv format
+                   this will write to stdout unless -o is given
+    import FILE    import data from a csv file
+                   with the columns: date,metric,value
+
+  reporting:
+    count          tell count of occurrences
+    dlog,log       show log by day
+    wlog           show log by week
+    mlog           show log by month
+    ylog           show log by year
+    cal            show calendar
+    records        show high and low records
+    streaks        show consecutive days with or without occurrences
+    graph          draw graph
+
+  misc:
+    help           show help
   
 options:
-  -d RANGE       specify date range (see details below)
-  -o FILE        write graph image to a file
-  -N             limit output to the last N items
-                 this affects streaks and the log commands
-  --all          select all existing metrics
-  --repo FILE    specify a repository filename
-  --min VAL      min threshold
-  -v, --version  show version
-  -h, --help     show help
+  general:
+    -d RANGE       specify date range (see RANGE below)
+    -o FILE        write graph image to a file
+    -N             limit output to the last N items
+                   this affects 'streaks' and the log commands
+    --all          select all existing metrics
+    --repo FILE    specify a repository filename
+    --min VAL      min threshold to count as an occurrence
+    -v, --version  show version
+    -h, --help     show help
+
+  values in reports:
+    -total         total values (default)
+    -count         count of occurrences
+    -avg           average values by duration
+    -percent       show values as the percent of occurrence of duration
 
 RANGE:
   DATE         only the specified date
@@ -252,8 +274,16 @@ enum Command
     YLOG;                                                   // show log by year
     CSV_EXPORT;                                             // export to csv
     CSV_IMPORT;                                             // import from csv
-    COUNT;                                                  // count occurrences
+    //    COUNT;                                                  // count occurrences
     RECORDS;                                                // view report
     STREAKS;                                                // show streaks
     GRAPH;                                                  // show graph
+}
+
+enum ValType
+{
+    TOTAL;                                                  // total values
+    COUNT;                                                  // count occurrences
+    AVG;                                                    // average values by num days
+    PERCENT;                                                // percent of count of num days
 }

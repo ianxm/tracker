@@ -16,7 +16,7 @@ class StreakReport implements Report
 
     private var filterName :String;
     private var isStreakOn :Bool;
-    public var include :Date -> Int -> Void;
+    public var include :Date -> Float -> Void;
     private var isBest :Int -> Int -> Bool;
 
     public function new(keep :FilterStrategy)
@@ -54,13 +54,13 @@ class StreakReport implements Report
     public function toString()
     {
         var onOrOff = if( isStreakOn == null )
-            "";
+            "\n";
         else if( isStreakOn == true )
-            " (on)";
+            " (on)\n";
         else
-            " (off)";
+            " (off)\n";
         return if( bestStartDate == null )
-            "none";
+            "none\n";
         else if( bestStreakLength == 1 )
             "  1 day  starting on " + Utils.dayToStr(bestStartDate) + onOrOff;
         else
@@ -82,7 +82,7 @@ class StreakReport implements Report
     }
 
     // val may be zero for first and last call
-    public function includeOff(occDay :Date, occVal :Int)
+    public function includeOff(occDay :Date, occVal :Float)
     {
         if( lastDay == null )
             lastDay = occDay;
@@ -93,7 +93,7 @@ class StreakReport implements Report
     }
 
     // val may be zero for first and last call
-    public function includeOn(occDay :Date, occVal :Int)
+    public function includeOn(occDay :Date, occVal :Float)
     {
         if( lastDay == null )
             lastDay = occDay;
@@ -112,7 +112,7 @@ class StreakReport implements Report
     }
 
     // val may be zero for first and last call
-    public function includeCurrent(occDay :Date, occVal :Int)
+    public function includeCurrent(occDay :Date, occVal :Float)
     {
         if( lastDay == null )
             lastDay = occDay;

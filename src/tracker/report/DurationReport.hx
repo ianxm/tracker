@@ -14,7 +14,7 @@ class DurationReport implements Report
         lastDate = null;
     }
 
-    public function include(thisDay :Date, val :Int)
+    public function include(thisDay :Date, val :Float)
     {
         if( firstDate == null )
             firstDate = thisDay;
