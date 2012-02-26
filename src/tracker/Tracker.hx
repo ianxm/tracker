@@ -193,6 +193,7 @@ class Tracker
         }
     }
 
+    // get a metric id, create it if it doesn't exist
     private function getOrCreateMetric(metric :String) :Int
     {
         var rs = db.request("SELECT id FROM metrics WHERE name='"+ metric +"';");
@@ -205,11 +206,12 @@ class Tracker
         }
     }
 
+    // set a value 
     private function setOrUpdate(metric :String, metricId :Int, dayStr :String, val :Float)
     {
         db.request("INSERT OR REPLACE INTO occurrences VALUES ('"+ metricId +"','"+ dayStr +"','"+ val +"')");
         Lib.println("set " + metric + " to " + val + " for " + dayStr);
-   }
+    }
 
     // clear values
     public function clear()
@@ -234,6 +236,7 @@ class Tracker
         }
     }
 
+    // check that metrics exist, replace splat
     private function checkMetrics()
     {
         if( metrics.exists(function(ii) return ii=="*") )
@@ -281,5 +284,6 @@ class Tracker
     // close db file
     public function close()
     {
+        db.close();
     }
 }
