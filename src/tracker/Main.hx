@@ -11,18 +11,20 @@ class Main
     public static var NO_DATA = -9999;
     private static var VERSION = "v0.6";
 
-    private var dbFile   :String;
-    private var metrics  :List<String>;
-    private var range    :Array<String>;
-    private var val      :Float;
-    private var cmd      :Command;
-    private var valType  :ValType;
-    private var fname    :String;
-    private var tail     :Int;
+    private var dbFile     :String;
+    private var metrics    :List<String>;
+    private var range      :Array<String>;
+    private var val        :Float;
+    private var cmd        :Command;
+    private var valType    :ValType;
+    private var groupType  :GroupType;
+    private var fname      :String;
+    private var tail       :Int;
 
     public function new()
     {
         cmd = null;
+        groupType = DAY;
         valType = TOTAL;
         metrics = new List<String>();
         range = [null, null];
@@ -44,7 +46,7 @@ class Main
             case CLEAR:      worker.clear();
             case CSV_EXPORT: worker.exportCsv(fname);
             case CSV_IMPORT: worker.importCsv(fname);
-            default:         worker.view(cmd, valType, tail);
+            default:         worker.view(cmd, groupType, valType, tail);
             }
             worker.close();
         } catch ( e:Dynamic ) {
@@ -69,16 +71,13 @@ class Main
             case "clear":       cmd = CLEAR;
 
             case "cal":         cmd = CAL;
-            case "log",
-                "dlog":         cmd = DLOG;
-            case "wlog":        cmd = WLOG;
-            case "mlog":        cmd = MLOG;
-            case "ylog":        cmd = YLOG;
+            case "log":         cmd = LOG;
             case "export":      cmd = CSV_EXPORT;
             case "import":      { cmd = CSV_IMPORT; fname = args.shift(); }
             case "records":     cmd = RECORDS;
             case "streaks":     cmd = STREAKS;
             case "graph":       throw "graphs have not been implemented yet";
+
             case "-d":                                  // date range
                 {
                     arg = args.shift();
@@ -106,10 +105,18 @@ class Main
             case "-h",
                 "--help",
                 "help":       printHelp();
+
+            case "-day":      groupType = DAY;
+            case "-week":     groupType = WEEK;
+            case "-month":    groupType = MONTH;
+            case "-year":     groupType = YEAR;
+            case "-full":     groupType = FULL;
+
             case "-total":    valType = TOTAL;
             case "-count":    valType = COUNT;
             case "-avg":      valType = AVG;
             case "-percent":  valType = PERCENT;
+
             default:                                        // else assume it is a metric
                 if( StringTools.startsWith(arg, "-") )
                 {
@@ -212,6 +219,7 @@ options:
     -h, --help     show help
 
   date groupings for reports:
+    (these are only used by the 'log' and 'graph' commands)
     -day           each day is separate (default)
     -week          group weeks together
     -month         group months together
@@ -272,15 +280,21 @@ enum Command
     SET;                                                    // set the value for a day
     CLEAR;                                                  // clear a value for a day
     CAL;                                                    // show calendar
-    DLOG;                                                   // show log by day
-    WLOG;                                                   // show log by week
-    MLOG;                                                   // show log by month
-    YLOG;                                                   // show log by year
+    LOG;                                                    // show log by day
     CSV_EXPORT;                                             // export to csv
     CSV_IMPORT;                                             // import from csv
     RECORDS;                                                // view report
     STREAKS;                                                // show streaks
     GRAPH;                                                  // show graph
+}
+
+enum GroupType
+{
+    DAY;                                                    // group each day separately
+    WEEK;                                                   // group by week
+    MONTH;                                                  // group by month
+    YEAR;                                                   // group by year
+    FULL;                                                   // group everything together
 }
 
 enum ValType

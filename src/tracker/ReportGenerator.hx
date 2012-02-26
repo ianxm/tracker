@@ -22,7 +22,7 @@ class ReportGenerator
         indent = false;
     }
 
-    public function setReport(cmd, valType)
+    public function setReport(cmd, groupType, valType)
     {
         switch(cmd)
         {
@@ -57,16 +57,11 @@ class ReportGenerator
                 reports.add(new tracker.report.StreakReport(KEEP_CURRENT));
                 tail = null;
             }
-        case DLOG,WLOG,MLOG,YLOG:
+        case LOG:
             {
                 reports.add(new tracker.report.DurationReport());
-                reports.add(new tracker.report.LogReport(cmd, valType));
+                reports.add(new tracker.report.LogReport(groupType, valType));
             }
-        // case COUNT:
-        //     {
-        //         reports.add(new tracker.report.DurationReport());
-        //         reports.add(new tracker.report.CountReport());
-        //}
         case STREAKS:
             {
                 reports.add(new tracker.report.DurationReport());

@@ -13,35 +13,40 @@ class LogReport implements Report
     private var printVal    :Float -> Float;                // set precision of output
     private var lastBin     :String;                        // key of last bin
     private var lastVal     :Float;                         // value in last bin
+    private var firstDay    :Date;                          // needed for full grouping
+    private var lastDay     :Date;                          // needed for full grouping
 
-    public function new(cmd, vt)
+    public function new(gt, vt)
     {
         buf = new StringBuf();
 
-        switch( cmd )
+        switch( gt )
         {
-        case YLOG: 
-            {
-                dateToBin = RecordReport.dateToYearBin;
-                getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
-            }
-        case MLOG:
-            {
-                dateToBin = RecordReport.dateToMonthBin;
-                getDuration = DateTools.getMonthDays;
-            }
-        case WLOG:
-            {
-                dateToBin = RecordReport.dateToWeekBin;
-                getDuration = function(date) { return 7; }
-            }
-        case DLOG:
+        case DAY:
             {
                 dateToBin = RecordReport.dateToDayBin;
                 getDuration = function(date) { return 1; }
             }
-        default:
-            throw "non-log cmd in log constructor";
+        case WEEK:
+            {
+                dateToBin = RecordReport.dateToWeekBin;
+                getDuration = function(date) { return 7; }
+            }
+        case MONTH:
+            {
+                dateToBin = RecordReport.dateToMonthBin;
+                getDuration = DateTools.getMonthDays;
+            }
+        case YEAR: 
+            {
+                dateToBin = RecordReport.dateToYearBin;
+                getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
+            }
+        case FULL: 
+            {
+                dateToBin = function(date) { return "all-time"; }
+                getDuration = function(date) { return 1; }  // must track full duration
+            }
         }
 
         switch( vt )
@@ -59,12 +64,20 @@ class LogReport implements Report
         case AVG:
             {
                 valToBin = function(val,date) { return val/getDuration(date); }
-                printVal = function(val) { return Math.round(val*10)/10; }
+                printVal = function(val) {                  // for full duration we have to put off evaluating the
+                    if( gt==FULL )                          // duration until all data has been processed
+                        val = val/Utils.dayDelta(firstDay,lastDay)+1;
+                    return Math.round(val*10)/10;
+                }
             }
         case PERCENT:
             {
                 valToBin = function(val,date) { return 1/getDuration(date)*100; }
-                printVal = Math.round;
+                printVal = function(val) {                  // ditto whats said for AVG
+                    if( gt==FULL )
+                        val = val/Utils.dayDelta(firstDay,lastDay)+1;
+                    return Math.round(val);
+                }
             }
         }
     }
@@ -73,6 +86,10 @@ class LogReport implements Report
     {
         if( val == Main.NO_DATA )
             return;
+
+        if( firstDay == null )
+            firstDay = thisDay;
+        lastDay = thisDay;
 
         var binStr = dateToBin(thisDay);
         val = valToBin(val, thisDay);

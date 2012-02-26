@@ -157,13 +157,13 @@ class Tracker
     }
 
     // run the report generator to view the data
-    public function view(cmd, valType, tail)
+    public function view(cmd, groupType, valType, tail)
     {
         connect();
         checkMetrics();                                     // check that all requested metrics exist
 
         var reportGenerator = new ReportGenerator(range, tail);
-        reportGenerator.setReport(cmd, valType);
+        reportGenerator.setReport(cmd, groupType, valType);
         var occurrences = selectRange(range);
 
         if( range[0] != null )                              // start..
