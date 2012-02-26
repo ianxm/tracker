@@ -9,7 +9,7 @@ import utils.Utils;
 class Main
 {
     public static var NO_DATA = -9999;
-    private static var VERSION = "v0.5";
+    private static var VERSION = "v0.6";
 
     private var dbFile   :String;
     private var metrics  :List<String>;
@@ -38,7 +38,7 @@ class Main
             switch (cmd)
             {
             case INIT:       worker.init();
-            case LIST:       worker.list();
+            case INFO:       worker.info();
             case INCR:       worker.incr();
             case SET:        worker.set(val);
             case CLEAR:      worker.clear();
@@ -46,7 +46,7 @@ class Main
             case CSV_IMPORT: worker.importCsv(fname);
             default:         worker.view(cmd, valType, tail);
             }
-            //worker.close();
+            worker.close();
         } catch ( e:Dynamic ) {
             Lib.println("ERROR: " + e);
             //Lib.println(haxe.Stack.toString(haxe.Stack.exceptionStack()));
@@ -62,10 +62,12 @@ class Main
             switch( arg )
             {
             case "init":        cmd = INIT;
-            case "list":        cmd = LIST;
+            case "info":        cmd = INFO;
+
             case "incr":        cmd = INCR;
             case "set":         { cmd = SET; val = Std.parseFloat(args.shift()); }
             case "clear":       cmd = CLEAR;
+
             case "cal":         cmd = CAL;
             case "log",
                 "dlog":         cmd = DLOG;
@@ -74,7 +76,6 @@ class Main
             case "ylog":        cmd = YLOG;
             case "export":      cmd = CSV_EXPORT;
             case "import":      { cmd = CSV_IMPORT; fname = args.shift(); }
-                //            case "count":       cmd = COUNT;
             case "records":     cmd = RECORDS;
             case "streaks":     cmd = STREAKS;
             case "graph":       throw "graphs have not been implemented yet";
@@ -126,7 +127,7 @@ class Main
     private function setDefaults()
     {
         if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT ) // list metrics if no metrics specified
-            cmd = LIST;
+            cmd = INFO;
 
         if( range[0] == null && ( cmd==INCR || cmd==SET ) ) // fix range if not specified
             range[0] = Utils.dayStr(Date.now());
@@ -175,7 +176,7 @@ if no metric is given, tracker will list all metrics found.
 commands:
   general repo info:
     init           initialize a repository
-    list           show list of existing metrics
+    info           list existing metrics and date ranges
 
   modify repo:
     incr           increment a value
@@ -189,7 +190,6 @@ commands:
                    with the columns: date,metric,value
 
   reporting:
-    count          tell count of occurrences
     dlog,log       show log by day
     wlog           show log by week
     mlog           show log by month
@@ -263,7 +263,7 @@ examples:
 enum Command
 {
     INIT;                                                   // initialize a db file
-    LIST;                                                   // list existing metrics
+    INFO;                                                   // metrics list and duration
     INCR;                                                   // increment a day
     SET;                                                    // set the value for a day
     CLEAR;                                                  // clear a value for a day
@@ -274,7 +274,6 @@ enum Command
     YLOG;                                                   // show log by year
     CSV_EXPORT;                                             // export to csv
     CSV_IMPORT;                                             // import from csv
-    //    COUNT;                                                  // count occurrences
     RECORDS;                                                // view report
     STREAKS;                                                // show streaks
     GRAPH;                                                  // show graph

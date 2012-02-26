@@ -91,15 +91,15 @@ class ReportGenerator
 
     public function print()
     {
-        var labelWidth = if( indent )
-            reports.fold(function(rr,width) return Math.max(rr.getLabel().length,width), 0);
+        var labelWidth:Int = if( indent )
+            reports.fold(function(rr,width:Int) return Std.int(Math.max(rr.getLabel().length,width)), 0);
         else
             0;
 
         var fifo = new List<String>();
         for( report in reports )
         {
-            var line = report.getLabel().lpad(' ', Std.int(labelWidth)) + report.toString();
+            var line = report.getLabel().lpad(' ', labelWidth) + report.toString();
             if( tail == null )
                 Lib.print(line);                          // just write to stdout
             else

@@ -1,7 +1,6 @@
 package tracker.report;
 
 import utils.Utils;
-import tracker.Occurrence;
 import tracker.Main;
 
 class LogReport implements Report

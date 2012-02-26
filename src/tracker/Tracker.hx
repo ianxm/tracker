@@ -1,6 +1,7 @@
 package tracker;
 
 using Lambda;
+using StringTools;
 import neko.Lib;
 import neko.Sys;
 import neko.io.File;
@@ -56,7 +57,7 @@ class Tracker
     }
 
     // get list of existing metrics
-    public function list()
+    public function info()
     {
         connect();
         var allMetrics = getAllMetrics();
@@ -66,9 +67,31 @@ class Tracker
             return;
         }
 
+        var nameWidth = allMetrics.fold(function(name,width:Int) return Std.int(Math.max(name.length,width)), 0);
+        var count;
+        var firstDate = null;
+        var lastDate = null;
         Lib.println("Current Metrics:");
         for( metric in allMetrics  )
-            Lib.println("- "+ metric);
+        {
+            count = 0;
+            firstDate = null;
+            metrics = [metric].list();
+            var occurrences = selectRange([null, null], false);
+            for( occ in occurrences )
+            {
+                if( firstDate == null )
+                    firstDate = occ.date;
+                lastDate = occ.date;
+                count++;
+            }
+            var duration = Utils.dayDelta(Utils.day(firstDate), Utils.day(lastDate))+1;
+            Lib.println("- "+ metric.rpad(" ",nameWidth) +" "+ 
+                        Std.string(count).lpad(" ",3) +
+                        ((count==1) ? " occurrence  " : " occurrences ") +
+                        "from "+ firstDate +" to "+ lastDate +
+                        " ("+ Std.string(duration).lpad(" ",4) + ((duration==1) ? " day " : " days")+ ")");
+        }
     }
 
     // output all metrics as a csv
