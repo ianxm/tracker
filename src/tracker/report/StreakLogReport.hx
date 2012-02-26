@@ -85,7 +85,7 @@ class StreakLogReport implements Report
         return if( buf.toString().length>0 )
             buf.toString();
         else
-            "no occurrences";
+            "no occurrences\n";
     }
 
     inline public function getLabel()

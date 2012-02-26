@@ -7,7 +7,7 @@ class TestLogReport extends haxe.unit.TestCase
   public function testEmpty()
   {
       var report = new LogReport(DLOG);
-      assertEquals("no occurrences", report.toString());
+      assertEquals("no occurrences\n", report.toString());
   }
 
   public function testOne()

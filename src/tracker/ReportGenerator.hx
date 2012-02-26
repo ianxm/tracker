@@ -101,7 +101,7 @@ class ReportGenerator
         {
             var line = report.getLabel().lpad(' ', Std.int(labelWidth)) + report.toString();
             if( tail == null )
-                Lib.println(line);                          // just write to stdout
+                Lib.print(line);                          // just write to stdout
             else
             {
                 for( ii in line.split("\n") )               // add each line to the fifo
@@ -113,7 +113,7 @@ class ReportGenerator
                 }
             }
             while( !fifo.isEmpty() )                            // dump the fifo to stdout
-                Lib.println(fifo.pop());
+                Lib.print(fifo.pop());
         }
     }
 }

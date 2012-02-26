@@ -24,6 +24,6 @@ class CountReport implements Report
 
     public function toString()
     {
-        return count + ((count==1) ? " occurrence" : " occurrences");
+        return count + ((count==1) ? " occurrence\n" : " occurrences\n");
     }
 }
