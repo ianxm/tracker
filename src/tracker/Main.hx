@@ -41,7 +41,7 @@ class Main
             {
             case INIT:       worker.init();
             case INFO:       worker.info();
-            case INCR:       worker.incr();
+            case INCR:       worker.incr(val);
             case SET:        worker.set(val);
             case CLEAR:      worker.clear();
             case CSV_EXPORT: worker.exportCsv(fname);
@@ -66,7 +66,7 @@ class Main
             case "init":        cmd = INIT;
             case "info":        cmd = INFO;
 
-            case "incr":        cmd = INCR;
+            case "incr":        { cmd = INCR; val = Std.parseFloat(args.shift()); }
             case "set":         { cmd = SET; val = Std.parseFloat(args.shift()); }
             case "clear":       cmd = CLEAR;
 
@@ -136,6 +136,12 @@ class Main
         if( cmd == null )
             throw "a command must be specified (try -h for help)";
 
+        if( cmd == SET && Math.isNaN(val) )                 // check that set has a val
+            throw "set must be followed by a number";
+
+        if( cmd == INCR && Math.isNaN(val) )                // check that incr has a val
+            throw "incr must be followed by a number";
+
         if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT ) // list metrics if no metrics specified
             cmd = INFO;
 
@@ -154,9 +160,6 @@ class Main
 
         if( dbFile == null )                                // use default repo
             dbFile = Sys.environment().get("HOME") + "/.tracker.db";
-
-        if( cmd == SET && val == null || cmd == SET && Math.isNaN(val) ) // check that set has a val
-            throw "set must be followed by a number";
 
         if( fname != null )
             if( cmd == GRAPH )
@@ -189,7 +192,7 @@ commands:
     help           show help
 
   modify repository:
-    incr           increment a value
+    incr VAL       increment a value
     set VAL        set a value
     clear          remove occurrences
 

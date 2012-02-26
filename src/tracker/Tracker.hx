@@ -179,7 +179,7 @@ class Tracker
     }
 
     // increment values
-    public function incr()
+    public function incr(val)
     {
         connect();
         for( metric in metrics )
@@ -190,9 +190,9 @@ class Tracker
             {
                 var rs = db.request("SELECT value FROM occurrences WHERE metricId='"+ metricId +"' AND date='"+ dayStr +"'");
                 var val = if( rs.length != 0 )
-                    rs.next().value+1;
+                    rs.next().value+val;
                 else
-                    1;
+                    val;
                 setOrUpdate( metric,  metricId, dayStr, val );
 
                 dayStr = Utils.dayToStr(Utils.dayShift(Utils.day(dayStr), 1));
