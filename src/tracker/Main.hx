@@ -22,7 +22,7 @@ class Main
 
     public function new()
     {
-        cmd = RECORDS;
+        cmd = null;
         valType = TOTAL;
         metrics = new List<String>();
         range = [null, null];
@@ -126,6 +126,9 @@ class Main
     // set defaults after args have been processed
     private function setDefaults()
     {
+        if( cmd == null )
+            throw "a command must be specified";
+
         if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT ) // list metrics if no metrics specified
             cmd = INFO;
 
@@ -167,16 +170,16 @@ class Main
     {
         Lib.println("tracker "+ VERSION);
         Lib.println("
-usage: tracker [command] [options] [metric [metric..]] 
+usage: tracker command [options] [metric [metric..]]
 
-if no command is given, tracker will show usage help.
-if no date range is specified, the range is all days. 
-if no metric is given, tracker will list all metrics found.
+    if no date range is specified, the range is all days. 
+    if no metric is given, tracker will list all metrics found.
 
 commands:
-  general repo info:
+  general:
     init           initialize a repository
     info           list existing metrics and date ranges
+    help           show help
 
   modify repo:
     incr           increment a value
@@ -190,17 +193,11 @@ commands:
                    with the columns: date,metric,value
 
   reporting:
-    dlog,log       show log by day
-    wlog           show log by week
-    mlog           show log by month
-    ylog           show log by year
+    log            view log of occurrences
     cal            show calendar
     records        show high and low records
     streaks        show consecutive days with or without occurrences
-    graph          draw graph
-
-  misc:
-    help           show help
+    graph          draw graph (requires gnuplot)
   
 options:
   general:
@@ -213,6 +210,13 @@ options:
     --min VAL      min threshold to count as an occurrence
     -v, --version  show version
     -h, --help     show help
+
+  date groupings for reports:
+    -day           each day is separate (default)
+    -week          group weeks together
+    -month         group months together
+    -year          group years together
+    -full          group the full date range together
 
   values in reports:
     -total         total values (default)
