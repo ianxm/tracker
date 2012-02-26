@@ -185,6 +185,33 @@ class TestRecordReport extends haxe.unit.TestCase
       assertEquals("2011-12 (1)\n", report.toString());
   }
 
+  public function testWeekHighestCount()
+  {
+      var report = new RecordReport(BIN_WEEK, KEEP_HIGHEST, COUNT);
+      report.include(Date.fromString("2012-01-01"), 1);
+      report.include(Date.fromString("2012-01-08"), 2);
+      report.include(Date.fromString("2012-01-08"), Main.NO_DATA);
+      assertEquals("2012-01-08 (1)\n", report.toString());
+  }
+
+  public function testWeekHighestAvg()
+  {
+      var report = new RecordReport(BIN_WEEK, KEEP_HIGHEST, AVG);
+      report.include(Date.fromString("2012-01-01"), 1);
+      report.include(Date.fromString("2012-01-08"), 2);
+      report.include(Date.fromString("2012-01-08"), Main.NO_DATA);
+      assertEquals("2012-01-08 (0.3)\n", report.toString());
+  }
+
+  public function testWeekHighestPercent()
+  {
+      var report = new RecordReport(BIN_WEEK, KEEP_HIGHEST, PERCENT);
+      report.include(Date.fromString("2012-01-01"), 1);
+      report.include(Date.fromString("2012-01-08"), 2);
+      report.include(Date.fromString("2012-01-08"), Main.NO_DATA);
+      assertEquals("2012-01-08 (14)\n", report.toString());
+  }
+
     /*
     //      this test uses Date.now()
   public function testMonthCurrent()

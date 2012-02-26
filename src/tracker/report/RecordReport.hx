@@ -6,17 +6,20 @@ import utils.Utils;
 
 class RecordReport implements Report
 {
-    private var bestScore :Float;
-    private var bestDateStr :String;
+    private var bestScore    :Float;
+    private var bestDateStr  :String;
 
-    private var binName :String;
-    private var filterName :String;
-    private var bins :Hash<Float>;
+    private var binName      :String;
+    private var filterName   :String;
+    private var bins         :Hash<Float>;
     private var startOfRange :Date;
 
-    private var checkBest :Float->String->Float->Bool;
-    private var dateToBin :Date->String;
-    private var oneBack :Date->Date;
+    private var checkBest    :Float->String->Float->Bool;   // check for the record
+    private var dateToBin    :Date->String;                 // convert date to bin string
+    private var valToBin     :Float -> Date -> Float;       // convert value to pack in bin
+    private var getDuration  :Date -> Int;                  // get num days for averaging
+    private var printVal     :Float -> Float;               // set precision of output
+    private var oneBack      :Date->Date;                   // get date one (day/week/month/year) ago
 
     public function new( bin :BinStrategy, keep :FilterStrategy, vt )
     {
@@ -52,6 +55,7 @@ class RecordReport implements Report
                 dateToBin = dateToYearBin;
                 oneBack = lastYear;
                 bestDateStr = dateToBin(Date.now());
+                getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
             }
         case BIN_MONTH:
             {
@@ -59,6 +63,7 @@ class RecordReport implements Report
                 dateToBin = dateToMonthBin;
                 oneBack = lastMonth;
                 bestDateStr = dateToBin(Date.now());
+                getDuration = DateTools.getMonthDays;
             }
         case BIN_WEEK:
             {
@@ -66,6 +71,7 @@ class RecordReport implements Report
                 dateToBin = dateToWeekBin;
                 oneBack = lastWeek;
                 bestDateStr = dateToBin(Date.now());
+                getDuration = function(date) { return 7; }
             }
         case BIN_DAY:
             {
@@ -73,6 +79,31 @@ class RecordReport implements Report
                 dateToBin = dateToDayBin;
                 oneBack = yesterday;
                 bestDateStr = dateToBin(Date.now());
+                getDuration = function(date) { return 1; }
+            }
+        }
+
+        switch( vt )
+        {
+        case TOTAL:
+            {
+                valToBin = function(val,date) { return val; }
+                printVal = Math.round;
+            }
+        case COUNT:
+            {
+                valToBin = function(val,date) { return 1; }
+                printVal = Math.round;
+            }
+        case AVG:
+            {
+                valToBin = function(val,date) { return val/getDuration(date); }
+                printVal = function(val) { return Math.round(val*10)/10; }
+            }
+        case PERCENT:
+            {
+                valToBin = function(val,date) { return 1/getDuration(date)*100; }
+                printVal = Math.round;
             }
         }
     }
@@ -94,6 +125,7 @@ class RecordReport implements Report
             return;
 
         var binStr = dateToBin(thisDay);
+        val = valToBin(val, thisDay);
         if( bins.exists(binStr) )
             bins.set(binStr, bins.get(binStr)+val);
         else
@@ -116,7 +148,7 @@ class RecordReport implements Report
                 bestDateStr = key;
             }
         }
-        return (( bestDateStr == null ) ? "none" : bestDateStr + " (" + bestScore + ")\n");
+        return (( bestDateStr == null ) ? "none" : bestDateStr + " (" + printVal(bestScore) + ")\n");
     }
 
     inline public function getLabel()
