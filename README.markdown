@@ -180,9 +180,10 @@ occurrences by day, but they can also be grouped in larger intervals.
       2012-02-05: 8
       2012-02-12: 12
 
-this is a log where each entry lists the totals for that week.  in
-addition to `-week`, tracker provides `-month`, `-year`, and `-full`,
-which combines all data into a single entry.
+this is a log where each entry lists the totals for that week.  so, on
+the week of the 12th, you spent 12 hours watching tv.  you should pare
+that back.  in addition to `-week`, tracker provides `-month`,
+`-year`, and `-full`, which combines all data into a single entry.
 
 in the last example, the values reported were sums of the metric
 values.  that's the default, but tracker can also provide counts of
@@ -193,25 +194,34 @@ occurrences:
       2012-02-05: 2
       2012-02-12: 3
 
-or averages of values.  here, tracker totals the values, then divides
-by the number of days in the interval (7 in this example, since we're
-looking at weeks).
+so, you watched tv on three days on the week of the 12th.
+
+you can also get averages of values.  here, tracker totals the values,
+then divides by the number of days in the interval (7 in this example,
+since we're looking at weeks).
 
     > tracker log watchedtv -week -count
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 1.1
       2012-02-12: 1.7
 
-or percentages of occurrences.  here, tracker counts the occurrences,
-then divides by the number of days in the interval (7 again) then
-converts to a percent.
+that says you spent 1.7 hours per day watching tv on the week of the
+12th.
+
+you can also get percentages of occurrences.  here, tracker counts the
+occurrences, then divides by the number of days in the interval (7
+again) then converts to a percent.
 
     > tracker log watchedtv -week -percentage
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 29
       2012-02-12: 43
 
-this shows the highest and lowest values for each interval.
+that says that you watched tv on 43% of the days of the week of the
+12th.
+
+the command below shows the highest and lowest values for each
+interval.
 
     > tracker records pushups pullups
               duration: 7 days from 2012-02-20 to 2012-02-26
@@ -236,7 +246,7 @@ this shows the highest and lowest values for each interval.
     longest off streak:   4 days starting on 2012-02-21
         current streak:   2 days starting on 2012-02-25 (on)
 
-this example shows totals, but the `-count`, `-avg` and `-percent`
+that example shows totals, but the `-count`, `-avg` and `-percent`
 options are available here also.
 
 
