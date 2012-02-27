@@ -1,3 +1,20 @@
+/*
+ Copyright (c) 2012, Ian Martins (ianxm@jhu.edu)
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+*/
 package tracker;
 
 using Lambda;
@@ -243,29 +260,29 @@ RANGE:
   DATE..DATE   days between specified dates (inclusive)
 
 DATE:
+  YYYY-MM-DD   specify a date
   today        specify day is today (default)
   yesterday    specify day is yesterday
-  YYYY-MM-DD   specify a date
   
 examples:
   > tracker init
                initialize the default repository
 
-  > tracker incr today bikecommute
-               increments bikecommute metric for today
+  > tracker incr 1 today bikecommute
+               increase bikecommute metric by 1 for today
 
   > tracker rm bikecommute
-               remove all bikecommute occurrences
+               remove bikecommute occurrence for today
 
   > tracker log -d 2012-01-01.. bikecommute
                show a log of all bikecommute occurrences since jan 1, 2012 
 
-  > tracker set -d yesterday --val 2 jogging
+  > tracker set 2 -d yesterday jogging
                set jogging occurrence to 2 for yesterday
 
   > tracker cal -d 2012-01-01.. wastedtime
                show wastedtime calendars for each month from jan 2012
-               untill the current month
+               until the current month
 ");
         Sys.exit(0);
     }
