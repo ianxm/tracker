@@ -66,16 +66,16 @@ maybe you just did a few more.  lets update the repo:
     set pushups to 55 for 2012-02-26
 
 that increased the existing value by 5.  with a negative value incr
-will reduce the metric's value.  if you don't specify a date, 'set'
-and 'incr' use the current day.  you can specify a date with the '-d'
+will reduce the metric's value.  if you don't specify a date, `set`
+and `incr` use the current day.  you can specify a date with the `-d`
 option:
 
     > tracker set 40 pushups -d 2012-02-20
     set pushups to 40 for 2012-02-20
 
 that added a '40' to the 'pushups' metric for feb 20th.  dates must be
-specified in 'YYYY-MM-DD' format, with two exceptions: 'today' and
-'yesterday' are valid dates.
+specified in `YYYY-MM-DD` format, with two exceptions: `today` and
+`yesterday` are valid dates.
 
     > tracker set 10 pullups -d yesterday
     set pullups to 10 for 2012-02-25
@@ -114,7 +114,7 @@ some reporting.
     - pullups     1 occurrence  from 2012-02-25 to 2012-02-25 (   1 day )
     - watchedtv   5 occurrences from 2012-02-10 to 2012-02-15 (   6 days)
 
-the 'info' command lists all metrics stored in the repo and gives
+the `info` command lists all metrics stored in the repo and gives
 their date ranges.
 
     > tracker streaks watchedtv
@@ -124,11 +124,11 @@ their date ranges.
        on   3 days from 2012-02-13
       off  11 days from 2012-02-16
 
-note: date ranges for modifier commands ('set', 'incr' and 'rm')
-default to 'today', but all other commands default to the full date
+note: date ranges for modifier commands (`set`, `incr` and `rm`)
+default to `today`, but all other commands default to the full date
 range.  all reports begin by specifying the full date range examined.
 
-the 'streaks' command lists runs of consecutive days with or without
+the `streaks` command lists runs of consecutive days with or without
 occurrences.  the full date range is from the first occurrence to the
 current day.
 
@@ -144,7 +144,7 @@ current day.
        .    _    _    _ 
 
 this is the calendar view of the same data.  here you can easily see
-the runs of on and off days that were listed by the 'streaks' output.
+the runs of on and off days that were listed by the `streaks` output.
 
 note: the underscores represent days in the future.
 
@@ -181,7 +181,7 @@ occurrences by day, but they can also be grouped in larger intervals.
       2012-02-12: 12
 
 this is a log where each entry lists the totals for that week.  in
-addition to '-week', tracker provides '-month', '-year', and '-full',
+addition to `-week`, tracker provides `-month`, `-year`, and `-full`,
 which combines all data into a single entry.
 
 in the last example, the values reported were sums of the metric
@@ -236,7 +236,7 @@ this shows the highest and lowest values for each interval.
     longest off streak:   4 days starting on 2012-02-21
         current streak:   2 days starting on 2012-02-25 (on)
 
-this example shows totals, but the '-count', '-avg' and '-percent'
+this example shows totals, but the `-count`, `-avg` and `-percent`
 options are available here also.
 
 
