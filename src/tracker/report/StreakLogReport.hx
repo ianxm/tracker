@@ -22,7 +22,7 @@ class StreakLogReport implements Report
     // val may be zero for first and last call
     public function include(occDay :Date, occVal :Float)
     {
-        if( lastDay == null )        // first
+        if( lastDay == null )                               // first
         {
             lastDay = occDay;
             if( occVal != Main.NO_DATA )
@@ -36,13 +36,13 @@ class StreakLogReport implements Report
         var delta = Utils.dayDelta(lastDay, occDay);
         //trace("delta: " + delta + " " +lastDay + " "  + occDay);
 
-        if( occVal==Main.NO_DATA && lastDay!=null )        // last
+        if( occVal==Main.NO_DATA && lastDay!=null )         // last
         {
             if( count > 0 )
                 append("on", count, startOfStreak);
             if( delta > 0 )
             {
-                if( count == 0 )                    // no occurrences
+                if( count == 0 )                            // no occurrences
                     append("off", delta+1, lastDay);
                 else
                     append("off", delta, Utils.dayShift(lastDay, 1));
@@ -50,19 +50,17 @@ class StreakLogReport implements Report
             return;
         }
 
-        if( delta==1 && count>0 )      // extend current on streak
-        {
+        if( delta==1 && count>0 )                           // extend current on streak
             count++;
-        }
-        else                                    // start new on streak
+        else                                                // start new on streak
         {
             if( count > 0 )
                 append("on", count, startOfStreak);
             if( delta > 0 )
-                if( count == 0 )                    // no occurrences
+                if( count == 0 )                            // no occurrences
                     append("off", delta, lastDay);
                 else
-                    append("off", delta, Utils.dayShift(lastDay, 1));
+                    append("off", delta-1, Utils.dayShift(lastDay, 1));
             startOfStreak = occDay;
             count = 1;
         }

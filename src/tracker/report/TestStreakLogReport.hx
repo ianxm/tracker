@@ -51,6 +51,15 @@ class TestStreakLogReport extends haxe.unit.TestCase
       assertEquals("no occurrences\n", report.toString());
   }
 
+  public function testOffOneDaySurrounded()
+  {
+      var report = new StreakLogReport();
+      report.include(Date.fromString("2012-01-01"), 1);
+      report.include(Date.fromString("2012-01-03"), 1);
+      report.include(Date.fromString("2012-01-03"), Main.NO_DATA);
+      assertEquals("   on   1 day  from 2012-01-01\n  off   1 day  from 2012-01-02\n   on   1 day  from 2012-01-03\n", report.toString());
+  }
+
   public function testOffFixed()
   {
       var report = new StreakLogReport();
@@ -93,6 +102,6 @@ class TestStreakLogReport extends haxe.unit.TestCase
       report.include(Date.fromString("2011-04-26"), 1);
       report.include(Date.fromString("2011-05-01"), 2);
       report.include(Date.fromString("2011-05-01"), Main.NO_DATA);
-      assertEquals("  off  25 days from 2011-04-01\n   on   1 day  from 2011-04-26\n  off   5 days from 2011-04-27\n   on   1 day  from 2011-05-01\n", report.toString());
+      assertEquals("  off  25 days from 2011-04-01\n   on   1 day  from 2011-04-26\n  off   4 days from 2011-04-27\n   on   1 day  from 2011-05-01\n", report.toString());
   }
 }
