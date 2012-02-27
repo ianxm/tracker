@@ -26,7 +26,9 @@ requirements
 installation
 ------------
 
-the easiest way to install is probably to install haxe, then run:
+the easiest way to install is probably to install haxe (haxe will
+install nekovm).  the haxe installer can be downloaded at
+http://haxe.org.  once that's installed, run:
 
   > haxelib install tracker
 

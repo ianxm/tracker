@@ -125,7 +125,7 @@ class ReportGenerator
                 }
             }
             while( !fifo.isEmpty() )                            // dump the fifo to stdout
-                Lib.print(fifo.pop());
+                Lib.print(fifo.pop() + "\n");
         }
     }
 }
