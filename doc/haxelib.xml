@@ -1,0 +1,8 @@
+<project name="tracker" url="http://github.com/ianxm/tracker" license="GPL">
+	<user name="ianxm"/>
+    <tag v="neko"/>
+	<description>personal metrics tracking tool</description>
+	<version name="0.6">first haxelib version</version>
+    <depends name="DeepHash"/>
+</project>
+
