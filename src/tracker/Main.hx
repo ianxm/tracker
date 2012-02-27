@@ -95,7 +95,7 @@ class Main
             case "streaks":     cmd = STREAKS;
             case "graph":       throw "graphs have not been implemented yet";
 
-            case "-d":                                  // date range
+            case "-d":                                      // date range
                 {
                     arg = args.shift();
                     var dateFix = function(ii) {
@@ -142,7 +142,13 @@ class Main
                         throw "unrecognized option: " + arg;
                 }
                 else
-                    metrics.add(arg);
+                {
+                    var path = neko.io.Path.directory(arg); // if run from haxelib, the last arg will be the haxelib dir
+                    if( args.length==0 && FileSystem.exists( path ) && FileSystem.isDirectory( path ) ) 
+                        Sys.setCwd( path );
+                    else
+                        metrics.add(arg);                   // it must be a metric
+                }
             }
         }
     }
