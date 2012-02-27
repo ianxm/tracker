@@ -71,7 +71,7 @@ class Tracker
         var count;
         var firstDate = null;
         var lastDate = null;
-        Lib.println("Current Metrics:");
+        Lib.println("current metrics:");
         for( metric in allMetrics  )
         {
             count = 0;
