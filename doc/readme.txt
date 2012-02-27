@@ -26,8 +26,7 @@ requirements
 installation
 ------------
 
-the easiest way to install is probably to install haxe and haxelib,
-then run:
+the easiest way to install is probably to install haxe, then run:
 
   > haxelib install tracker
 
@@ -83,25 +82,25 @@ that created the 'pullups' metric and set its value to '10' for feb
 25th (yesterday).
 
 tracker also accepts date ranges.  the following will set all of the
-days from feb 10th until the 15th (inclusive) to '4' for 'drankbeer':
+days from feb 10th until the 15th (inclusive) to '4' for 'watchedtv':
 
-  > tracker set 4 drankbeer -d 2012-02-10..2012-02-15
-  set drankbeer to 4 for 2012-02-10
-  set drankbeer to 4 for 2012-02-11
-  set drankbeer to 4 for 2012-02-12
-  set drankbeer to 4 for 2012-02-13
-  set drankbeer to 4 for 2012-02-14
-  set drankbeer to 4 for 2012-02-15
+  > tracker set 4 watchedtv -d 2012-02-10..2012-02-15
+  set watchedtv to 4 for 2012-02-10
+  set watchedtv to 4 for 2012-02-11
+  set watchedtv to 4 for 2012-02-12
+  set watchedtv to 4 for 2012-02-13
+  set watchedtv to 4 for 2012-02-14
+  set watchedtv to 4 for 2012-02-15
 
-tracker doesn't care about units.  the '4' could mean 4 bottles, or
-could mean 4 ounces.  lets say you didn't actually have a beer on the
+tracker doesn't care about units.  the '4' could mean 4 shows, or
+could mean 4 hours.  lets say you didn't actually watch tv on the
 12th.  you can delete that entry with:
 
-  > tracker rm drankbeer -d 2012-02-12
-  removed drankbeer for 2012-02-12
+  > tracker rm watchedtv -d 2012-02-12
+  removed watchedtv for 2012-02-12
 
 the date is important on that one.  if you left the date off, it would
-have tried to delete a 'drankbeer' entry for today (but there isn't
+have tried to delete a 'watchedtv' entry for today (but there isn't
 one).
 
 that's it for the commands that modify the repo.  now lets look at
@@ -111,12 +110,12 @@ some reporting.
   current metrics:
   - pushups     2 occurrences from 2012-02-20 to 2012-02-26 (   7 days)
   - pullups     1 occurrence  from 2012-02-25 to 2012-02-25 (   1 day )
-  - drankbeer   5 occurrences from 2012-02-10 to 2012-02-15 (   6 days)
+  - watchedtv   5 occurrences from 2012-02-10 to 2012-02-15 (   6 days)
 
 the 'info' command lists all metrics stored in the repo and gives
 their date ranges.
 
-  > tracker streaks drankbeer
+  > tracker streaks watchedtv
   duration: 17 days from 2012-02-10 to 2012-02-26
      on   2 days from 2012-02-10
     off   1 day  from 2012-02-12
@@ -131,7 +130,7 @@ the 'streaks' command lists runs of consecutive days with or without
 occurrences.  the full date range is from the first occurrence to the
 current day.
 
-  > tracker cal drankbeer
+  > tracker cal watchedtv
   duration: 29 days from 2012-02-01 to 2012-02-29
   
                Feb 2012
@@ -161,7 +160,7 @@ note: the underscores represent days in the future.
 this is the calendar for both the 'pullups' and 'pushups' metrics.
 listing multiple metrics will return occurrences of either.
 
-  > tracker log drankbeer
+  > tracker log watchedtv
   duration: 17 days from 2012-02-10 to 2012-02-26
     2012-02-10: 4
     2012-02-11: 4
@@ -171,10 +170,10 @@ listing multiple metrics will return occurrences of either.
 
 note: logs, like all reports, can be constrained using date ranges.
 
-this is a log of all 'drankbeer' occurrences.  by default, logs group
+this is a log of all 'watchedtv' occurrences.  by default, logs group
 occurrences by day, but they can also be grouped in larger intervals.
 
-  > tracker log drankbeer -week
+  > tracker log watchedtv -week
   duration: 17 days from 2012-02-10 to 2012-02-26
     2012-02-05: 8
     2012-02-12: 12
@@ -187,7 +186,7 @@ in the last example, the values reported were sums of the metric
 values.  that's the default, but tracker can also provide counts of
 occurrences:
 
-  > tracker log drankbeer -week -count
+  > tracker log watchedtv -week -count
   duration: 17 days from 2012-02-10 to 2012-02-26
     2012-02-05: 2
     2012-02-12: 3
@@ -196,7 +195,7 @@ or averages of values.  here, tracker totals the values, then divides
 by the number of days in the interval (7 in this example, since we're
 looking at weeks).
 
-  > tracker log drankbeer -week -count
+  > tracker log watchedtv -week -count
   duration: 17 days from 2012-02-10 to 2012-02-26
     2012-02-05: 1.1
     2012-02-12: 1.7
@@ -205,7 +204,7 @@ or percentages of occurrences.  here, tracker counts the occurrences,
 then divides by the number of days in the interval (7 again) then
 converts to a percent.
 
-  > tracker log drankbeer -week -percentage
+  > tracker log watchedtv -week -percentage
   duration: 17 days from 2012-02-10 to 2012-02-26
     2012-02-05: 29
     2012-02-12: 43
