@@ -101,7 +101,7 @@ class LogReport implements Report
 
     public function include(thisDay :Date, val :Float)
     {
-        if( val == Main.NO_DATA )
+        if( Main.IS_NO_DATA(val) )
             return;
 
         if( firstDay == null )

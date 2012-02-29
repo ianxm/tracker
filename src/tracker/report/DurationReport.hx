@@ -35,7 +35,7 @@ class DurationReport implements Report
     {
         if( firstDate == null )
             firstDate = thisDay;
-        else if( val == Main.NO_DATA )
+        else if( Main.IS_NO_DATA(val) )
             lastDate = thisDay;
     }
 

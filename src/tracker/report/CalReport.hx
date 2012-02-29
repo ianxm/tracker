@@ -49,7 +49,7 @@ class CalReport implements Report
         if( firstDay == null )
             firstDay = thisDay;
         lastDay = thisDay;
-        if( val != Main.NO_DATA )
+        if( !Main.IS_NO_DATA(val) )
             tree.set(pathFromDay(thisDay), valToBin(val));
     }
 

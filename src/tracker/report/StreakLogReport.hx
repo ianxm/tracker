@@ -42,7 +42,7 @@ class StreakLogReport implements Report
         if( lastDay == null )                               // first
         {
             lastDay = occDay;
-            if( occVal != Main.NO_DATA )
+            if( !Main.IS_NO_DATA(occVal) )
             {
                 startOfStreak = occDay;
                 count = 1;
@@ -53,7 +53,7 @@ class StreakLogReport implements Report
         var delta = Utils.dayDelta(lastDay, occDay);
         //trace("delta: " + delta + " " +lastDay + " "  + occDay);
 
-        if( occVal==Main.NO_DATA && lastDay!=null )         // last
+        if( Main.IS_NO_DATA(occVal) && lastDay!=null )         // last
         {
             if( count > 0 )
                 append("on", count, startOfStreak);

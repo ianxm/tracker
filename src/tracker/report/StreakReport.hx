@@ -119,7 +119,7 @@ class StreakReport implements Report
 
         if( delta == 1 )                                    // extend current on streak
             count++;
-        else if( occVal != Main.NO_DATA )                   // start new streak
+        else if( !Main.IS_NO_DATA(occVal) )                 // start new streak
         {
             startOfStreak = occDay;
             count = 1;
@@ -136,11 +136,11 @@ class StreakReport implements Report
 
         var delta = Utils.dayDelta(lastDay, occDay);
 
-        if( delta == 1 && occVal != Main.NO_DATA )          // extend current on streak
+        if( delta == 1 && !Main.IS_NO_DATA(occVal) )        // extend current on streak
             count++;
         else
         {
-            if( occVal != Main.NO_DATA )                    // start new on streak
+            if( !Main.IS_NO_DATA(occVal) )                  // start new on streak
             {
                 startOfStreak = occDay;
                 count = 1;

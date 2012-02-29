@@ -138,7 +138,7 @@ class RecordReport implements Report
                 bins.set(oneBackStr, 0);
         }
 
-        if( val == Main.NO_DATA )
+        if( Main.IS_NO_DATA(val) )
             return;
 
         var binStr = dateToBin(thisDay);

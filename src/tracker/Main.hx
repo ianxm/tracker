@@ -25,8 +25,10 @@ import utils.Utils;
 
 class Main
 {
-    public static var NO_DATA = -9999;
     private static var VERSION = "v0.6";
+
+    public static var NO_DATA = Math.NaN;
+    public static var IS_NO_DATA = Math.isNaN;
 
     private var dbFile     :String;
     private var metrics    :List<String>;
