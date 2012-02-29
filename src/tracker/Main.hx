@@ -235,7 +235,6 @@ class Main
         Lib.println("tracker "+ VERSION);
         Lib.println("
 usage: tracker command [options] [metric [metric..]]
-       tracker set [options] [metric [metric..]] [[=VAL][+VAL][-VAL]]
 
     if no date range is specified, the range is all days. 
     if no metric is given, tracker will list all metrics found.
@@ -247,7 +246,8 @@ commands:
     help           show help
 
   modify repository:
-    set            set (using =VAL) or increment (using +VAL or -VAL)
+    set            set or increment a value
+                   see 'set command options' below
     rm             remove occurrences
 
   import/export:
@@ -264,11 +264,16 @@ commands:
     graph          draw graph (requires gnuplot)
   
 options:
+  set command options:
+    =N             set metrics to N
+    +N             increment metrics by N
+    -N             decrement metrics by N
+
   general:
     -d RANGE       specify date range (see RANGE below)
     -o FILE        write graph image to a file
     -N             limit output to the last N items
-                   this affects 'streaks' and the log commands
+                   this only affects the 'streaks' and 'log' commands
     --all          select all existing metrics
     --repo FILE    specify a repository filename
     --min VAL      min threshold to count as an occurrence
