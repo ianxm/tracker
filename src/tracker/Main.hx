@@ -25,7 +25,7 @@ import utils.Utils;
 
 class Main
 {
-    private static var VERSION = "v0.6";
+    private static var VERSION = "v0.7";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;
@@ -60,8 +60,8 @@ class Main
             {
             case INIT:       worker.init();
             case INFO:       worker.info();
-            case INCR:       worker.incr(val);
             case SET:        worker.set(val);
+            case INCR:       worker.incr(val);
             case REMOVE:     worker.remove();
             case CSV_EXPORT: worker.exportCsv(fname);
             case CSV_IMPORT: worker.importCsv(fname);
@@ -77,26 +77,32 @@ class Main
     private function parseArgs()
     {
         var args = Sys.args();
-        while( args.length>0 )
+
+        var arg = args.shift();
+        switch( arg )                                       // process command first
         {
-            var arg = args.shift();
+        case "init":    cmd = INIT;
+        case "info":    cmd = INFO;
+
+        case "set":     cmd = SET;
+        case "rm":      cmd = REMOVE;
+
+        case "cal":     cmd = CAL;
+        case "log":     cmd = LOG;
+        case "export":  cmd = CSV_EXPORT;
+        case "import":  { cmd = CSV_IMPORT; fname = args.shift(); }
+        case "records": cmd = RECORDS;
+        case "streaks": cmd = STREAKS;
+        case "graph":   throw "graphs have not been implemented yet";
+
+        default:        throw "the first argument must be a command (try -h for help)";
+        }
+
+        while( args.length>0 )                              // process options and metrics
+        {
+            arg = args.shift();
             switch( arg )
             {
-            case "init":        cmd = INIT;
-            case "info":        cmd = INFO;
-
-            case "incr":        { cmd = INCR; val = Std.parseFloat(args.shift()); }
-            case "set":         { cmd = SET; val = Std.parseFloat(args.shift()); }
-            case "rm":          cmd = REMOVE;
-
-            case "cal":         cmd = CAL;
-            case "log":         cmd = LOG;
-            case "export":      cmd = CSV_EXPORT;
-            case "import":      { cmd = CSV_IMPORT; fname = args.shift(); }
-            case "records":     cmd = RECORDS;
-            case "streaks":     cmd = STREAKS;
-            case "graph":       throw "graphs have not been implemented yet";
-
             case "-d":                                      // date range
                 {
                     arg = args.shift();
@@ -137,11 +143,42 @@ class Main
             case "-percent":  valType = PERCENT;
 
             default:                                        // else assume it is a metric
-                if( StringTools.startsWith(arg, "-") )
+                if( StringTools.startsWith(arg, "=") )
+                    if( cmd == SET )
+                    {
+                        val = Std.parseFloat(arg.substr(1)); // see if its a set val
+                        if( Math.isNaN(val) )
+                            throw "unrecognized option: " + arg;
+                    }
+                    else
+                        throw "the '=VAL' option can only be used with a set command ";
+                else if( StringTools.startsWith(arg, "+") )
                 {
-                    tail = Std.parseInt(arg.substr(1));     // see if its a tail arg
-                    if( tail == null )
-                        throw "unrecognized option: " + arg;
+                    if( cmd == SET )
+                    {
+                        val = Std.parseFloat(arg.substr(1)); // see if its a decr val
+                        if( Math.isNaN(val) )
+                            throw "unrecognized option: " + arg;
+                        cmd = INCR;
+                    }
+                    else
+                        throw "the '+VAL' option can only be used with a set command ";
+                }
+                else if( StringTools.startsWith(arg, "-") )
+                {
+                    if( cmd == SET )
+                    {
+                        val = -1*Std.parseFloat(arg.substr(1)); // see if its a decr val
+                        if( Math.isNaN(val) )
+                            throw "unrecognized option: " + arg;
+                        cmd = INCR;
+                    }
+                    else
+                    {
+                        tail = Std.parseInt(arg.substr(1));     // see if its a tail arg
+                        if( tail == null )
+                            throw "unrecognized option: " + arg;
+                    }
                 }
                 else
                 {
@@ -158,20 +195,11 @@ class Main
     // set defaults after args have been processed
     private function setDefaults()
     {
-        if( cmd == null )
-            throw "a command must be specified (try -h for help)";
-
-        if( cmd == SET && Math.isNaN(val) )                 // check that set has a val
-            throw "set must be followed by a number";
-
-        if( cmd == INCR && Math.isNaN(val) )                // check that incr has a val
-            throw "incr must be followed by a number";
-
         if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT ) // list metrics if no metrics specified
             cmd = INFO;
 
                                                             // fix range if not specified
-        if( range[0] == null && ( cmd==INCR || cmd==SET || cmd==REMOVE ) )
+        if( range[0] == null && ( cmd==SET || cmd==INCR || cmd==REMOVE ) )
             range[0] = Utils.dayStr(Date.now());
         if( range[1] == null )
             range[1] = Utils.dayStr(Date.now());
@@ -207,6 +235,7 @@ class Main
         Lib.println("tracker "+ VERSION);
         Lib.println("
 usage: tracker command [options] [metric [metric..]]
+       tracker set [options] [metric [metric..]] [[=VAL][+VAL][-VAL]]
 
     if no date range is specified, the range is all days. 
     if no metric is given, tracker will list all metrics found.
@@ -218,8 +247,7 @@ commands:
     help           show help
 
   modify repository:
-    incr VAL       increment a value
-    set VAL        set a value
+    set            set (using =VAL) or increment (using +VAL or -VAL)
     rm             remove occurrences
 
   import/export:
@@ -276,7 +304,10 @@ examples:
   > tracker init
                initialize the default repository
 
-  > tracker incr 1 today bikecommute
+  > tracker set -d yesterday jogging =2
+               set jogging occurrence to 2 for yesterday
+
+  > tracker set -d today bikecommute +1
                increase bikecommute metric by 1 for today
 
   > tracker rm bikecommute
@@ -284,9 +315,6 @@ examples:
 
   > tracker log -d 2012-01-01.. bikecommute
                show a log of all bikecommute occurrences since jan 1, 2012 
-
-  > tracker set 2 -d yesterday jogging
-               set jogging occurrence to 2 for yesterday
 
   > tracker cal -d 2012-01-01.. wastedtime
                show wastedtime calendars for each month from jan 2012
@@ -305,8 +333,8 @@ enum Command
 {
     INIT;                                                   // initialize a db file
     INFO;                                                   // metrics list and duration
-    INCR;                                                   // increment a day
     SET;                                                    // set the value for a day
+    INCR;                                                   // incrthe value for a day
     REMOVE;                                                 // clear a value for a day
     CAL;                                                    // show calendar
     LOG;                                                    // show log by day

@@ -55,29 +55,29 @@ if that didn't crash, I guess your installation is ok.
 
 now lets put something in the repo:
 
-    > tracker set 50 pushups
+    > tracker set pushups =50
     set pushups to 50 for 2012-02-26
 
 that created a metric call 'pushups' and stored '50' in it for today
 (2012-02-26).  values can have decimal parts and can be negative.
 maybe you just did a few more.  lets update the repo:
 
-    > tracker incr 5 pushups
+    > tracker set pushups +5
     set pushups to 55 for 2012-02-26
 
-that increased the existing value by 5.  with a negative value incr
-will reduce the metric's value.  if you don't specify a date, `set`
-and `incr` use the current day.  you can specify a date with the `-d`
-option:
+that increased the existing value by 5.  a '-5' will decrease the
+metric's value.  if you don't specify a date, `set` uses the current
+day.  you can specify a date with the `-d` option:
 
-    > tracker set 40 pushups -d 2012-02-20
+    > tracker set =40 pushups -d 2012-02-20
     set pushups to 40 for 2012-02-20
 
-that added a '40' to the 'pushups' metric for feb 20th.  dates must be
-specified in `YYYY-MM-DD` format, with two exceptions: `today` and
-`yesterday` are valid dates.
+that set '40' to the 'pushups' metric for feb 20th.  the order of
+arguments doesn't matter except that the first argument must be the
+command.  dates must be specified in `YYYY-MM-DD` format, with two
+exceptions: `today` and `yesterday` are valid dates.
 
-    > tracker set 10 pullups -d yesterday
+    > tracker set pullups =10 -d yesterday
     set pullups to 10 for 2012-02-25
 
 that created the 'pullups' metric and set its value to '10' for feb
@@ -86,7 +86,7 @@ that created the 'pullups' metric and set its value to '10' for feb
 tracker also accepts date ranges.  the following will set all of the
 days from feb 10th until the 15th (inclusive) to '4' for 'watchedtv':
 
-    > tracker set 4 watchedtv -d 2012-02-10..2012-02-15
+    > tracker set watchedtv =4 -d 2012-02-10..2012-02-15
     set watchedtv to 4 for 2012-02-10
     set watchedtv to 4 for 2012-02-11
     set watchedtv to 4 for 2012-02-12
@@ -124,9 +124,9 @@ their date ranges.
        on   3 days from 2012-02-13
       off  11 days from 2012-02-16
 
-note: date ranges for modifier commands (`set`, `incr` and `rm`)
-default to `today`, but all other commands default to the full date
-range.  all reports begin by specifying the full date range examined.
+note: date ranges for modifier commands (`set` and `rm`) default to
+`today`, but all other commands default to the full date range.  all
+reports begin by specifying the full date range examined.
 
 the `streaks` command lists runs of consecutive days with or without
 occurrences.  the full date range is from the first occurrence to the
