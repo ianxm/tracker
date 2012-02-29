@@ -5,7 +5,9 @@ rm tracker.zip
 mkdir dist
 
 cp -r src/* dist
-cp doc/*.txt doc/*.xml dist
+cp README.markdown dist
+cp LICENSE dist
+cp doc/haxelib.xml dist
 
 cd dist
 mv tracker.n run.n
