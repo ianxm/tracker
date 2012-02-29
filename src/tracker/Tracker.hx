@@ -84,11 +84,18 @@ class Tracker
             return;
         }
 
-        var nameWidth = allMetrics.fold(function(name,width:Int) return Std.int(Math.max(name.length,width)), 0);
+        var nameWidth = allMetrics.fold(function(name,width:Int) return Std.int(Math.max(name.length,width)), 5);
         var count;
         var firstDate = null;
         var lastDate = null;
-        Lib.println("current metrics:");
+        var buf = new StringBuf();
+        var padding = Math.round((nameWidth-"metric".length)/2);
+        for( ii in 0...padding )
+            buf.add(" ");
+        buf.add("metric");
+        for( ii in 0...padding )
+            buf.add(" ");
+        buf.add(" count  first       last      days\n");
         for( metric in allMetrics  )
         {
             count = 0;
@@ -103,12 +110,12 @@ class Tracker
                 count++;
             }
             var duration = Utils.dayDelta(Utils.day(firstDate), Utils.day(lastDate))+1;
-            Lib.println("- "+ metric.rpad(" ",nameWidth) +" "+ 
-                        Std.string(count).lpad(" ",3) +
-                        ((count==1) ? " occurrence  " : " occurrences ") +
-                        "from "+ firstDate +" to "+ lastDate +
-                        " ("+ Std.string(duration).lpad(" ",4) + ((duration==1) ? " day " : " days")+ ")");
+            buf.add(metric.rpad(" ",nameWidth) +"  "+ 
+                    Std.string(count).lpad(" ",3) + 
+                    "  "+ firstDate +"  "+ lastDate +
+                    "  "+ Std.string(duration).lpad(" ",4) + "\n");
         }
+        Lib.println(buf.toString());
     }
 
     // output all metrics as a csv
