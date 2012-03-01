@@ -95,6 +95,10 @@ class Main
         case "streaks": cmd = STREAKS;
         case "graph":   throw "graphs have not been implemented yet";
         case "help":    printHelp();
+        case "-v",
+            "--version":  printVersion();
+        case "-h",
+            "--help":     printHelp();
 
         default:        throw "the first argument must be a command (try -h for help)";
         }
