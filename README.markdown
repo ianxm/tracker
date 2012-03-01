@@ -14,7 +14,7 @@ generate a variety of reports from its data.  tracker is like a
 command line interface to a spreadsheet.
 
 
-requirements
+dependencies
 ------------
 
 - nekovm
@@ -26,9 +26,14 @@ requirements
 installation
 ------------
 
-the easiest way to install is probably to install haxe (haxe will
-install nekovm).  the haxe installer can be downloaded at
-http://haxe.org.  once that's installed, run:
+there are two ways to install.  either install haxe (which installs
+nekovm) and use its package manager to install tracker, or manaully
+install nekovm and copy the tracker binary onto your system.
+
+option 1:
+
+the haxe installer can be downloaded at
+[haxe.org](http://haxe.org/download).  once that's installed, run:
 
     haxelib install tracker
 
@@ -39,6 +44,17 @@ then run tracker with:
 I find it convenient to set an alias
 
     alias tracker='haxelib run tracker'
+
+
+option 2:
+
+download the nekovm installer from
+[nekovm.org](http://nekovm.org/download).  once that's installed,
+download tracker.n from
+[github](https://github.com/downloads/ianxm/tracker/tracker.n).  now
+you can run with:
+
+    neko tracker.n
 
 
 tutorial
@@ -59,7 +75,9 @@ now lets put something in the repo:
     set pushups to 50 for 2012-02-26
 
 that created a metric call 'pushups' and stored '50' in it for today
-(2012-02-26).  values can have decimal parts and can be negative.
+(2012-02-26).  the space between the 'pushups' and '=50' is important.
+values can have decimal parts and can be negative.
+
 maybe you just did a few more.  lets update the repo:
 
     > tracker set pushups +5
@@ -109,10 +127,10 @@ that's it for the commands that modify the repo.  now lets look at
 some reporting.  
 
     > tracker info
-    current metrics:
-    - pushups     2 occurrences from 2012-02-20 to 2012-02-26 (   7 days)
-    - pullups     1 occurrence  from 2012-02-25 to 2012-02-25 (   1 day )
-    - watchedtv   5 occurrences from 2012-02-10 to 2012-02-15 (   6 days)
+     metric  count  first         last      days
+    pushups     2 2012-02-20 to 2012-02-26     7
+    pullups     1 2012-02-25 to 2012-02-25     1
+    watchedtv   5 2012-02-10 to 2012-02-15     6
 
 the `info` command lists all metrics stored in the repo and gives
 their date ranges.
@@ -200,7 +218,7 @@ you can also get averages of values.  here, tracker totals the values,
 then divides by the number of days in the interval (7 in this example,
 since we're looking at weeks).
 
-    > tracker log watchedtv -week -count
+    > tracker log watchedtv -week -avg
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 1.1
       2012-02-12: 1.7
@@ -249,7 +267,80 @@ interval.
 that example shows totals, but the `-count`, `-avg` and `-percent`
 options are available here also.
 
-
-
 that's all for now.  tracker will be able to generate graphs using
 gnuplot but that's not done yet.
+
+
+reference
+---------
+
+usage: tracker command [options] [metric [metric..]]
+
+    if no date range is specified, the range is all days. 
+    if no metric is given, tracker will list all metrics found.
+
+commands:
+  general:
+    init           initialize a repository
+    info           list existing metrics and date ranges
+    help           show help
+
+  modify repository:
+    set            set or increment a value
+                   see 'set command options' below
+    rm             remove occurrences
+
+  import/export:
+    export         export data to csv format
+                   this will write to stdout unless -o is given
+    import FILE    import data from a csv file
+                   with the columns: date,metric,value
+
+  reporting:
+    log            view log of occurrences
+    cal            show calendar
+    records        show high and low records
+    streaks        show consecutive days with or without occurrences
+    graph          draw graph (requires gnuplot)
+  
+options:
+  set command options:
+    =N             set metrics to N
+    +N             increment metrics by N
+    -N             decrement metrics by N
+
+  general:
+    -d RANGE       specify date range (see RANGE below)
+    -o FILE        write graph image to a file
+    -N             limit output to the last N items
+                   this only affects the 'streaks' and 'log' commands
+    --all          select all existing metrics
+    --repo FILE    specify a repository filename
+    --min VAL      min threshold to count as an occurrence
+    -v, --version  show version
+    -h, --help     show help
+
+  date groupings for reports:
+    (these are only used by the 'log' and 'graph' commands)
+    -day           each day is separate (default)
+    -week          group weeks together
+    -month         group months together
+    -year          group years together
+    -full          group the full date range together
+
+  values in reports:
+    -total         total values (default)
+    -count         count of occurrences
+    -avg           average values by duration
+    -percent       show values as the percent of occurrence of duration
+
+RANGE:
+  DATE         only the specified date
+  DATE..       days from the given date until today
+  ..DATE       days from the start of the data to the specified date
+  DATE..DATE   days between specified dates (inclusive)
+
+DATE:
+  YYYY-MM-DD   specify a date
+  today        specify day is today (default)
+  yesterday    specify day is yesterday

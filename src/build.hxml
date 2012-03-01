@@ -1,3 +1,3 @@
--neko tracker.n
+-neko ../bin/tracker.n
 -lib DeepHash
 -main tracker.Main
