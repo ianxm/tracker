@@ -243,12 +243,12 @@ class Tracker
     // get a metric id, create it if it doesn't exist
     private function getOrCreateMetric(metric :String) :Int
     {
-        var rs = db.request("SELECT id FROM metrics WHERE name='"+ metric +"'");
+        var rs = db.request("SELECT id FROM metrics WHERE name="+ db.quote(metric));
         return if( rs.length != 0 )
             rs.next().id;
         else
         {                                                   // add metric if its new
-            db.request("INSERT INTO metrics VALUES (null, '"+ metric +"')");
+            db.request("INSERT INTO metrics VALUES (null, "+ db.quote(metric) +")");
             getOrCreateMetric(metric);
         }
     }
@@ -322,7 +322,7 @@ class Tracker
         var select = new StringBuf();
         select.add("SELECT ");
         select.add((shouldCombine) ? "metric, date, sum(value) as value " : "* ");
-        select.add("FROM full WHERE ("+ metrics.map(function(ii) return "metric='"+ii+"'").join(" OR ") +") ");
+        select.add("FROM full WHERE ("+ metrics.map(function(ii) return "metric="+db.quote(ii)).join(" OR ") +") ");
         if( range[0]!=null )                               // start..
             select.add("AND date >= '"+ range[0] +"' ");
         if( range[1]!=null )                               // ..end
