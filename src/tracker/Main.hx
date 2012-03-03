@@ -222,8 +222,6 @@ class Main
         if( fname != null )
             if( cmd == GRAPH )
                 Lib.println("saving graph to: " + fname);
-            else if( cmd == CSV_IMPORT )
-                Lib.println("reading: " + FileSystem.fullPath(fname));
             else if( cmd == CSV_EXPORT )
                 Lib.println("writing csv to: " + fname);
     }
