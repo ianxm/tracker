@@ -114,11 +114,13 @@ class TestRecordReport extends haxe.unit.TestCase
 
     // month tests
 
+    /*
   public function testMonthEmpty()
   {
       var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST, TOTAL);
       assertEquals("2012-02 (0)\n", report.toString());
   }
+*/
 
   public function testMonthOne()
   {
