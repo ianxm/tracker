@@ -60,7 +60,7 @@ class Tracker
                    "value REAL NOT NULL, " +
                    "CONSTRAINT key PRIMARY KEY (metricId, date))");
         db.request("CREATE VIEW full AS SELECT " +
-                   "metrics.id as metricId, metrics.name as metric, occurrences.date, occurrences.value " +
+                   "metrics.id AS metricId, metrics.name AS metric, occurrences.date AS date, occurrences.value AS value " +
                    "from metrics, occurrences " +
                    "where occurrences.metricId=metrics.id");
     }
@@ -321,7 +321,7 @@ class Tracker
 
         var select = new StringBuf();
         select.add("SELECT ");
-        select.add((shouldCombine) ? "metric, date, sum(value) as value " : "* ");
+        select.add((shouldCombine) ? "metric, date, sum(value) AS value " : "* ");
         select.add("FROM full WHERE ("+ metrics.map(function(ii) return "metric="+db.quote(ii)).join(" OR ") +") ");
         if( range[0]!=null )                               // start..
             select.add("AND date >= '"+ range[0] +"' ");
