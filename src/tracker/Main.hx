@@ -25,7 +25,7 @@ import utils.Utils;
 
 class Main
 {
-    private static var VERSION = "v0.7";
+    private static var VERSION = "v0.8";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;

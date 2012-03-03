@@ -2,7 +2,7 @@
 	<user name="ianxm"/>
     <tag v="neko"/>
 	<description>personal metrics tracking tool</description>
-	<version name="0.7">changed set command options</version>
+	<version name="0.8">fixed db view for windows</version>
     <depends name="DeepHash"/>
 </project>
 
