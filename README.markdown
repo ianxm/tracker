@@ -35,15 +35,15 @@ option 1:
 the haxe installer can be downloaded at
 [haxe.org](http://haxe.org/download).  once that's installed, run:
 
-    haxelib install tracker
+    > haxelib install tracker
 
 then run tracker with:
 
-    haxelib run tracker
+    > haxelib run tracker
 
 I find it convenient to set an alias
 
-    alias tracker='haxelib run tracker'
+    > alias tracker='haxelib run tracker'
 
 
 option 2:
@@ -54,7 +54,7 @@ download tracker.n from
 [github](https://github.com/downloads/ianxm/tracker/tracker.n).  now
 you can run with:
 
-    neko tracker.n
+    > neko tracker
 
 
 tutorial
