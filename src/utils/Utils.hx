@@ -19,47 +19,67 @@ package utils;
 
 import neko.Lib;
 import neko.Sys;
+import altdate.Gregorian;
 
 class Utils
 {
     // get a dayStr (YYYY-MM-DD) from a date or string (parse the string to ensure 
     // it is properly formatted
-    public static function dayStr( ?date :Date, ?str :String ) :String
+    public static function dayStr( ?date :Date, ?str :String )
     {
-        var date = day(str, date);
-        return (date==null) ? null : date.toString().substr(0, 10);
+        var d = if( date != null )
+            dayFromDate(date);
+        else
+            dayFromString(str);
+        return (d==null) ? null : d.toString();
     }
 
-    public static function day( ?str :String, ?date :Date ) :Date
+    public static function dayFromString( str :String ) :Gregorian
     {
-        if( date==null && day==null )
+        var date;
+        if( str == null || str == "" )
             return null;
-        if ( str!=null )
-        {
-            if( str=="" )
-                return null;
-            try {
-                date = Date.fromString(str);
-            } catch ( e:Dynamic ) {
-                throw "date must be YYYY-MM-DD";
-            }
+        try {
+            date = Date.fromString(str);
+        } catch ( e:Dynamic ) {
+            throw "date must be YYYY-MM-DD";
         }
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+        return dayFromDate(date);
     }
 
-    inline public static function dayToStr( date :Date ) :String
+    public static function dayFromJulian( julianDay :Float )
     {
-        return (date==null) ? null : date.toString().substr(0, 10);
+        var g = new Gregorian();
+        g.value = julianDay;
+        return g;
     }
 
-    inline public static function dayShift( date :Date, days :Int )
+    public static function today() :Gregorian
     {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate()+days, 0, 0, 0);
+        return dayFromDate(Date.now());
     }
 
-    inline public static function dayDelta( date1 :Date, date2 :Date ) :Int
+    public static function dayFromDate( date :Date ) :Gregorian
     {
-        return Std.int(Math.ceil((date2.getTime()-date1.getTime())/(1000*60*60*24)));
+        var g = new Gregorian();
+        g.set(false, null, date.getFullYear(), date.getMonth(), date.getDate());
+        return g;
+    }
+
+    public static function dayToStr( date :Gregorian ) :String
+    {
+        return (date==null) ? null : date.toString();
+    }
+
+    public static function dayShift( date :Gregorian, days :Int )
+    {
+        date.day += days;
+        return date;
+    }
+
+    public static function dayDelta( date1 :Gregorian, date2 :Gregorian ) :Int
+    {
+       return Std.int(date2.value-date1.value);
     }
 
     inline public static function tenths(val :Float) :Float

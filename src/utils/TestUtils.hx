@@ -29,38 +29,42 @@ class TestUtils extends haxe.unit.TestCase
         assertEquals("2012-02-29", Utils.dayStr(new Date(2012, 01, 29, 0, 0, 0)));
     }
 
-    public function testDay()
+    public function testDayFromString()
     {
-        assertEquals("2010-01-01 00:00:00", Utils.day(new Date(2010, 00, 01, 0, 0, 0)).toString());
-        assertEquals("2012-02-29 00:00:00", Utils.day(new Date(2012, 01, 29, 0, 0, 0)).toString());
-        assertEquals("2011-03-01 00:00:00", Utils.day(new Date(2011, 01, 29, 0, 0, 0)).toString());
+        assertEquals("2010-01-01", Utils.dayFromString("2010-01-01").toString());
+        assertEquals("2012-02-29", Utils.dayFromString("2012-02-29").toString());
+        assertEquals("2011-03-01", Utils.dayFromString("2011-03-01").toString());
+        assertEquals("2011-03-13", Utils.dayFromString("2011-03-13").toString());
     }
 
-    public function testDayToStr()
+    public function testDayFromDate()
     {
-        assertEquals("2010-01-01", Utils.dayToStr(new Date(2010, 00, 01, 1, 0, 0)).toString());
-        assertEquals("2012-02-29", Utils.dayToStr(new Date(2012, 01, 29, 0, 2, 0)).toString());
-        assertEquals("2011-03-01", Utils.dayToStr(new Date(2011, 01, 29, 0, 0, 3)).toString());
+        assertEquals("2010-01-01", Utils.dayFromDate(new Date(2010, 00, 01, 0, 0, 0)).toString());
+        assertEquals("2012-02-29", Utils.dayFromDate(new Date(2012, 01, 29, 0, 0, 0)).toString());
+        assertEquals("2011-03-01", Utils.dayFromDate(new Date(2011, 01, 29, 0, 0, 0)).toString());
+    }
+
+    public function testDayFromJulian()
+    {
+        assertEquals("2010-01-01", Utils.dayFromJulian(2455197.5).toString());
+        assertEquals("2012-02-29", Utils.dayFromJulian(2455986.5).toString());
+        assertEquals("2011-03-01", Utils.dayFromJulian(2455621.5).toString());
+        assertEquals("2011-03-13", Utils.dayFromJulian(2455633.5).toString());
     }
 
     public function testDayShift()
     {
-        assertEquals("2010-01-02 00:00:00", Utils.dayShift(new Date(2010, 00, 01, 0, 0, 0), 1).toString());
-        assertEquals("2009-12-31 00:00:00", Utils.dayShift(new Date(2010, 00, 01, 0, 0, 0), -1).toString());
-        assertEquals("2012-01-01 00:00:00", Utils.dayShift(new Date(2012, 00, 14, 0, 0, 0), -13).toString());
+        assertEquals("2010-01-02", Utils.dayShift(Utils.dayFromString("2010-01-01"), 1).toString());
+        assertEquals("2009-12-31", Utils.dayShift(Utils.dayFromString("2010-01-01"), -1).toString());
+        assertEquals("2012-01-01", Utils.dayShift(Utils.dayFromString("2012-01-14"), -13).toString());
     }
-    /*
-    public function testDateBug()
-    {
-        assertEquals("2011-03-13 00:00:00", new Date(2011, 02, 13, 0, 0, 0).toString());
-    }
-    */
+
     public function testDayDelta()
     {
-        assertEquals(2, Utils.dayDelta(new Date(2010, 00, 01, 0, 0, 0), new Date(2010, 00, 03, 0, 0, 0)));
-        assertEquals(-2, Utils.dayDelta(new Date(2010, 00, 03, 0, 0, 0), new Date(2010, 00, 01, 0, 0, 0)));
-        assertEquals(-2, Utils.dayDelta(new Date(2010, 00, 01, 0, 0, 0), new Date(2009, 11, 30, 0, 0, 0)));
-        assertEquals(3, Utils.dayDelta(new Date(2009, 11, 29, 0, 0, 0), new Date(2010, 00, 01, 0, 0, 0)));
+        assertEquals(2, Utils.dayDelta(Utils.dayFromString("2010-01-01"), Utils.dayFromString("2010-01-03")));
+        assertEquals(-2, Utils.dayDelta(Utils.dayFromString("2010-01-03"), Utils.dayFromString("2010-01-01")));
+        assertEquals(-2, Utils.dayDelta(Utils.dayFromString("2010-01-01"), Utils.dayFromString("2009-12-30")));
+        assertEquals(3, Utils.dayDelta(Utils.dayFromString("2009-12-29"), Utils.dayFromString("2010-01-01")));
     }
 
     public function testTenths()

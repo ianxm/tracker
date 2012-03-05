@@ -26,14 +26,12 @@ import tracker.report.Report;
 
 class ReportGenerator
 {
-    private var range   :Array<String>;
     private var reports :List<Report>;
     private var indent  :Bool;
     private var tail    :Int;
 
-    public function new(r, t)
+    public function new(t)
     {
-        range = r;
         tail = t;
         reports = new List<Report>();
         indent = false;

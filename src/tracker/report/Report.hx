@@ -16,10 +16,11 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 */
 package tracker.report;
+import altdate.Gregorian;
 
 interface Report
 {
-    public function include(thisDay :Date, val :Float) :Void;
+    public function include(thisDay :Gregorian, val :Float) :Void;
     public function getLabel() :String;
     public function toString() :String;
 }

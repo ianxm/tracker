@@ -22,17 +22,18 @@ import neko.Lib;
 import neko.Sys;
 import neko.FileSystem;
 import utils.Utils;
+import altdate.Gregorian;
 
 class Main
 {
-    private static var VERSION = "v0.8";
+    private static var VERSION = "v0.9";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;
 
     private var dbFile     :String;
     private var metrics    :List<String>;
-    private var range      :Array<String>;
+    private var range      :Array<Gregorian>;
     private var val        :Float;
     private var cmd        :Command;
     private var valType    :ValType;
@@ -113,9 +114,9 @@ class Main
                     arg = args.shift();
                     var dateFix = function(ii) {
                         return switch(ii){
-                        case "today":     Utils.dayStr(Date.now());
-                        case "yesterday": Utils.dayStr(Utils.dayShift(Date.now(),-1));
-                        default:          Utils.dayStr(ii);
+                        case "today":     Utils.today();
+                        case "yesterday": Utils.dayShift(Utils.today(),-1);
+                        default:          Utils.dayFromString(ii);
                         }
                     }
                     if( arg.indexOf("..")!=-1 )
@@ -204,16 +205,17 @@ class Main
 
                                                             // fix range if not specified
         if( range[0] == null && ( cmd==SET || cmd==INCR || cmd==REMOVE ) )
-            range[0] = Utils.dayStr(Date.now());
+            range[0] = Utils.today();
         if( range[1] == null )
-            range[1] = Utils.dayStr(Date.now());
+            range[1] = Utils.today();
 
         if( cmd == CAL )                                    // always cal by full month
         {
-            var r0 = (range[0]==null) ? Utils.day(Date.now()) : Utils.day(range[0]);
-            var r1 = Utils.day(range[1]);
-            range[0] = Utils.dayStr(new Date(r0.getFullYear(), r0.getMonth(), 1, 0, 0, 0));
-            range[1] = Utils.dayStr(new Date(r1.getFullYear(), r1.getMonth()+1, 0, 0, 0, 0));
+            if( range[0] == null )
+                range[0] = Utils.today();
+            range[0].day = 1;
+            range[1].month += 1;
+            range[1].day = 0;
         }
 
         if( dbFile == null )                                // use default repo

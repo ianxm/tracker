@@ -26,7 +26,7 @@ import neko.FileSystem;
 import neko.db.Sqlite;
 import neko.db.Connection;
 import neko.db.Manager;
-
+import altdate.Gregorian;
 import tracker.Main;
 import utils.Utils;
 
@@ -34,7 +34,7 @@ class Tracker
 {
     private var dbFile  :String;
     private var metrics :List<String>;
-    private var range   :Array<String>;
+    private var range   :Array<Gregorian>;
     private var db      :Connection;
 
     public function new(f, m, r)
@@ -105,11 +105,11 @@ class Tracker
             for( occ in occurrences )
             {
                 if( firstDate == null )
-                    firstDate = occ.date;
-                lastDate = occ.date;
+                    firstDate = Utils.dayFromJulian(occ.date);
+                lastDate = Utils.dayFromJulian(occ.date);
                 count++;
             }
-            var duration = Utils.dayDelta(Utils.day(firstDate), Utils.day(lastDate))+1;
+            var duration = Utils.dayDelta(firstDate, lastDate)+1;
             buf.add(metric.rpad(" ",nameWidth) +"  "+ 
                     Std.string(count).lpad(" ",3) + 
                     "  "+ firstDate +"  "+ lastDate +
@@ -159,9 +159,9 @@ class Tracker
             {
                 var line = fin.readLine();
                 var fields = line.split(",").map(function(ii) return StringTools.trim(ii)).array();
-                var dayStr;
+                var day;
                 try {
-                    dayStr = Utils.dayStr(fields[0]);
+                    day = Utils.dayFromJulian(Std.parseFloat(fields[0]));
                 } catch( e:String ) {
                     Lib.println("bad date, skipping line: " + line);
                     continue;
@@ -173,7 +173,7 @@ class Tracker
                     continue;
                 }
                 var metricId = getOrCreateMetric(fields[1]);
-                setOrUpdate(fields[1], metricId, dayStr, val);
+                setOrUpdate(fields[1], metricId, day, val);
             }
         } catch( e:haxe.io.Eof ) {
         }
@@ -186,18 +186,18 @@ class Tracker
         connect();
         checkMetrics();                                     // check that all requested metrics exist
 
-        var reportGenerator = new ReportGenerator(range, tail);
+        var reportGenerator = new ReportGenerator(tail);
         reportGenerator.setReport(cmd, groupType, valType);
-        var occurrences = selectRange(range);
 
         if( range[0] != null )                              // start..
-            reportGenerator.include(Utils.day(range[0]), Main.NO_DATA);
+            reportGenerator.include(range[0], Main.NO_DATA);
 
+        var occurrences = selectRange(range);
         for( occ in occurrences )
-            reportGenerator.include(Utils.day(occ.date), occ.value);
+            reportGenerator.include(occ.date, occ.value);
 
                                                             // ..end (cant be null)
-        reportGenerator.include(Utils.day(range[1]), Main.NO_DATA);
+        reportGenerator.include(range[1], Main.NO_DATA);
 
         reportGenerator.print();
     }
@@ -209,18 +209,18 @@ class Tracker
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);
-            var dayStr = range[0];
+            var day = range[0];
             do
             {
-                var rs = db.request("SELECT value FROM occurrences WHERE metricId='"+ metricId +"' AND date='"+ dayStr +"'");
+                var rs = db.request("SELECT value FROM occurrences WHERE metricId='"+ metricId +"' AND date='"+ day.toString() +"'");
                 var val = if( rs.length != 0 )
                     rs.next().value+val;
                 else
                     val;
-                setOrUpdate( metric,  metricId, dayStr, val );
+                setOrUpdate( metric,  metricId, day, val );
 
-                dayStr = Utils.dayToStr(Utils.dayShift(Utils.day(dayStr), 1));
-            } while( range[1]!=null && Utils.dayDelta(Utils.day(dayStr), Utils.day(range[1])) >= 0 );
+                day.day += 1;
+            } while( range[1]!=null && Utils.dayDelta(day, range[1]) >= 0 );
         }
     }
 
@@ -231,12 +231,12 @@ class Tracker
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);
-            var dayStr = range[0];
+            var day = range[0];
             do
             {
-                setOrUpdate( metric, metricId, dayStr, val );
-                dayStr = Utils.dayToStr(Utils.dayShift(Utils.day(dayStr), 1));
-            } while( range[1]!=null && Utils.dayDelta(Utils.day(dayStr), Utils.day(range[1])) >= 0 );
+                setOrUpdate( metric, metricId, day, val );
+                day.day += 1;
+            } while( range[1]!=null && Utils.dayDelta(day, range[1]) >= 0 );
         }
     }
 
@@ -254,10 +254,10 @@ class Tracker
     }
 
     // set a value 
-    private function setOrUpdate(metric :String, metricId :Int, dayStr :String, val :Float)
+    private function setOrUpdate(metric :String, metricId :Int, day :Gregorian, val :Float)
     {
-        db.request("INSERT OR REPLACE INTO occurrences VALUES ('"+ metricId +"','"+ dayStr +"','"+ val +"')");
-        Lib.println("set " + metric + " to " + val + " for " + dayStr);
+        db.request("INSERT OR REPLACE INTO occurrences VALUES ('"+ metricId +"','"+ day.toString() +"','"+ val +"')");
+        Lib.println("set " + metric + " to " + val + " for " + day.toString());
     }
 
     // clear values
@@ -310,7 +310,7 @@ class Tracker
     }
 
     // select a date range from the db
-    private function selectRange(range, ?shouldCombine = true)
+    private function selectRange(range :Array<Gregorian>, ?shouldCombine = true)
     {
         var rs = db.request("SELECT name FROM metrics");
         if( rs.length == 0 )
