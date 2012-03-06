@@ -18,22 +18,23 @@
 package tracker.report;
 
 using StringTools;
+import altdate.Gregorian;
 import tracker.Main;
 import utils.Utils;
 import tracker.report.RecordReport;
 
 class StreakReport implements Report
 {
-    private var startOfStreak :Date;
-    private var lastDay :Date;
+    private var startOfStreak :Gregorian;
+    private var lastDay :Gregorian;
     private var count :Int;
 
     private var bestStreakLength :Int;
-    private var bestStartDate :Date;
+    private var bestStartDate :Gregorian;
 
     private var filterName :String;
     private var isStreakOn :Bool;
-    public var include :Date -> Float -> Void;
+    public var include :Gregorian -> Float -> Void;
     private var isBest :Int -> Int -> Bool;
 
     public function new(keep :FilterStrategy)
@@ -79,9 +80,9 @@ class StreakReport implements Report
         return if( bestStartDate == null )
             "none\n";
         else if( bestStreakLength == 1 )
-            "  1 day  starting on " + Utils.dayToStr(bestStartDate) + onOrOff;
+            "  1 day  starting on " + bestStartDate + onOrOff;
         else
-            Std.string(bestStreakLength).lpad(' ',3) + " days starting on " + Utils.dayToStr(bestStartDate) + onOrOff;
+            Std.string(bestStreakLength).lpad(' ',3) + " days starting on " + bestStartDate + onOrOff;
     }
 
     inline public function getLabel()
@@ -95,11 +96,11 @@ class StreakReport implements Report
         {
             bestStartDate = checkDate;
             bestStreakLength = checkLength;
-        }
+       }
     }
 
     // val may be zero for first and last call
-    public function includeOff(occDay :Date, occVal :Float)
+    public function includeOff(occDay :Gregorian, occVal :Float)
     {
         if( lastDay == null )
             lastDay = occDay;
@@ -110,7 +111,7 @@ class StreakReport implements Report
     }
 
     // val may be zero for first and last call
-    public function includeOn(occDay :Date, occVal :Float)
+    public function includeOn(occDay :Gregorian, occVal :Float)
     {
         if( lastDay == null )
             lastDay = occDay;
@@ -129,7 +130,7 @@ class StreakReport implements Report
     }
 
     // val may be zero for first and last call
-    public function includeCurrent(occDay :Date, occVal :Float)
+    public function includeCurrent(occDay :Gregorian, occVal :Float)
     {
         if( lastDay == null )
             lastDay = occDay;

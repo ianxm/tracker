@@ -18,14 +18,15 @@
 package tracker.report;
 
 using StringTools;
+import altdate.Gregorian;
 import tracker.Main;
 import utils.Utils;
 
 class StreakLogReport implements Report
 {
     private var buf :StringBuf;
-    private var startOfStreak :Date;
-    private var lastDay :Date;
+    private var startOfStreak :Gregorian;
+    private var lastDay :Gregorian;
     private var count :Int;
 
     public function new()
@@ -37,7 +38,7 @@ class StreakLogReport implements Report
     }
 
     // val may be zero for first and last call
-    public function include(occDay :Date, occVal :Float)
+    public function include(occDay :Gregorian, occVal :Float)
     {
         if( lastDay == null )                               // first
         {
@@ -85,14 +86,14 @@ class StreakLogReport implements Report
         lastDay = occDay;
     }
 
-    private function append(onOrOff :String, days, from)
+    private function append(onOrOff :String, days :Int, from :Gregorian)
     {
         var onOrOffStr = onOrOff.lpad(' ', 5);
         var daysStr = Std.string(days).lpad(' ', 3);
 
         buf.add(onOrOffStr + " " + daysStr + 
                 ((days==1)? " day " : " days") + 
-                " from " + Utils.dayStr(from) + "\n");
+                " from " + from + "\n");
     }
 
     public function toString()

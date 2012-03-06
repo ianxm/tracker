@@ -17,13 +17,14 @@
 */
 package tracker.report;
 
+import altdate.Gregorian;
 import tracker.Main;
 import utils.Utils;
 
 class DurationReport implements Report
 {
-    private var firstDate :Date;
-    private var lastDate :Date;
+    private var firstDate :Gregorian;
+    private var lastDate :Gregorian;
 
     public function new()
     {
@@ -31,7 +32,7 @@ class DurationReport implements Report
         lastDate = null;
     }
 
-    public function include(thisDay :Date, val :Float)
+    public function include(thisDay :Gregorian, val :Float)
     {
         if( firstDate == null )
             firstDate = thisDay;

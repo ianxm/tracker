@@ -17,6 +17,7 @@
 */
 package tracker.report;
 
+import altdate.Gregorian;
 import tracker.Main;
 
 class CountReport implements Report
@@ -28,7 +29,7 @@ class CountReport implements Report
         count = 0;
     }
 
-    public function include(thisDay :Date, val :Float)
+    public function include(thisDay :Gregorian, val :Float)
     {
         if( !Main.IS_NO_DATA(val) )
             count++;

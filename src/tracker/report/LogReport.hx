@@ -17,6 +17,7 @@
 */
 package tracker.report;
 
+import altdate.Gregorian;
 import utils.Utils;
 import tracker.Main;
 
@@ -24,14 +25,14 @@ class LogReport implements Report
 {
     private var buf         :StringBuf;                     // output buffer
     private var cmd         :Command;                       // which log command
-    private var dateToBin   :Date->String;                  // convert date to bin key
-    private var valToBin    :Float -> Date -> Float;        // convert value to pack in bin
-    private var getDuration :Date -> Int;                   // get num days for averaging
+    private var dateToBin   :Gregorian->String;             // convert date to bin key
+    private var valToBin    :Float -> Gregorian -> Float;   // convert value to pack in bin
+    private var getDuration :Gregorian -> Int;              // get num days for averaging
     private var printVal    :Float -> Float;                // set precision of output
     private var lastBin     :String;                        // key of last bin
     private var lastVal     :Float;                         // value in last bin
-    private var firstDay    :Date;                          // needed for full grouping
-    private var lastDay     :Date;                          // needed for full grouping
+    private var firstDay    :Gregorian;                     // needed for full grouping
+    private var lastDay     :Gregorian;                     // needed for full grouping
 
     public function new(gt, vt)
     {
@@ -52,7 +53,7 @@ class LogReport implements Report
         case MONTH:
             {
                 dateToBin = RecordReport.dateToMonthBin;
-                getDuration = DateTools.getMonthDays;
+                getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
             }
         case YEAR: 
             {
@@ -99,7 +100,7 @@ class LogReport implements Report
         }
     }
 
-    public function include(thisDay :Date, val :Float)
+    public function include(thisDay :Gregorian, val :Float)
     {
         if( Main.IS_NO_DATA(val) )
             return;

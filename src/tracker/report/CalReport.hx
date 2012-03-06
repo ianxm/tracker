@@ -19,6 +19,7 @@ package tracker.report;
 
 using Lambda;
 using StringTools;
+import altdate.Gregorian;
 import DeepHash;
 import utils.Utils;
 import tracker.Main;
@@ -29,8 +30,8 @@ class CalReport implements Report
                                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     private var tree :DeepHash<Int,Float>;
-    private var firstDay :Date;
-    private var lastDay :Date;
+    private var firstDay :Gregorian;
+    private var lastDay :Gregorian;
     private var valToBin :Float -> Float;
 
     public function new(vt)
@@ -44,7 +45,7 @@ class CalReport implements Report
         }
     }
 
-    public function include(thisDay :Date, val :Float)
+    public function include(thisDay :Gregorian, val :Float)
     {
         if( firstDay == null )
             firstDay = thisDay;
@@ -65,29 +66,29 @@ class CalReport implements Report
 
         var buf = new StringBuf();
 
-        var month = new Date(firstDay.getFullYear(), firstDay.getMonth(), 1, 0, 0, 0);
-        var lastMonth = new Date(lastDay.getFullYear(), lastDay.getMonth(), 1, 0, 0, 0);
-        do {
-            printMonth(buf, month);
-            month = new Date(month.getFullYear(), month.getMonth()+1, 1, 0, 0, 0);
-        } while( Utils.dayDelta(month, lastMonth) >= 0 );
+        var currentDay = new Gregorian();
+        currentDay.set(false, null, firstDay.year, firstDay.month, 1);
+        var endDay = new Gregorian();
+        endDay.set(false, null, lastDay.year, lastDay.month+1, 1);
+        while( Utils.dayDelta(currentDay, endDay) > 0 )
+            printMonth(buf, currentDay);
 
         return buf.toString();
     }
 
-    private function printMonth(buf, month :Date)
+    private function printMonth(buf, month :Gregorian)
     {
-        var monthNum = month.getMonth();
+        var monthNum = month.month;
 
         buf.add("\n             " + MONTH_NAMES[monthNum] + " " + month.getFullYear() + "\n" +
                 "  Su   Mo   Tu   We   Th   Fr   Sa\n");
 
         // print given month
         var day = month;
-        for( ii in 0...month.getDay() )
+        for( ii in 0...month.dayOfWeek() )
             buf.add("     ");
 
-        var today = Date.now();
+        var today = Utils.today();
         do {
             var val = tree.get(pathFromDay(day));
             var str = if( val != null )
@@ -97,15 +98,15 @@ class CalReport implements Report
             else
                 "   .";
             buf.add(str +" ");
-            if( day.getDay() == 6 )
+            if( day.dayOfWeek() == 6 )
                 buf.add("\n");
-            day = Utils.dayShift(day, 1);
-        } while( day.getMonth() == monthNum );
+            day.day += 1;
+        } while( day.month == monthNum );
         buf.add("\n");
     }
 
     inline private function pathFromDay(day)
     {
-        return [day.getFullYear(), day.getMonth(), day.getDate()].list();
+        return [day.year, day.month, day.day].list();
     }
 }

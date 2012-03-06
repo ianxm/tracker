@@ -17,12 +17,14 @@
 */
 package tracker.report;
 
+import altdate.Gregorian;
+
 class Spacer implements Report
 {
     public function new()
     {}
 
-    inline public function include(thisDay :Date, val :Float)
+    inline public function include(thisDay :Gregorian, val :Float)
     {}
 
     inline public function getLabel()

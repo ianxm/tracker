@@ -18,6 +18,7 @@
 package tracker.report;
 
 using Lambda;
+import altdate.Gregorian;
 import tracker.Main;
 import utils.Utils;
 
@@ -29,14 +30,14 @@ class RecordReport implements Report
     private var binName      :String;
     private var filterName   :String;
     private var bins         :Hash<Float>;
-    private var startOfRange :Date;
+    private var startOfRange :Gregorian;
 
-    private var checkBest    :Float->String->Float->Bool;   // check for the record
-    private var dateToBin    :Date->String;                 // convert date to bin string
-    private var valToBin     :Float -> Date -> Float;       // convert value to pack in bin
-    private var getDuration  :Date -> Int;                  // get num days for averaging
-    private var printVal     :Float -> Float;               // set precision of output
-    private var oneBack      :Date->Date;                   // get date one (day/week/month/year) ago
+    private var checkBest    :Float->String->Float->Bool;  // check for the record
+    private var dateToBin    :Gregorian->String;           // convert date to bin string
+    private var valToBin     :Float -> Gregorian -> Float; // convert value to pack in bin
+    private var getDuration  :Gregorian -> Int;            // get num days for averaging
+    private var printVal     :Float -> Float;              // set precision of output
+    private var oneBack      :Gregorian->Gregorian;        // get date one (day/week/month/year) ago
 
     public function new( bin :BinStrategy, keep :FilterStrategy, vt )
     {
@@ -71,7 +72,7 @@ class RecordReport implements Report
                 binName = "year";
                 dateToBin = dateToYearBin;
                 oneBack = lastYear;
-                bestDateStr = dateToBin(Date.now());
+                bestDateStr = dateToBin(Utils.today());
                 getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
             }
         case BIN_MONTH:
@@ -79,15 +80,15 @@ class RecordReport implements Report
                 binName = "month";
                 dateToBin = dateToMonthBin;
                 oneBack = lastMonth;
-                bestDateStr = dateToBin(Date.now());
-                getDuration = DateTools.getMonthDays;
+                bestDateStr = dateToBin(Utils.today());
+                getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
             }
         case BIN_WEEK:
             {
                 binName = "week";
                 dateToBin = dateToWeekBin;
                 oneBack = lastWeek;
-                bestDateStr = dateToBin(Date.now());
+                bestDateStr = dateToBin(Utils.today());
                 getDuration = function(date) { return 7; }
             }
         case BIN_DAY:
@@ -95,7 +96,7 @@ class RecordReport implements Report
                 binName = "day";
                 dateToBin = dateToDayBin;
                 oneBack = yesterday;
-                bestDateStr = dateToBin(Date.now());
+                bestDateStr = dateToBin(Utils.today());
                 getDuration = function(date) { return 1; }
             }
         }
@@ -125,7 +126,7 @@ class RecordReport implements Report
         }
     }
 
-    public function include(thisDay :Date, val :Float)
+    public function include(thisDay :Gregorian, val :Float)
     {
         if( startOfRange == null )                          // dont let lowest look past start of range
             startOfRange = thisDay;
@@ -186,13 +187,13 @@ class RecordReport implements Report
 
     inline private function keepCurrent(bestScore :Float, newDateStr :String, newScore :Float)
     {
-        return newDateStr != null && newDateStr == dateToBin(Date.now());
+        return newDateStr != null && newDateStr == dateToBin(Utils.today());
     }
 
     // how to bin (chosen by bin strategy)
     inline public static function dateToYearBin(date)
     {
-        return Std.string(date.getFullYear());
+        return Std.string(date.year);
     }
 
     inline public static function dateToMonthBin(date)
@@ -202,33 +203,43 @@ class RecordReport implements Report
 
     inline public static function dateToWeekBin(date)
     {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate()-date.getDay(), 0, 0, 0).toString().substr(0, 10);
+        var ret = new Gregorian();
+        ret.set(false, null, date.year, date.month, date.day-date.dayOfWeek());
+        return ret.toString();
     }
 
     inline public static function dateToDayBin(date)
     {
-        return date.toString().substr(0, 10);
+        return date.toString();
     }
 
     // how to bin (chosen by bin strategy)
     inline private function lastYear(date)
     {
-        return new Date(date.getFullYear()-1, date.getMonth(), date.getDate(), 0, 0, 0);
+        var ret = new Gregorian();
+        ret.set(false, null, date.year-1, date.month, date.day);
+        return ret;
     }
 
     inline private function lastMonth(date)
     {
-        return new Date(date.getFullYear(), date.getMonth()-1, 1, 0, 0, 0);
+        var ret = new Gregorian();
+        ret.set(false, null, date.year, date.month-1, 1);
+        return ret;
     }
 
     inline private function lastWeek(date)
     {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate()-date.getDay()-7, 0, 0, 0);
+        var ret = new Gregorian();
+        ret.set(false, null, date.year, date.month, date.day-date.dayOfWeek()-7);
+        return ret;
     }
 
     inline private function yesterday(date)
     {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate()-1, 0, 0, 0);
+        var ret = new Gregorian();
+        ret.set(false, null, date.year, date.month, date.day-1);
+        return ret;
     }
 }
 

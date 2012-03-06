@@ -17,6 +17,7 @@
 */
 package tracker.report;
 
+import utils.Utils;
 import tracker.Main;
 
 class TestCountReport extends haxe.unit.TestCase
@@ -30,26 +31,26 @@ class TestCountReport extends haxe.unit.TestCase
   public function testOne()
   {
       var report = new CountReport();
-      report.include(Date.fromString("2012-01-01"), 1);
-      report.include(Date.fromString("2012-01-01"), Main.NO_DATA);
+      report.include(Utils.dayFromString("2012-01-01"), 1);
+      report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       assertEquals("1 occurrence\n", report.toString());
   }
 
   public function testOneFixedStartStop()
   {
       var report = new CountReport();
-      report.include(Date.fromString("2012-01-01"), Main.NO_DATA);
-      report.include(Date.fromString("2012-01-01"), 1);
-      report.include(Date.fromString("2012-01-01"), Main.NO_DATA);
+      report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
+      report.include(Utils.dayFromString("2012-01-01"), 1);
+      report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       assertEquals("1 occurrence\n", report.toString());
   }
 
   public function testTwo()
   {
       var report = new CountReport();
-      report.include(Date.fromString("2012-01-01"), 1);
-      report.include(Date.fromString("2012-01-02"), 2);
-      report.include(Date.fromString("2012-01-02"), Main.NO_DATA);
+      report.include(Utils.dayFromString("2012-01-01"), 1);
+      report.include(Utils.dayFromString("2012-01-02"), 2);
+      report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);
       assertEquals("2 occurrences\n", report.toString());
   }
 
@@ -57,9 +58,9 @@ class TestCountReport extends haxe.unit.TestCase
   public function testTwoGap()
   {
       var report = new CountReport();
-      report.include(Date.fromString("2012-01-01"), 1);
-      report.include(Date.fromString("2012-01-02"), 2);
-      report.include(Date.fromString("2012-01-05"), Main.NO_DATA);
+      report.include(Utils.dayFromString("2012-01-01"), 1);
+      report.include(Utils.dayFromString("2012-01-02"), 2);
+      report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
       assertEquals("2 occurrences\n", report.toString());
   }
 }

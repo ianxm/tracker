@@ -73,8 +73,9 @@ class Utils
 
     public static function dayShift( date :Gregorian, days :Int )
     {
-        date.day += days;
-        return date;
+        var g = new Gregorian();
+        g.set(false, null, date.year, date.month, date.day+days);
+        return g;
     }
 
     public static function dayDelta( date1 :Gregorian, date2 :Gregorian ) :Int
