@@ -141,7 +141,7 @@ class Tracker
         var occurrences = selectRange(range, false);
         fout.writeString("date,metric,value\n");
         for( rr in occurrences )
-            fout.writeString(rr.date +","+ rr.metric +","+ rr.value +"\n");
+            fout.writeString(Utils.dayFromJulian(rr.date).toString() +","+ rr.metric +","+ rr.value +"\n");
         fout.close();
     }
 
@@ -161,7 +161,7 @@ class Tracker
                 var fields = line.split(",").map(function(ii) return StringTools.trim(ii)).array();
                 var day;
                 try {
-                    day = Utils.dayFromJulian(Std.parseFloat(fields[0]));
+                    day = Utils.dayFromString(fields[0]);
                 } catch( e:String ) {
                     Lib.println("bad date, skipping line: " + line);
                     continue;
@@ -194,7 +194,7 @@ class Tracker
 
         var occurrences = selectRange(range);
         for( occ in occurrences )
-            reportGenerator.include(occ.date, occ.value);
+            reportGenerator.include(Utils.dayFromJulian(occ.date), occ.value);
 
                                                             // ..end (cant be null)
         reportGenerator.include(range[1], Main.NO_DATA);
@@ -256,8 +256,8 @@ class Tracker
     // set a value 
     private function setOrUpdate(metric :String, metricId :Int, day :Gregorian, val :Float)
     {
-        db.request("INSERT OR REPLACE INTO occurrences VALUES ('"+ metricId +"','"+ day.toString() +"','"+ val +"')");
-        Lib.println("set " + metric + " to " + val + " for " + day.toString());
+        db.request("INSERT OR REPLACE INTO occurrences VALUES ('"+ metricId +"','"+ day.value +"','"+ val +"')");
+        Lib.println("set " + metric + " to " + val + " for " + day);
     }
 
     // clear values
@@ -269,8 +269,9 @@ class Tracker
         var occurrences = selectRange(range, false).results().map(function(ii) return {metricId: ii.metricId, metric: ii.metric, date: ii.date});
         for( occ in occurrences )
         {
-            db.request("DELETE FROM occurrences WHERE metricId='"+ occ.metricId +"' AND date='"+ occ.date +"'");
-            Lib.println("removed " + occ.metric + " for " + occ.date);
+            var date = Utils.dayFromJulian(occ.date);
+            db.request("DELETE FROM occurrences WHERE metricId='"+ occ.metricId +"' AND date='"+ date.value +"'");
+            Lib.println("removed " + occ.metric + " for " + date.toString());
             count++;
         }
         if( count == 0 )
@@ -324,9 +325,9 @@ class Tracker
         select.add((shouldCombine) ? "metric, date, sum(value) AS value " : "* ");
         select.add("FROM full WHERE ("+ metrics.map(function(ii) return "metric="+db.quote(ii)).join(" OR ") +") ");
         if( range[0]!=null )                               // start..
-            select.add("AND date >= '"+ range[0] +"' ");
+            select.add("AND date >= '"+ range[0].value +"' ");
         if( range[1]!=null )                               // ..end
-            select.add("AND date <= '"+ range[1] +"' ");
+            select.add("AND date <= '"+ range[1].value +"' ");
         select.add((shouldCombine) ? "GROUP BY date " : " ");
         select.add("ORDER BY date");
 
