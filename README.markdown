@@ -18,7 +18,6 @@ dependencies
 ------------
 
 - nekovm
-- sqlite3
 - gnuplot (for rendering graphs)
 - imagemagick (for displaying graphs better)
 
