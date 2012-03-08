@@ -71,7 +71,7 @@ class Main
             worker.close();
         } catch ( e:Dynamic ) {
             Lib.println("ERROR: " + e);
-            Lib.println(haxe.Stack.toString(haxe.Stack.exceptionStack()));
+            //Lib.println(haxe.Stack.toString(haxe.Stack.exceptionStack()));
         }
     }
 

@@ -209,7 +209,7 @@ class Tracker
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);
-            var day = range[0];
+            var day = range[0].toDate();
             do
             {
                 var rs = db.request("SELECT value FROM occurrences WHERE metricId='"+ metricId +"' AND date='"+ day.toString() +"'");
@@ -231,7 +231,7 @@ class Tracker
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);
-            var day = range[0];
+            var day = range[0].toDate();
             do
             {
                 setOrUpdate( metric, metricId, day, val );
