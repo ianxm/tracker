@@ -219,7 +219,12 @@ class Main
         }
 
         if( dbFile == null )                                // use default repo
-            dbFile = Sys.environment().get("HOME") + "/.tracker.db";
+        {
+            var home = Sys.environment().get("HOME");
+            if( home == null )
+                throw "you must set the HOME environment variable or specify the repo filename";
+            dbFile = home + "/.tracker.db";
+        }
 
         if( fname != null )
             if( cmd == GRAPH )
