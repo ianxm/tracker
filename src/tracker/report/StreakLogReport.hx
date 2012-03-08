@@ -24,10 +24,10 @@ import utils.Utils;
 
 class StreakLogReport implements Report
 {
-    private var buf :StringBuf;
+    private var buf           :StringBuf;
     private var startOfStreak :Gregorian;
-    private var lastDay :Gregorian;
-    private var count :Int;
+    private var lastDay       :Gregorian;
+    private var count         :Int;
 
     public function new()
     {
@@ -51,10 +51,10 @@ class StreakLogReport implements Report
             return;
         }
 
-        var delta = Utils.dayDelta(lastDay, occDay);
+        var delta = Std.int(occDay.value-lastDay.value);
         //trace("delta: " + delta + " " +lastDay + " "  + occDay);
 
-        if( Main.IS_NO_DATA(occVal) && lastDay!=null )         // last
+        if( Main.IS_NO_DATA(occVal) )                       // last
         {
             if( count > 0 )
                 append("on", count, startOfStreak);

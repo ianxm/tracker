@@ -105,7 +105,7 @@ class StreakReport implements Report
         if( lastDay == null )
             lastDay = occDay;
 
-        var delta = Utils.dayDelta(lastDay, occDay);
+        var delta = Std.int(occDay.value-lastDay.value);
         checkBest(Utils.dayShift(lastDay, 1), delta-1);
         lastDay = occDay;
     }
@@ -116,7 +116,7 @@ class StreakReport implements Report
         if( lastDay == null )
             lastDay = occDay;
 
-        var delta = Utils.dayDelta(lastDay, occDay);
+        var delta = Std.int(occDay.value-lastDay.value);
 
         if( delta == 1 )                                    // extend current on streak
             count++;
@@ -135,7 +135,7 @@ class StreakReport implements Report
         if( lastDay == null )
             lastDay = occDay;
 
-        var delta = Utils.dayDelta(lastDay, occDay);
+        var delta = Std.int(occDay.value-lastDay.value);
 
         if( delta == 1 && !Main.IS_NO_DATA(occVal) )        // extend current on streak
             count++;

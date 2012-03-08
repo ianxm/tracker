@@ -109,7 +109,7 @@ class Tracker
                 lastDate = Utils.dayFromJulian(occ.date);
                 count++;
             }
-            var duration = Utils.dayDelta(firstDate, lastDate)+1;
+            var duration = lastDate.value-firstDate.value + 1;
             buf.add(metric.rpad(" ",nameWidth) +"  "+ 
                     Std.string(count).lpad(" ",3) + 
                     "  "+ firstDate +"  "+ lastDate +
@@ -220,7 +220,7 @@ class Tracker
                 setOrUpdate( metric,  metricId, day, val );
 
                 day.day += 1;
-            } while( range[1]!=null && Utils.dayDelta(day, range[1]) >= 0 );
+            } while( range[1]!=null && range[1].value-day.value>=0 );
         }
     }
 
@@ -236,7 +236,7 @@ class Tracker
             {
                 setOrUpdate( metric, metricId, day, val );
                 day.day += 1;
-            } while( range[1]!=null && Utils.dayDelta(day, range[1]) >= 0 );
+            } while( range[1]!=null && range[1].value-day.value>=0 );
         }
     }
 

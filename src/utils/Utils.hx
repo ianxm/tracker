@@ -23,17 +23,6 @@ import altdate.Gregorian;
 
 class Utils
 {
-    // get a dayStr (YYYY-MM-DD) from a date or string (parse the string to ensure 
-    // it is properly formatted
-    public static function dayStr( ?date :Date, ?str :String )
-    {
-        var d = if( date != null )
-            dayFromDate(date);
-        else
-            dayFromString(str);
-        return (d==null) ? null : d.toString();
-    }
-
     public static function dayFromString( str :String ) :Gregorian
     {
         var date;
@@ -47,40 +36,31 @@ class Utils
         return dayFromDate(date);
     }
 
-    public static function dayFromJulian( julianDay :Float )
+    inline public static function dayFromJulian( julianDay :Float )
     {
         var g = new Gregorian();
         g.value = julianDay;
         return g;
     }
 
-    public static function today() :Gregorian
+    inline public static function today() :Gregorian
     {
         return dayFromDate(Date.now());
     }
 
-    public static function dayFromDate( date :Date ) :Gregorian
+    inline public static function dayFromDate( date :Date ) :Gregorian
     {
         var g = new Gregorian();
         g.set(false, null, date.getFullYear(), date.getMonth(), date.getDate());
         return g;
     }
 
-    public static function dayToStr( date :Gregorian ) :String
-    {
-        return (date==null) ? null : date.toString();
-    }
-
-    public static function dayShift( date :Gregorian, days :Int )
+    // copies and shifts
+    inline public static function dayShift( date :Gregorian, days :Int )
     {
         var g = new Gregorian();
         g.set(false, null, date.year, date.month, date.day+days);
         return g;
-    }
-
-    public static function dayDelta( date1 :Gregorian, date2 :Gregorian ) :Int
-    {
-       return Std.int(date2.value-date1.value);
     }
 
     inline public static function tenths(val :Float) :Float

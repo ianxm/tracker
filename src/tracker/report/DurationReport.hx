@@ -45,14 +45,11 @@ class DurationReport implements Report
         if( firstDate==null || lastDate==null ) 
             return "empty range\n";
 
-        var duration = Utils.dayDelta(firstDate, lastDate)+1;
+        var duration = lastDate.value - firstDate.value + 1;
         if( duration == 1 )
-            return (Utils.dayDelta(firstDate, lastDate)+1) + " day: " +
-                Utils.dayToStr(firstDate) + "\n";
+            return "1 day: " + firstDate + "\n";
         else
-            return (Utils.dayDelta(firstDate, lastDate)+1) + " days" +
-                " from " + Utils.dayToStr(firstDate) +
-                " to " + Utils.dayToStr(lastDate) + "\n";
+            return duration + " days" + " from " + firstDate + " to " + lastDate + "\n";
     }
 
 

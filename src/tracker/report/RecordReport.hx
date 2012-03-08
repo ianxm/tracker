@@ -135,7 +135,7 @@ class RecordReport implements Report
         {
             var oneBack = oneBack(thisDay);
             var oneBackStr = dateToBin(oneBack);
-            if( !bins.exists(oneBackStr) && Utils.dayDelta(oneBack,startOfRange)<0)
+            if( !bins.exists(oneBackStr) && startOfRange.value-oneBack.value<0)
                 bins.set(oneBackStr, 0);
         }
 

@@ -21,14 +21,6 @@ using Lambda;
 
 class TestUtils extends haxe.unit.TestCase
 {
-    public function testDayStr()
-    {
-        assertEquals("2010-01-01", Utils.dayStr(new Date(2010, 00, 01, 0, 0, 0)));
-        assertEquals("2012-01-31", Utils.dayStr(new Date(2012, 00, 31, 0, 0, 0)));
-        assertEquals("2011-03-01", Utils.dayStr(new Date(2011, 01, 29, 0, 0, 0))); // not leap year
-        assertEquals("2012-02-29", Utils.dayStr(new Date(2012, 01, 29, 0, 0, 0)));
-    }
-
     public function testDayFromString()
     {
         assertEquals("2010-01-01", Utils.dayFromString("2010-01-01").toString());
@@ -57,14 +49,6 @@ class TestUtils extends haxe.unit.TestCase
         assertEquals("2010-01-02", Utils.dayShift(Utils.dayFromString("2010-01-01"), 1).toString());
         assertEquals("2009-12-31", Utils.dayShift(Utils.dayFromString("2010-01-01"), -1).toString());
         assertEquals("2012-01-01", Utils.dayShift(Utils.dayFromString("2012-01-14"), -13).toString());
-    }
-
-    public function testDayDelta()
-    {
-        assertEquals(2, Utils.dayDelta(Utils.dayFromString("2010-01-01"), Utils.dayFromString("2010-01-03")));
-        assertEquals(-2, Utils.dayDelta(Utils.dayFromString("2010-01-03"), Utils.dayFromString("2010-01-01")));
-        assertEquals(-2, Utils.dayDelta(Utils.dayFromString("2010-01-01"), Utils.dayFromString("2009-12-30")));
-        assertEquals(3, Utils.dayDelta(Utils.dayFromString("2009-12-29"), Utils.dayFromString("2010-01-01")));
     }
 
     public function testTenths()

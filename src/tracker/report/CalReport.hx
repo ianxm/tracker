@@ -70,7 +70,7 @@ class CalReport implements Report
         currentDay.set(false, null, firstDay.year, firstDay.month, 1);
         var endDay = new Gregorian();
         endDay.set(false, null, lastDay.year, lastDay.month+1, 1);
-        while( Utils.dayDelta(currentDay, endDay) > 0 )
+        while( endDay.value-currentDay.value > 0 )
             printMonth(buf, currentDay);
 
         return buf.toString();
@@ -93,7 +93,7 @@ class CalReport implements Report
             var val = tree.get(pathFromDay(day));
             var str = if( val != null )
                 Std.string(val).lpad(' ',4);
-            else if( Utils.dayDelta(day, today) <= 0 )
+            else if( today.value-day.value <= 0 )
                 "   _";
             else
                 "   .";

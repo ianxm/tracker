@@ -82,9 +82,9 @@ class LogReport implements Report
         case AVG:
             {
                 valToBin = function(val,date) { return val/getDuration(date); }
-                printVal = function(val) {                  // for full duration we have to put off evaluating the
-                    if( gt==FULL )                          // duration until all data has been processed
-                        val = val/Utils.dayDelta(firstDay,lastDay)+1;
+                printVal = function(val) {    // for full duration we have to put off evaluating the
+                    if( gt == FULL )          // duration until all data has been processed
+                        val = val/(lastDay.value-firstDay.value) + 1;
                     return Math.round(val*10)/10;
                 }
             }
@@ -92,8 +92,8 @@ class LogReport implements Report
             {
                 valToBin = function(val,date) { return 1/getDuration(date)*100; }
                 printVal = function(val) {                  // ditto whats said for AVG
-                    if( gt==FULL )
-                        val = val/Utils.dayDelta(firstDay,lastDay)+1;
+                    if( gt == FULL )
+                        val = val/(lastDay.value-firstDay.value) + 1;
                     return Math.round(val);
                 }
             }

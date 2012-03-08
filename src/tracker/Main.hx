@@ -115,7 +115,7 @@ class Main
                     var dateFix = function(ii) {
                         return switch(ii){
                         case "today":     Utils.today();
-                        case "yesterday": Utils.dayShift(Utils.today(),-1);
+                        case "yesterday": { var day = Utils.today(); day.day-=1; day; }
                         default:          Utils.dayFromString(ii);
                         }
                     }
