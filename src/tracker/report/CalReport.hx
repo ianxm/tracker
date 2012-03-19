@@ -93,7 +93,7 @@ class CalReport implements Report
             var val = tree.get(pathFromDay(day));
             var str = if( val != null )
                 Std.string(val).lpad(' ',4);
-            else if( today.value-day.value <= 0 )
+            else if( today.value-day.value < 0 )
                 "   _";
             else
                 "   .";
