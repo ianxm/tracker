@@ -212,7 +212,7 @@ class Tracker
             var day = range[0].toDate();
             do
             {
-                var rs = db.request("SELECT value FROM occurrences WHERE metricId='"+ metricId +"' AND date='"+ day.toString() +"'");
+                var rs = db.request("SELECT value FROM occurrences WHERE metricId='"+ metricId +"' AND date='"+ day.value +"'");
                 var val = if( rs.length != 0 )
                     rs.next().value+val;
                 else
@@ -256,6 +256,8 @@ class Tracker
     // set a value 
     private function setOrUpdate(metric :String, metricId :Int, day :Gregorian, val :Float)
     {
+        if( (Utils.today().value - day.value) < 0 )
+            throw "Cannot set metrics in the future";
         db.request("INSERT OR REPLACE INTO occurrences VALUES ('"+ metricId +"','"+ day.value +"','"+ val +"')");
         Lib.println("set " + metric + " to " + val + " for " + day);
     }
