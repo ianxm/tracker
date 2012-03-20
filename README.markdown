@@ -25,35 +25,15 @@ dependencies
 installation
 ------------
 
-there are two ways to install.  either install haxe (which installs
-nekovm) and use its package manager to install tracker, or manaully
-install nekovm and copy the tracker binary onto your system.
-
-option 1:
-
-the haxe installer can be downloaded at
-[haxe.org](http://haxe.org/download).  once that's installed, run:
-
-    > haxelib install tracker
-
-then run tracker with:
-
-    > haxelib run tracker
-
-I find it convenient to set an alias
-
-    > alias tracker='haxelib run tracker'
-
-
-option 2:
-
 download the nekovm installer from
 [nekovm.org](http://nekovm.org/download).  once that's installed,
 download tracker.n from
 [github](https://github.com/downloads/ianxm/tracker/tracker.n).  now
 you can run with:
 
-    > neko tracker
+    > neko /path/to/tracker.n
+
+on linux, I recommend setting an alias to shorten the command.
 
 
 tutorial
