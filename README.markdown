@@ -303,84 +303,84 @@ that's all for now.
 reference
 ---------
 
-usage: tracker command [options] [metric [metric..]]
-
-    if no date range is specified, the range is all days.
-
-commands:
-  general:
-    init           initialize a repository
-    list           list existing metrics and date ranges
-    help           show help
-
-  modify repository:
-    set            set or increment a value
-                   see 'set command options' below
-    rm             remove occurrences
-
-  import/export:
-    export         export data to csv format
-                   this will write to stdout unless -o is given
-    import FILE    import data from a csv file
-                   with the columns: date,metric,value
-                   read from stdin if FILE is '-'
-
-  reporting:
-    log            view log of occurrences
-    cal            show calendar
-    records        show high and low records
-    streaks        show consecutive days with or without occurrences
-    graph          draw graph (requires gnuplot)
-
-  tags:
-    addtag TAG     tag given metrics with TAG
-    rmtag TAG      untag given metrics with TAG
-    listtags       list all tags
-
-options:
-  set command options:
-    =N             set metrics to N
-    +N             increment metrics by N
-    -N             decrement metrics by N
-
-  general:
-    -d RANGE       specify date range (see RANGE below)
-    -o FILE        write graph image to a file
-    -N             limit output to the last N items
-                   this only affects the 'streaks' and 'log' commands
-    --all          select all existing metrics
-    --repo FILE    specify a repository filename
-    --min VAL      min threshold to count as an occurrence
-    -v, --version  show version
-    -h, --help     show help
-
-  date groupings:
-    (these are only used by the 'log' and 'graph' commands)
-    -day           each day is separate (default)
-    -week          group weeks together
-    -month         group months together
-    -year          group years together
-    -full          group the full date range together
-
-  value types:
-    -total         total values (default)
-    -count         count of occurrences
-    -avg           average values by duration
-    -pct           show values as the percent of occurrence of duration
-
-  graphs:
-    -line          draw a line graph (default)
-    -bar           draw a bar graph
-    -point         draw a point graph
-
-RANGE:
-  DATE         only the specified date
-  DATE..       days from the given date until today
-  ..DATE       days from the start of the data to the specified date
-  DATE..DATE   days between specified dates (inclusive)
-
-DATE:
-  YYYY-MM-DD   specify a date
-  today        specify day is today (default)
-  yesterday    specify day is yesterday
-  today-N      specify day is N days before today
+    usage: tracker command [options] [metric [metric..]]
+    
+        if no date range is specified, the range is all days.
+    
+    commands:
+      general:
+        init           initialize a repository
+        list           list existing metrics and date ranges
+        help           show help
+    
+      modify repository:
+        set            set or increment a value
+                       see 'set command options' below
+        rm             remove occurrences
+    
+      import/export:
+        export         export data to csv format
+                       this will write to stdout unless -o is given
+        import FILE    import data from a csv file
+                       with the columns: date,metric,value
+                       read from stdin if FILE is '-'
+    
+      reporting:
+        log            view log of occurrences
+        cal            show calendar
+        records        show high and low records
+        streaks        show consecutive days with or without occurrences
+        graph          draw graph (requires gnuplot)
+    
+      tags:
+        addtag TAG     tag given metrics with TAG
+        rmtag TAG      untag given metrics with TAG
+        listtags       list all tags
+    
+    options:
+      set command options:
+        =N             set metrics to N
+        +N             increment metrics by N
+        -N             decrement metrics by N
+    
+      general:
+        -d RANGE       specify date range (see RANGE below)
+        -o FILE        write graph image to a file
+        -N             limit output to the last N items
+                       this only affects the 'streaks' and 'log' commands
+        --all          select all existing metrics
+        --repo FILE    specify a repository filename
+        --min VAL      min threshold to count as an occurrence
+        -v, --version  show version
+        -h, --help     show help
+    
+      date groupings:
+        (these are only used by the 'log' and 'graph' commands)
+        -day           each day is separate (default)
+        -week          group weeks together
+        -month         group months together
+        -year          group years together
+        -full          group the full date range together
+    
+      value types:
+        -total         total values (default)
+        -count         count of occurrences
+        -avg           average values by duration
+        -pct           show values as the percent of occurrence of duration
+    
+      graphs:
+        -line          draw a line graph (default)
+        -bar           draw a bar graph
+        -point         draw a point graph
+    
+    RANGE:
+      DATE         only the specified date
+      DATE..       days from the given date until today
+      ..DATE       days from the start of the data to the specified date
+      DATE..DATE   days between specified dates (inclusive)
+    
+    DATE:
+      YYYY-MM-DD   specify a date
+      today        specify day is today (default)
+      yesterday    specify day is yesterday
+      today-N      specify day is N days before today
