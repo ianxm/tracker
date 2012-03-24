@@ -1,5 +1,6 @@
 -neko test.n
 -lib DeepHash
--lib haxealtdate
+-cp ../../haxealtdate
+# -lib haxealtdate
 -main tracker.TestSuite
 -cmd neko test.n

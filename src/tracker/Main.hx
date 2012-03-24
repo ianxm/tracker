@@ -26,7 +26,7 @@ import altdate.Gregorian;
 
 class Main
 {
-    private static var VERSION = "v0.9";
+    private static var VERSION = "v0.10";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;
@@ -60,7 +60,7 @@ class Main
             switch (cmd)
             {
             case INIT:       worker.init();
-            case INFO:       worker.info();
+            case LIST:       worker.list();
             case SET:        worker.set(val);
             case INCR:       worker.incr(val);
             case REMOVE:     worker.remove();
@@ -83,7 +83,7 @@ class Main
         switch( arg )                                       // process command first
         {
         case "init":    cmd = INIT;
-        case "info":    cmd = INFO;
+        case "list":    cmd = LIST;
 
         case "set":     cmd = SET;
         case "rm":      cmd = REMOVE;
@@ -200,8 +200,9 @@ class Main
     // set defaults after args have been processed
     private function setDefaults()
     {
-        if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT ) // list metrics if no metrics specified
-            cmd = INFO;
+                                                            // list metrics if no metrics specified
+        if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT && cmd!=LIST )
+            throw "you must specify a metric";
 
                                                             // fix range if not specified
         if( range[0] == null && ( cmd==SET || cmd==INCR || cmd==REMOVE ) )
@@ -245,13 +246,12 @@ class Main
         Lib.println("
 usage: tracker command [options] [metric [metric..]]
 
-    if no date range is specified, the range is all days. 
-    if no metric is given, tracker will list all metrics found.
+    if no date range is specified, the range is all days.
 
 commands:
   general:
     init           initialize a repository
-    info           list existing metrics and date ranges
+    list           list existing metrics and date ranges
     help           show help
 
   modify repository:
@@ -264,6 +264,7 @@ commands:
                    this will write to stdout unless -o is given
     import FILE    import data from a csv file
                    with the columns: date,metric,value
+                   read from stdin if FILE is '--'
 
   reporting:
     log            view log of occurrences
@@ -271,7 +272,7 @@ commands:
     records        show high and low records
     streaks        show consecutive days with or without occurrences
     graph          draw graph (requires gnuplot)
-  
+
 options:
   set command options:
     =N             set metrics to N
@@ -346,7 +347,7 @@ examples:
 enum Command
 {
     INIT;                                                   // initialize a db file
-    INFO;                                                   // metrics list and duration
+    LIST;                                                   // metrics list and duration
     SET;                                                    // set the value for a day
     INCR;                                                   // incrthe value for a day
     REMOVE;                                                 // clear a value for a day

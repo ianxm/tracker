@@ -74,7 +74,7 @@ class Tracker
     }
 
     // get list of existing metrics
-    public function info()
+    public function list()
     {
         connect();
         var allMetrics = getAllMetrics();

@@ -1,4 +1,5 @@
 -neko ../bin/tracker.n
 -lib DeepHash
--lib haxealtdate
+-cp ../../haxealtdate
+# -lib haxealtdate
 -main tracker.Main

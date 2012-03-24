@@ -105,13 +105,13 @@ one).
 that's it for the commands that modify the repo.  now lets look at
 some reporting.  
 
-    > tracker info
+    > tracker list
      metric  count  first         last      days
     pushups     2 2012-02-20 to 2012-02-26     7
     pullups     1 2012-02-25 to 2012-02-25     1
     watchedtv   5 2012-02-10 to 2012-02-15     6
 
-the `info` command lists all metrics stored in the repo and gives
+the `list` command lists all metrics stored in the repo and gives
 their date ranges.
 
     > tracker streaks watchedtv
@@ -261,7 +261,7 @@ reference
     commands:
       general:
         init           initialize a repository
-        info           list existing metrics and date ranges
+        list           list existing metrics and date ranges
         help           show help
     
       modify repository:
