@@ -225,7 +225,7 @@ class Tracker
             if( metricId == null )
                 throw "metric doesn't exist: " + metric;
             db.request("DELETE FROM tags WHERE (name="+ db.quote(tag) +" AND metricId="+ metricId +")");
-            Lib.println("removed tag '"+ metric +"' from '"+ tag +"'");
+            Lib.println("removed tag '"+ tag +"' from '"+ metric +"'");
         }
     }
 
