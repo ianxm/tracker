@@ -84,7 +84,11 @@ class Tracker
     public function list()
     {
         connect();
-        var allMetrics = getAllMetrics();
+        checkMetrics();
+        var allMetrics = if( !metrics.isEmpty() )
+            metrics.list();
+        else
+            getAllMetrics();
         if( allMetrics.isEmpty() )
         {
             Lib.println("No metrics found");
