@@ -32,7 +32,7 @@ class Main
     public static var IS_NO_DATA = Math.isNaN;
 
     private var dbFile     :String;
-    private var metrics    :List<String>;
+    private var metrics    :Set<String>;
     private var range      :Array<Gregorian>;
     private var val        :Float;
     private var cmd        :Command;
@@ -47,7 +47,7 @@ class Main
         cmd = null;
         groupType = DAY;
         valType = TOTAL;
-        metrics = new List<String>();
+        metrics = new Set<String>();
         range = [null, null];
     }
 

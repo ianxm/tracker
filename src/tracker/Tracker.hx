@@ -33,7 +33,7 @@ import utils.Utils;
 class Tracker
 {
     private var dbFile  :String;
-    private var metrics :List<String>;
+    private var metrics :Set<String>;
     private var range   :Array<Gregorian>;
     private var db      :Connection;
 
@@ -107,7 +107,8 @@ class Tracker
         {
             count = 0;
             firstDate = null;
-            metrics = [metric].list();
+            metrics.clear();
+            metrics.add(metric);
             var occurrences = selectRange([null, null], false);
             for( occ in occurrences )
             {
@@ -349,17 +350,30 @@ class Tracker
             }
     }
 
-    // check that metrics exist, replace splat
+    // check that metrics exist, replace tags or splat
     private function checkMetrics()
     {
-        if( metrics.exists(function(ii) return ii=="*") )
-            metrics = getAllMetrics().list();
+        var allMetrics = getAllMetrics();
+        if( metrics.has("*") )
+        {
+            metrics.clear();
+            metrics.union(allMetrics);
+        }
         else
         {
-            var allMetrics = getAllMetrics();
+            var newMetrics = new Set<String>();
             for( metric in metrics )
-                if( !allMetrics.has(metric) )
-                    throw "unknown metric: " + metric;
+                if( allMetrics.has(metric) )
+                    newMetrics.add(metric);
+                else
+                {
+                    var taggedMetrics = checkTag(metric);
+                    if( taggedMetrics != null )
+                        newMetrics.union(taggedMetrics);
+                    else
+                        throw "unknown metric: " + metric;                        
+                }
+            metrics = newMetrics;
         }
     }
 
@@ -368,6 +382,16 @@ class Tracker
     {
         var rs = db.request("SELECT name FROM metrics");
         return rs.results().map(function(ii) return ii.name);
+    }
+
+    // check if the given string is a tag, if it is, return the metrics tagged with it
+    private function checkTag(str :String)
+    {
+        var rs = db.request("SELECT metric FROM tags_by_names WHERE tag="+ db.quote(str));
+        return if( rs.length == 0 )
+            null;
+        else
+            rs.results().map(function(ii) return ii.metric);
     }
 
     // select a date range from the db
