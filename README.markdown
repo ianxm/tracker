@@ -20,7 +20,7 @@ dependencies
 
 - nekovm
 - gnuplot (for rendering graphs)
-- imagemagick (for displaying graphs better)
+- ImageMagick (for displaying graphs better)
 
 
 installation
@@ -284,9 +284,10 @@ graph image named 'out.png' in the current directory.
 
 ### tags
 
-tracker lets you tag metrics.  are shortcuts that let you select
-multiple metrics by one name.  for instance if you wanted to group
-pushups and pullups together, you could tag them with 'workout'.
+tracker has a little tagging support.  tags are shortcuts that let you
+group metrics together so that they can be selected with one name.
+for instance if you wanted to group pushups and pullups together, you
+could tag them with 'workout'.
 
     > tracker addtag workout pushups pullups
     added tag 'workout' to 'pushups'
