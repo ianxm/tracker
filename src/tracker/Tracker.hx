@@ -158,9 +158,15 @@ class Tracker
     {
         connect();
 
-        if( !FileSystem.exists(fname) )
-            throw "file not found: " + fname;
-        var fin = File.read(fname);
+        var fin = if( fname == "-" )
+            File.stdin();
+        else 
+        {
+            if( !FileSystem.exists(fname) )
+                throw "file not found: " + fname;
+            File.read(fname);
+        }
+
         try
         {
             while( true )

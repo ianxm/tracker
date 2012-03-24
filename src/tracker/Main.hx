@@ -26,7 +26,7 @@ import altdate.Gregorian;
 
 class Main
 {
-    private static var VERSION = "v0.10";
+    private static var VERSION = "v0.11";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;
@@ -273,7 +273,7 @@ commands:
                    this will write to stdout unless -o is given
     import FILE    import data from a csv file
                    with the columns: date,metric,value
-                   read from stdin if FILE is '--'
+                   read from stdin if FILE is '-'
 
   reporting:
     log            view log of occurrences
