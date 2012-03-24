@@ -88,7 +88,7 @@ class LogReport implements Report
                     return Math.round(val*10)/10;
                 }
             }
-        case PERCENT:
+        case PCT:
             {
                 valToBin = function(val,date) { return 1/getDuration(date)*100; }
                 printVal = function(val) {                  // ditto whats said for AVG

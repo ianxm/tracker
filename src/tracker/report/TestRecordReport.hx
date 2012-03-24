@@ -225,7 +225,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testWeekHighestPercent()
   {
-      var report = new RecordReport(BIN_WEEK, KEEP_HIGHEST, PERCENT);
+      var report = new RecordReport(BIN_WEEK, KEEP_HIGHEST, PCT);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-08"), 2);
       report.include(Utils.dayFromString("2012-01-08"), Main.NO_DATA);

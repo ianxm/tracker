@@ -118,7 +118,7 @@ class RecordReport implements Report
                 valToBin = function(val,date) { return val/getDuration(date); }
                 printVal = function(val) { return Math.round(val*10)/10; }
             }
-        case PERCENT:
+        case PCT:
             {
                 valToBin = function(val,date) { return 1/getDuration(date)*100; }
                 printVal = Math.round;

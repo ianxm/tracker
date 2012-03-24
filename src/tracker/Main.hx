@@ -145,7 +145,7 @@ class Main
             case "-total":    valType = TOTAL;
             case "-count":    valType = COUNT;
             case "-avg":      valType = AVG;
-            case "-percent":  valType = PERCENT;
+            case "-pct":      valType = PCT;
 
             default:                                        // else assume it is a metric
                 if( StringTools.startsWith(arg, "=") )
@@ -273,6 +273,11 @@ commands:
     streaks        show consecutive days with or without occurrences
     graph          draw graph (requires gnuplot)
 
+  tags:
+    addtag TAG     tag given metrics with TAG
+    rmtag TAG      untag given metrics with TAG
+    listtags       list all tags
+
 options:
   set command options:
     =N             set metrics to N
@@ -302,7 +307,7 @@ options:
     -total         total values (default)
     -count         count of occurrences
     -avg           average values by duration
-    -percent       show values as the percent of occurrence of duration
+    -pct           show values as the percent of occurrence of duration
 
 RANGE:
   DATE         only the specified date
@@ -374,5 +379,5 @@ enum ValType
     TOTAL;                                                  // total values
     COUNT;                                                  // count occurrences
     AVG;                                                    // average values by num days
-    PERCENT;                                                // percent of count of num days
+    PCT;                                                    // percent of count of num days
 }
