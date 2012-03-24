@@ -254,6 +254,34 @@ interval.
 that example shows totals, but the `-count`, `-avg` and `-pct`
 options are available here also.
 
+### graphs
+
+tracker can generate graphs with the help of gnuplot.  by default
+tracker will pop up a graph using ImageMagick (if it is found)
+otherwise using gnuplot's native plotter.  ImageMagick looks a bit
+nicer.
+
+the graph command works the same way as the log command.  the
+following command will produce a graph of average tv watching per
+week.
+
+    > tracker graph watchedtv -week -avg
+
+in addition to 'date grouping' and 'value type' options, the graph
+type can be set.  the default is a line graph, but tracker can produce
+bar and point graphs.  this command produces a graph of the same data,
+but as a bar graph.
+
+    > tracker graph watchedtv -week -avg -bar
+
+if an output filename is provided tracker will save the
+graph to that file instead of popping up a graph window.  tracker
+determines the image file type from the given filename.  the filename
+must end in '.png' or '.svg'.  the following command will create a
+graph image named 'out.png' in the current directory.
+
+    > tracker graph watchedtv -week -o out.png
+
 ### tags
 
 tracker lets you tag metrics.  are shortcuts that let you select
@@ -269,8 +297,7 @@ then you can get the same records report from above with
     > tracker records workout
     ...
 
-that's all for now.  tracker will be able to generate graphs using
-gnuplot but that's not done yet.
+that's all for now.
 
 
 reference
@@ -327,7 +354,7 @@ options:
     -v, --version  show version
     -h, --help     show help
 
-  date groupings for reports:
+  date groupings:
     (these are only used by the 'log' and 'graph' commands)
     -day           each day is separate (default)
     -week          group weeks together
@@ -335,11 +362,16 @@ options:
     -year          group years together
     -full          group the full date range together
 
-  values in reports:
+  value types:
     -total         total values (default)
     -count         count of occurrences
     -avg           average values by duration
     -pct           show values as the percent of occurrence of duration
+
+  graphs:
+    -line          draw a line graph (default)
+    -bar           draw a bar graph
+    -point         draw a point graph
 
 RANGE:
   DATE         only the specified date

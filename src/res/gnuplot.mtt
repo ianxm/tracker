@@ -1,0 +1,58 @@
+::if makePng::
+  #set term png size 600, 400
+  set term pngcairo size 600, 400
+  set output "::fname::"
+::elseif makeSvg::
+  set term svg size 600, 400
+  set output "::fname::"
+::elseif useMagick::
+  set term svg size 600, 400
+  set output "|display"
+::else::
+  set term x11 persist
+::end::
+  
+  set title "::title:: per ::grouping::"
+  set xlabel "date"
+::if (valType=="total")::
+  set ylabel "total"
+::elseif (valType=="count")::
+  set ylabel "count"
+::elseif (valType=="avg")::
+  set ylabel "average value per day"
+::else::
+  set ylabel "percent of days with occurrences"
+::end::
+
+::if ((grouping=="day")||(grouping=="week"))::
+  set timefmt "%Y-%m-%d"
+  set format x "%Y-%m-%d"
+::elseif (grouping == "month")::
+  set timefmt "%Y-%m"
+  set format x "%Y-%m"
+::else::
+  set timefmt "%Y"
+  set format x "%Y"
+::end::
+
+::if (graphType=="bar")::
+  set xtics rotate
+  set boxwidth 0.9 relative
+  set yrange [0:]
+  set style data histogram
+  set style histogram cluster
+  set style fill solid
+  plot "-" using 2:xtic(1) notitle lc rgbcolor "#399320"
+::elseif (graphType=="line")::
+  set xdata time
+  set xtics rotate
+  set style line 1 lw 1.2
+  plot "-" using 1:2 with lines notitle ls 1 lc rgbcolor "#399320"
+::else::
+  set xdata time
+  set xtics rotate
+  set style line 1 pt 7 ps 0.5
+  plot "-" using 1:2 with points notitle ls 1 lc rgbcolor "#399320"
+::end::
+
+::data::

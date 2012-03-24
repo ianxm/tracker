@@ -149,6 +149,7 @@ class Tracker
         }
         else
             File.stdout();
+        Lib.println("writing csv to: " + fname);
 
         var occurrences = selectRange(range, false);
         fout.writeString("date,metric,value\n");
@@ -258,15 +259,28 @@ class Tracker
 
         if( range[0] != null )                              // start..
             reportGenerator.include(range[0], Main.NO_DATA);
-
         var occurrences = selectRange(range);
         for( occ in occurrences )
             reportGenerator.include(Utils.dayFromJulian(occ.date), occ.value);
-
-                                                            // ..end (cant be null)
-        reportGenerator.include(range[1], Main.NO_DATA);
+        reportGenerator.include(range[1], Main.NO_DATA);    // ..end (cant be null)
 
         reportGenerator.print();
+    }
+
+    // run the graph generator
+    public function graph(fname :String, graphType, groupType, valType)
+    {
+        connect();
+        checkMetrics();                                     // check that all requested metrics exist
+
+        var graphGenerator = new GraphGenerator(metrics.list().join(", "), graphType, fname);
+        graphGenerator.setReport(groupType, valType);
+
+        var occurrences = selectRange(range);
+        for( occ in occurrences )
+            graphGenerator.include(Utils.dayFromJulian(occ.date), occ.value);
+
+        graphGenerator.render();
     }
 
     // increment values

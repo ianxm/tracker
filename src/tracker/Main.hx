@@ -27,7 +27,7 @@ import altdate.Gregorian;
 
 class Main
 {
-    private static var VERSION = "v0.11";
+    private static var VERSION = "v0.12";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;
@@ -39,6 +39,7 @@ class Main
     private var cmd        :Command;
     private var valType    :ValType;
     private var groupType  :GroupType;
+    private var graphType  :GraphType;
     private var fname      :String;
     private var tail       :Int;
     private var tag        :String;
@@ -48,6 +49,7 @@ class Main
         cmd = null;
         groupType = DAY;
         valType = TOTAL;
+        graphType = LINE;
         metrics = new Set<String>();
         range = [null, null];
     }
@@ -71,6 +73,7 @@ class Main
             case ADD_TAG:    worker.addTag(tag);
             case RM_TAG:     worker.rmTag(tag);
             case LIST_TAGS:  worker.listTags();
+            case GRAPH:      worker.graph(fname, graphType, groupType, valType);
             default:         worker.view(cmd, groupType, valType, tail);
             }
             worker.close();
@@ -99,7 +102,7 @@ class Main
         case "import":  { cmd = CSV_IMPORT; fname = args.shift(); }
         case "records": cmd = RECORDS;
         case "streaks": cmd = STREAKS;
-        case "graph":   throw "graphs have not been implemented yet";
+        case "graph":   cmd = GRAPH;
 
         case "addtag":   { cmd = ADD_TAG; tag = args.shift(); }
         case "rmtag":    { cmd = RM_TAG; tag = args.shift(); }
@@ -130,7 +133,7 @@ class Main
                         range = [date, date];
                     }
                 }
-            case "-o":        fname = args.shift();         // save image file
+            case "-o":        fname = args.shift();         // save image or csv file
             case "--all":     metrics.add("*");             // select all metrics
             case "--min":     throw "the min option has not been implemented yet";
             case "--repo":    dbFile = args.shift();        // set filename
@@ -149,6 +152,10 @@ class Main
             case "-count":    valType = COUNT;
             case "-avg":      valType = AVG;
             case "-pct":      valType = PCT;
+
+            case "-line":     graphType = LINE;
+            case "-bar":      graphType = BAR;
+            case "-point":    graphType = POINT;
 
             default:                                        // else assume it is a metric
                 if( StringTools.startsWith(arg, "=") )
@@ -256,12 +263,6 @@ class Main
                 throw "you must set the HOME environment variable or specify the repo filename";
             dbFile = home + "/.tracker.db";
         }
-
-        if( fname != null )
-            if( cmd == GRAPH )
-                Lib.println("saving graph to: " + fname);
-            else if( cmd == CSV_EXPORT )
-                Lib.println("writing csv to: " + fname);
     }
 
     private static function printVersion()
@@ -316,7 +317,7 @@ options:
 
   general:
     -d RANGE       specify date range (see RANGE below)
-    -o FILE        write graph image to a file
+    -o FILE        write graph image or csv export to a file
     -N             limit output to the last N items
                    this only affects the 'streaks' and 'log' commands
     --all          select all existing metrics
@@ -338,6 +339,11 @@ options:
     -count         count of occurrences
     -avg           average values by duration
     -pct           show values as the percent of occurrence of duration
+
+  graphs:
+    -line          draw a line graph (default)
+    -bar           draw a bar graph
+    -point         draw a point graph
 
 RANGE:
   DATE         only the specified date
@@ -414,4 +420,11 @@ enum ValType
     COUNT;                                                  // count occurrences
     AVG;                                                    // average values by num days
     PCT;                                                    // percent of count of num days
+}
+
+enum GraphType
+{
+    LINE;                                                  // line graph
+    BAR;                                                   // bar graph
+    POINT;                                                 // point graph
 }

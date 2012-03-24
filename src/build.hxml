@@ -4,3 +4,4 @@
 -cp ../../haxealtdate
 # -lib haxealtdate
 -main tracker.Main
+-resource res/gnuplot.mtt@gnuplot
