@@ -61,8 +61,15 @@ class Tracker
                    "CONSTRAINT key PRIMARY KEY (metricId, date))");
         db.request("CREATE VIEW full AS SELECT " +
                    "metrics.id AS metricId, metrics.name AS metric, occurrences.date AS date, occurrences.value AS value " +
-                   "from metrics, occurrences " +
-                   "where occurrences.metricId=metrics.id");
+                   "FROM metrics, occurrences " +
+                   "WHERE occurrences.metricId=metrics.id");
+        db.request("CREATE TABLE tags (" +
+                   "name TEXT NOT NULL," +
+                   "metricId INTEGER NOT NULL REFERENCES metric (id) ON DELETE SET NULL)");
+        db.request("CREATE VIEW tags_by_names AS SELECT " +
+                   "tags.name AS tag, metrics.name AS metric " + 
+                   "FROM tags, metrics " +
+                   "WHERE tags.metricId=metrics.id");
     }
 
     // open db file
@@ -180,6 +187,48 @@ class Tracker
         fin.close();
     }
 
+    public function addTag(tag)
+    {
+        connect();
+        for( metric in metrics )
+        {
+            var metricId = getMetric(metric);
+            if( metricId == null )
+                throw "metric doesn't exist: " + metric;
+            db.request("INSERT INTO tags VALUES ("+ db.quote(tag) +", "+ metricId +")");
+        }
+    }
+
+    public function rmTag(tag)
+    {
+        connect();
+        for( metric in metrics )
+        {
+            var metricId = getMetric(metric);
+            if( metricId == null )
+                throw "metric doesn't exist: " + metric;
+            db.request("DELETE FROM tags WHERE (name="+ db.quote(tag) +" AND metricId="+ metricId +")");
+        }
+    }
+
+    public function listTags()
+    {
+        connect();
+        var rs = db.request("SELECT DISTINCT name FROM tags ORDER BY name");
+        var tags = rs.results().map(function(ii) return ii.name);
+        var tagHash = new Hash<String>();
+        for( tag in tags )
+        {
+            rs = db.request("SELECT metric FROM tags_by_names where tag="+ db.quote(tag));
+            var metricNames = rs.results().map(function(ii) return ii.metric);
+            tagHash.set(tag, metricNames.join(", "));
+        }
+        
+        var width = tags.fold(function(rr,width:Int) return Std.int(Math.max(rr.length,width)), 0);
+        for( key in tags )
+            Lib.println("  " + key.lpad(" ",width) + ": " + tagHash.get(key));
+    }
+
     // run the report generator to view the data
     public function view(cmd, groupType, valType, tail)
     {
@@ -243,14 +292,23 @@ class Tracker
     // get a metric id, create it if it doesn't exist
     private function getOrCreateMetric(metric :String) :Int
     {
-        var rs = db.request("SELECT id FROM metrics WHERE name="+ db.quote(metric));
-        return if( rs.length != 0 )
-            rs.next().id;
+        var metricId = getMetric(metric);
+        return if( metricId!=null )
+            metricId;
         else
         {                                                   // add metric if its new
             db.request("INSERT INTO metrics VALUES (null, "+ db.quote(metric) +")");
             getOrCreateMetric(metric);
         }
+    }
+
+    inline private function getMetric(metric :String) :Int
+    {
+        var rs = db.request("SELECT id FROM metrics WHERE name="+ db.quote(metric));
+        return if( rs.length != 0 )
+            rs.next().id;
+        else
+            null;
     }
 
     // set a value 

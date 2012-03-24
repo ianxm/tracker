@@ -40,6 +40,7 @@ class Main
     private var groupType  :GroupType;
     private var fname      :String;
     private var tail       :Int;
+    private var tag        :String;
 
     public function new()
     {
@@ -66,6 +67,9 @@ class Main
             case REMOVE:     worker.remove();
             case CSV_EXPORT: worker.exportCsv(fname);
             case CSV_IMPORT: worker.importCsv(fname);
+            case ADD_TAG:    worker.addTag(tag);
+            case RM_TAG:     worker.rmTag(tag);
+            case LIST_TAGS:  worker.listTags();
             default:         worker.view(cmd, groupType, valType, tail);
             }
             worker.close();
@@ -95,7 +99,12 @@ class Main
         case "records": cmd = RECORDS;
         case "streaks": cmd = STREAKS;
         case "graph":   throw "graphs have not been implemented yet";
-        case "help":    printHelp();
+
+        case "addtag":   { cmd = ADD_TAG; tag = args.shift(); }
+        case "rmtag":    { cmd = RM_TAG; tag = args.shift(); }
+        case "listtags": cmd = LIST_TAGS;
+
+        case "help":      printHelp();
         case "-v",
             "--version":  printVersion();
         case "-h",
@@ -201,7 +210,7 @@ class Main
     private function setDefaults()
     {
                                                             // list metrics if no metrics specified
-        if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT && cmd!=LIST )
+        if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT && cmd!=LIST && cmd!=LIST_TAGS  )
             throw "you must specify a metric";
 
                                                             // fix range if not specified
@@ -363,6 +372,9 @@ enum Command
     RECORDS;                                                // view report
     STREAKS;                                                // show streaks
     GRAPH;                                                  // show graph
+    ADD_TAG;                                                // add a tag
+    RM_TAG;                                                 // remove a tag
+    LIST_TAGS;                                              // list all tags
 }
 
 enum GroupType
