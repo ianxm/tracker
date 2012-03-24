@@ -7,11 +7,12 @@ overview
 tracker is a tool to help track daily personal metrics.  each metric
 is a count of something per day.  the point is to measure behaviors to
 know whether progress is being made in trying to increase a behavior
-(ie. exercise) or decrease it (ie. watching buffy the vampire slayer).
+(i.e. exercise) or decrease it (i.e. watching buffy the vampire
+slayer).
 
-tracker keeps a repository of occurrences for each metric, and can
-generate a variety of reports from its data.  tracker is like a
-command line interface to a spreadsheet.
+tracker keeps a repository of occurrences for each metric, from which
+it can generate a variety of reports from its data.  tracker is like a
+spreadsheet with a command line interface.
 
 
 dependencies
@@ -33,11 +34,13 @@ you can run with:
 
     > neko /path/to/tracker.n
 
-on linux, I recommend setting an alias to shorten the command.
+on linux, I recommend setting an alias to save a few keystrokes.
 
 
 tutorial
 --------
+
+### modifying the repo
 
 tracker has a command line interface similar to git's.  to begin using
 it, you must initialize a repo.  by default tracker will create a repo
@@ -54,7 +57,7 @@ now lets put something in the repo:
     set pushups to 50 for 2012-02-26
 
 that created a metric call 'pushups' and stored '50' in it for today
-(2012-02-26).  the space between the 'pushups' and '=50' is important.
+(2012-02-26).  the space between the 'pushups' and '=50' is required.
 values can have decimal parts and can be negative.
 
 maybe you just did a few more.  lets update the repo:
@@ -62,7 +65,7 @@ maybe you just did a few more.  lets update the repo:
     > tracker set pushups +5
     set pushups to 55 for 2012-02-26
 
-that increased the existing value by 5.  a '-5' will decrease the
+that increased the existing value by 5.  a '-5' will decrease a
 metric's value.  if you don't specify a date, `set` uses the current
 day.  you can specify a date with the `-d` option:
 
@@ -91,19 +94,25 @@ days from feb 10th until the 15th (inclusive) to '4' for 'watchedtv':
     set watchedtv to 4 for 2012-02-14
     set watchedtv to 4 for 2012-02-15
 
-tracker doesn't care about units.  the '4' could mean 4 shows, or
-could mean 4 hours.  lets say you didn't actually watch tv on the
-12th.  you can delete that entry with:
+note: tracker doesn't care about units.  the '4' could mean 4 shows, or
+could mean 4 hours.
+
+lets say you didn't actually watch tv on the 12th.  you can delete
+that entry with:
 
     > tracker rm watchedtv -d 2012-02-12
     removed watchedtv for 2012-02-12
 
-the date is important on that one.  if you left the date off, it would
-have tried to delete a 'watchedtv' entry for today (but there isn't
-one).
+if you left the date off, tracker would have tried to delete a
+'watchedtv' entry for today (but there isn't one).
+
+### reports
 
 that's it for the commands that modify the repo.  now lets look at
 some reporting.  
+
+the `list` command lists all metrics stored in the repo and gives
+their date ranges.
 
     > tracker list
      metric  count  first         last      days
@@ -111,8 +120,9 @@ some reporting.
     pullups     1 2012-02-25 to 2012-02-25     1
     watchedtv   5 2012-02-10 to 2012-02-15     6
 
-the `list` command lists all metrics stored in the repo and gives
-their date ranges.
+the `streaks` command lists runs of consecutive days with or without
+occurrences.  the full date range is from the first occurrence to the
+current day.
 
     > tracker streaks watchedtv
     duration: 17 days from 2012-02-10 to 2012-02-26
@@ -123,11 +133,10 @@ their date ranges.
 
 note: date ranges for modifier commands (`set` and `rm`) default to
 `today`, but all other commands default to the full date range.  all
-reports begin by specifying the full date range examined.
+reports begin by specifying the duration of the date range examined.
 
-the `streaks` command lists runs of consecutive days with or without
-occurrences.  the full date range is from the first occurrence to the
-current day.
+this is the calendar view of the same data.  here you can easily see
+the runs of on and off days that were listed by the `streaks` output.
 
     > tracker cal watchedtv
     duration: 29 days from 2012-02-01 to 2012-02-29
@@ -140,10 +149,11 @@ current day.
        .    .    .    .    .    .    . 
        .    _    _    _ 
 
-this is the calendar view of the same data.  here you can easily see
-the runs of on and off days that were listed by the `streaks` output.
-
 note: the underscores represent days in the future.
+
+this is the calendar for both the 'pullups' and 'pushups' metrics.
+listing multiple metrics will return occurrences of either.  values
+for the same day will be summed.
 
     > tracker cal pullups pushups
     duration: 29 days from 2012-02-01 to 2012-02-29
@@ -156,8 +166,8 @@ note: the underscores represent days in the future.
        .   40    .    .    .    .   10 
       55    _    _    _ 
 
-this is the calendar for both the 'pullups' and 'pushups' metrics.
-listing multiple metrics will return occurrences of either.
+this is a log of all 'watchedtv' occurrences.  by default, logs group
+occurrences by day, but they can also be grouped in larger intervals.
 
     > tracker log watchedtv
     duration: 17 days from 2012-02-10 to 2012-02-26
@@ -169,20 +179,17 @@ listing multiple metrics will return occurrences of either.
 
 note: logs, like all reports, can be constrained using date ranges.
 
-this is a log of all 'watchedtv' occurrences.  by default, logs group
-occurrences by day, but they can also be grouped in larger intervals.
+this is a log where each entry lists the totals for that week.  so, on
+the week of the 12th, you spent 12 hours watching tv.  you should pare
+that back.  in addition to `-week`, tracker provides `-month`,
+`-year`, and `-full`, which combines all data into a single entry.
 
     > tracker log watchedtv -week
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 8
       2012-02-12: 12
 
-this is a log where each entry lists the totals for that week.  so, on
-the week of the 12th, you spent 12 hours watching tv.  you should pare
-that back.  in addition to `-week`, tracker provides `-month`,
-`-year`, and `-full`, which combines all data into a single entry.
-
-in the last example, the values reported were sums of the metric
+in the above example, the values reported were sums of the metric
 values.  that's the default, but tracker can also provide counts of
 occurrences:
 
@@ -191,7 +198,8 @@ occurrences:
       2012-02-05: 2
       2012-02-12: 3
 
-so, you watched tv on three days on the week of the 12th.
+that last line says, you watched tv on three days on the week of feb
+12th.
 
 you can also get averages of values.  here, tracker totals the values,
 then divides by the number of days in the interval (7 in this example,
@@ -202,19 +210,19 @@ since we're looking at weeks).
       2012-02-05: 1.1
       2012-02-12: 1.7
 
-that says you spent 1.7 hours per day watching tv on the week of the
+that says you spent 1.7 hours per day watching tv on the week of feb
 12th.
 
 you can also get percentages of occurrences.  here, tracker counts the
 occurrences, then divides by the number of days in the interval (7
 again) then converts to a percent.
 
-    > tracker log watchedtv -week -percentage
+    > tracker log watchedtv -week -pct
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 29
       2012-02-12: 43
 
-that says that you watched tv on 43% of the days of the week of the
+that says that you watched tv on 43% of the days of the week of feb
 12th.
 
 the command below shows the highest and lowest values for each
@@ -243,8 +251,23 @@ interval.
     longest off streak:   4 days starting on 2012-02-21
         current streak:   2 days starting on 2012-02-25 (on)
 
-that example shows totals, but the `-count`, `-avg` and `-percent`
+that example shows totals, but the `-count`, `-avg` and `-pct`
 options are available here also.
+
+### tags
+
+tracker lets you tag metrics.  are shortcuts that let you select
+multiple metrics by one name.  for instance if you wanted to group
+pushups and pullups together, you could tag them with 'workout'.
+
+    > tracker addtag workout pushups pullups
+    added tag 'workout' to 'pushups'
+    added tag 'workout' to 'pullups'
+
+then you can get the same records report from above with
+
+    > tracker records workout
+    ...
 
 that's all for now.  tracker will be able to generate graphs using
 gnuplot but that's not done yet.
@@ -253,73 +276,78 @@ gnuplot but that's not done yet.
 reference
 ---------
 
-    usage: tracker command [options] [metric [metric..]]
-    
-        if no date range is specified, the range is all days. 
-        if no metric is given, tracker will list all metrics found.
-    
-    commands:
-      general:
-        init           initialize a repository
-        list           list existing metrics and date ranges
-        help           show help
-    
-      modify repository:
-        set            set or increment a value
-                       see 'set command options' below
-        rm             remove occurrences
-    
-      import/export:
-        export         export data to csv format
-                       this will write to stdout unless -o is given
-        import FILE    import data from a csv file
-                       with the columns: date,metric,value
-    
-      reporting:
-        log            view log of occurrences
-        cal            show calendar
-        records        show high and low records
-        streaks        show consecutive days with or without occurrences
-        graph          draw graph (requires gnuplot)
-      
-    options:
-      set command options:
-        =N             set metrics to N
-        +N             increment metrics by N
-        -N             decrement metrics by N
-    
-      general:
-        -d RANGE       specify date range (see RANGE below)
-        -o FILE        write graph image to a file
-        -N             limit output to the last N items
-                       this only affects the 'streaks' and 'log' commands
-        --all          select all existing metrics
-        --repo FILE    specify a repository filename
-        --min VAL      min threshold to count as an occurrence
-        -v, --version  show version
-        -h, --help     show help
-    
-      date groupings for reports:
-        (these are only used by the 'log' and 'graph' commands)
-        -day           each day is separate (default)
-        -week          group weeks together
-        -month         group months together
-        -year          group years together
-        -full          group the full date range together
-    
-      values in reports:
-        -total         total values (default)
-        -count         count of occurrences
-        -avg           average values by duration
-        -percent       show values as the percent of occurrence of duration
-    
-    RANGE:
-      DATE         only the specified date
-      DATE..       days from the given date until today
-      ..DATE       days from the start of the data to the specified date
-      DATE..DATE   days between specified dates (inclusive)
-    
-    DATE:
-      YYYY-MM-DD   specify a date
-      today        specify day is today (default)
-      yesterday    specify day is yesterday
+usage: tracker command [options] [metric [metric..]]
+
+    if no date range is specified, the range is all days.
+
+commands:
+  general:
+    init           initialize a repository
+    list           list existing metrics and date ranges
+    help           show help
+
+  modify repository:
+    set            set or increment a value
+                   see 'set command options' below
+    rm             remove occurrences
+
+  import/export:
+    export         export data to csv format
+                   this will write to stdout unless -o is given
+    import FILE    import data from a csv file
+                   with the columns: date,metric,value
+                   read from stdin if FILE is '-'
+
+  reporting:
+    log            view log of occurrences
+    cal            show calendar
+    records        show high and low records
+    streaks        show consecutive days with or without occurrences
+    graph          draw graph (requires gnuplot)
+
+  tags:
+    addtag TAG     tag given metrics with TAG
+    rmtag TAG      untag given metrics with TAG
+    listtags       list all tags
+
+options:
+  set command options:
+    =N             set metrics to N
+    +N             increment metrics by N
+    -N             decrement metrics by N
+
+  general:
+    -d RANGE       specify date range (see RANGE below)
+    -o FILE        write graph image to a file
+    -N             limit output to the last N items
+                   this only affects the 'streaks' and 'log' commands
+    --all          select all existing metrics
+    --repo FILE    specify a repository filename
+    --min VAL      min threshold to count as an occurrence
+    -v, --version  show version
+    -h, --help     show help
+
+  date groupings for reports:
+    (these are only used by the 'log' and 'graph' commands)
+    -day           each day is separate (default)
+    -week          group weeks together
+    -month         group months together
+    -year          group years together
+    -full          group the full date range together
+
+  values in reports:
+    -total         total values (default)
+    -count         count of occurrences
+    -avg           average values by duration
+    -pct           show values as the percent of occurrence of duration
+
+RANGE:
+  DATE         only the specified date
+  DATE..       days from the given date until today
+  ..DATE       days from the start of the data to the specified date
+  DATE..DATE   days between specified dates (inclusive)
+
+DATE:
+  YYYY-MM-DD   specify a date
+  today        specify day is today (default)
+  yesterday    specify day is yesterday

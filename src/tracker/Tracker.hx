@@ -194,6 +194,8 @@ class Tracker
         fin.close();
     }
 
+    // add a tag
+    // this allows multiple identical, but it doesn't seem to hurt anything
     public function addTag(tag)
     {
         connect();
@@ -203,9 +205,12 @@ class Tracker
             if( metricId == null )
                 throw "metric doesn't exist: " + metric;
             db.request("INSERT INTO tags VALUES ("+ db.quote(tag) +", "+ metricId +")");
+            Lib.println("added tag '"+ tag +"' to '"+ metric +"'");
         }
     }
 
+    // remove a tag
+    // this says it removed it even if the tag didn't exist
     public function rmTag(tag)
     {
         connect();
@@ -215,9 +220,11 @@ class Tracker
             if( metricId == null )
                 throw "metric doesn't exist: " + metric;
             db.request("DELETE FROM tags WHERE (name="+ db.quote(tag) +" AND metricId="+ metricId +")");
+            Lib.println("removed tag '"+ metric +"' from '"+ tag +"'");
         }
     }
 
+    // list all tags and the metrics they tag
     public function listTags()
     {
         connect();
