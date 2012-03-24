@@ -18,6 +18,7 @@
 package tracker;
 
 using Lambda;
+using StringTools;
 import neko.Lib;
 import neko.Sys;
 import neko.FileSystem;
@@ -121,13 +122,6 @@ class Main
             case "-d":                                      // date range
                 {
                     arg = args.shift();
-                    var dateFix = function(ii) {
-                        return switch(ii){
-                        case "today":     Utils.today();
-                        case "yesterday": { var day = Utils.today(); day.day-=1; day; }
-                        default:          Utils.dayFromString(ii);
-                        }
-                    }
                     if( arg.indexOf("..")!=-1 )
                         range = arg.split("..").map(dateFix).array();
                     else
@@ -205,6 +199,33 @@ class Main
             }
         }
     }
+
+    // parse date strings
+    // accept yyyy-mm-dd or yesterday or today[-N]
+    private function dateFix(dateStr :String)
+    {
+        return if( dateStr.startsWith("yest") )
+        {
+            var day = Utils.today();
+            day.day -= 1;
+            day;
+        }
+        else if( dateStr.startsWith("tod") )
+        {
+            var day = Utils.today();
+            var fields = dateStr.split("-");
+            try {
+                if( fields.length == 2 )
+                    day.day -= Std.parseInt(fields[1]);
+            } catch( e:String ) {
+                throw "offset from today must be an integer";
+            }
+            day;
+        }
+        else
+            Utils.dayFromString(dateStr);
+    }
+
 
     // set defaults after args have been processed
     private function setDefaults()
@@ -328,6 +349,7 @@ DATE:
   YYYY-MM-DD   specify a date
   today        specify day is today (default)
   yesterday    specify day is yesterday
+  today-N      specify day is N days before today
   
 examples:
   > tracker init

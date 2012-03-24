@@ -351,3 +351,4 @@ DATE:
   YYYY-MM-DD   specify a date
   today        specify day is today (default)
   yesterday    specify day is yesterday
+  today-N      specify day is N days before today
