@@ -5,14 +5,16 @@ overview
 --------
 
 tracker is a tool to help track daily personal metrics.  each metric
-is a count of something per day.  the point is to measure behaviors to
-know whether progress is being made in trying to increase a behavior
-(i.e. exercise) or decrease it (i.e. watching buffy the vampire
-slayer).
+is a count of something per day.  the point is to measure behaviors
+that you are trying to increase (like excercise) or decrease (like
+watching buffy the vampire slayer) so that you can see if you are
+making progress toward that goal.  You cannot measure something
+without affecting it.  Heisenberg wasn't thinking about personal
+decisions, but it probably applies.
 
-tracker keeps a repository of occurrences for each metric, from which
-it can generate a variety of reports from its data.  tracker is like a
-spreadsheet with a command line interface.
+tracker keeps a repository of occurrences for each metric from which
+it can generate a variety of reports.  tracker is like a spreadsheet
+with a command line interface.
 
 
 dependencies
@@ -34,7 +36,7 @@ you can run with:
 
     > neko /path/to/tracker.n
 
-on linux, I recommend setting an alias to save a few keystrokes.
+on linux, setting an alias can save a few keystrokes.
 
 
 tutorial
@@ -57,7 +59,7 @@ now lets put something in the repo:
     set pushups to 50 for 2012-02-26
 
 that created a metric call 'pushups' and stored '50' in it for today
-(2012-02-26).  the space between the 'pushups' and '=50' is required.
+(2012-02-26).  the space between the `pushups` and `=50` is required.
 values can have decimal parts and can be negative.
 
 maybe you just did a few more.  lets update the repo:
@@ -65,7 +67,7 @@ maybe you just did a few more.  lets update the repo:
     > tracker set pushups +5
     set pushups to 55 for 2012-02-26
 
-that increased the existing value by 5.  a '-5' will decrease a
+that increased the existing value by 5.  a `-5` will decrease a
 metric's value.  if you don't specify a date, `set` uses the current
 day.  you can specify a date with the `-d` option:
 
@@ -74,8 +76,9 @@ day.  you can specify a date with the `-d` option:
 
 that set '40' to the 'pushups' metric for feb 20th.  the order of
 arguments doesn't matter except that the first argument must be the
-command.  dates must be specified in `YYYY-MM-DD` format, with two
-exceptions: `today` and `yesterday` are valid dates.
+command.  dates can be specified in either `YYYY-MM-DD` format, or as
+`yesterday` or `today` or `today-N`, where `today-1` is the same as
+`yesterday`.
 
     > tracker set pullups =10 -d yesterday
     set pullups to 10 for 2012-02-25
@@ -104,7 +107,8 @@ that entry with:
     removed watchedtv for 2012-02-12
 
 if you left the date off, tracker would have tried to delete a
-'watchedtv' entry for today (but there isn't one).
+'watchedtv' entry for today (but there isn't one).  date ranges for
+modifier commands (`set` and `rm`) default to `today`.
 
 ### reports
 
@@ -121,8 +125,7 @@ their date ranges.
     watchedtv   5 2012-02-10 to 2012-02-15     6
 
 the `streaks` command lists runs of consecutive days with or without
-occurrences.  the full date range is from the first occurrence to the
-current day.
+occurrences.
 
     > tracker streaks watchedtv
     duration: 17 days from 2012-02-10 to 2012-02-26
@@ -131,9 +134,10 @@ current day.
        on   3 days from 2012-02-13
       off  11 days from 2012-02-16
 
-note: date ranges for modifier commands (`set` and `rm`) default to
-`today`, but all other commands default to the full date range.  all
-reports begin by specifying the duration of the date range examined.
+since the date range isn't specified, tracker uses the full date range
+of the data.  the full date range for report commands is from the
+first occurrence to the current day.  all reports begin by specifying
+the duration of the date range examined.
 
 this is the calendar view of the same data.  here you can easily see
 the runs of on and off days that were listed by the `streaks` output.
@@ -166,8 +170,9 @@ for the same day will be summed.
        .   40    .    .    .    .   10 
       55    _    _    _ 
 
-this is a log of all 'watchedtv' occurrences.  by default, logs group
-occurrences by day, but they can also be grouped in larger intervals.
+the following is a log of all 'watchedtv' occurrences.  by default,
+logs group occurrences by day, but they can also be grouped in larger
+intervals.
 
     > tracker log watchedtv
     duration: 17 days from 2012-02-10 to 2012-02-26
@@ -179,15 +184,17 @@ occurrences by day, but they can also be grouped in larger intervals.
 
 note: logs, like all reports, can be constrained using date ranges.
 
-this is a log where each entry lists the totals for that week.  so, on
-the week of the 12th, you spent 12 hours watching tv.  you should pare
-that back.  in addition to `-week`, tracker provides `-month`,
-`-year`, and `-full`, which combines all data into a single entry.
+this is a log where each entry lists the totals for that week.
 
     > tracker log watchedtv -week
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 8
       2012-02-12: 12
+
+so, on the week of the 12th, you spent 12 hours watching tv.  you
+should pare that back.  in addition to `-week`, tracker provides
+`-month`, `-year`, and `-full`, which combines all data into a single
+entry.
 
 note: day logs omit gaps in data, but the other date groupings show
 gaps as zero entries.
@@ -201,8 +208,8 @@ occurrences:
       2012-02-05: 2
       2012-02-12: 3
 
-that last line says, you watched tv on three days on the week of feb
-12th.
+that last line says that you watched tv on three days of the week of
+feb 12th.
 
 you can also get averages of values.  here, tracker totals the values,
 then divides by the number of days in the interval (7 in this example,
