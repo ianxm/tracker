@@ -189,7 +189,10 @@ that back.  in addition to `-week`, tracker provides `-month`,
       2012-02-05: 8
       2012-02-12: 12
 
-in the above example, the values reported were sums of the metric
+note: day logs omit gaps in data, but the other date groupings show
+gaps as zero entries.
+
+in the last example the values reported were sums of the metric
 values.  that's the default, but tracker can also provide counts of
 occurrences:
 

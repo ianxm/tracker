@@ -33,6 +33,7 @@ class LogReport implements Report
     private var lastVal     :Float;                         // value in last bin
     private var firstDay    :Gregorian;                     // needed for full grouping
     private var lastDay     :Gregorian;                     // needed for full grouping
+    private var gapCheck    :Bool;                          // if true, check for gaps
 
     public function new(gt, vt)
     {
@@ -44,26 +45,31 @@ class LogReport implements Report
             {
                 dateToBin = RecordReport.dateToDayBin;
                 getDuration = function(date) { return 1; }
+                gapCheck = false;
             }
         case WEEK:
             {
                 dateToBin = RecordReport.dateToWeekBin;
                 getDuration = function(date) { return 7; }
+                gapCheck = true;
             }
         case MONTH:
             {
                 dateToBin = RecordReport.dateToMonthBin;
                 getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
+                gapCheck = true;
             }
-        case YEAR: 
+        case YEAR:
             {
                 dateToBin = RecordReport.dateToYearBin;
                 getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
+                gapCheck = true;
             }
         case FULL: 
             {
                 dateToBin = function(date) { return "all-time"; }
                 getDuration = function(date) { return 1; }  // must track full duration
+                gapCheck = false;
             }
         }
 
@@ -107,9 +113,8 @@ class LogReport implements Report
 
         if( firstDay == null )
             firstDay = thisDay;
-        lastDay = thisDay;
 
-        var binStr = dateToBin(thisDay);
+        var binStr = dateToBin(thisDay);                    // get bin key
         val = valToBin(val, thisDay);
         if( lastBin == null )
         {
@@ -118,16 +123,27 @@ class LogReport implements Report
         }
         else
         {
-            if( binStr == lastBin )
+            if( binStr == lastBin )                         // same bin as last
                 lastVal += val;
             else
             {
-                if( lastBin != null )
+                if( lastBin != null )                       // add new occ
                     buf.add("  " + lastBin + ": " + printVal(lastVal) + "\n");
+
+                // check for gaps
+                if( gapCheck && lastDay!=null )
+                    while( true )
+                    {
+                        lastDay.day += getDuration(lastDay);
+                        if( lastDay.value+getDuration(lastDay) >= thisDay.value )
+                            break;
+                        buf.add("  " + dateToBin(lastDay) + ": 0\n");
+                    }
                 lastBin = binStr;
                 lastVal = val;
             }
         }
+        lastDay = thisDay;
     }
 
     public function toString()

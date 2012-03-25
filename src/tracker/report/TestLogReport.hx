@@ -116,4 +116,23 @@ class TestLogReport extends haxe.unit.TestCase
         report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);
         assertEquals("  2012-01-01: 29\n", report.toString());
     }
+
+    public function testWeekGap()
+    {
+        var report = new LogReport(WEEK, TOTAL);
+        report.include(Utils.dayFromString("2012-01-01"), 1);
+        report.include(Utils.dayFromString("2012-01-18"), 2);
+        report.include(Utils.dayFromString("2012-01-18"), Main.NO_DATA);
+        assertEquals("  2012-01-01: 1\n  2012-01-08: 0\n  2012-01-15: 2\n", report.toString());
+    }
+
+    public function testWeekGap2()
+    {
+        var report = new LogReport(WEEK, TOTAL);
+        report.include(Utils.dayFromString("2012-03-04"), 1);
+        report.include(Utils.dayFromString("2012-03-19"), 1);
+        report.include(Utils.dayFromString("2012-03-20"), 1);
+        report.include(Utils.dayFromString("2012-03-20"), Main.NO_DATA);
+        assertEquals("  2012-03-04: 1\n  2012-03-11: 0\n  2012-03-18: 2\n", report.toString());
+    }
 }
