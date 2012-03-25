@@ -136,20 +136,21 @@ class Tracker
         connect();
         checkMetrics();                                     // check that all requested metrics exist
 
-        var fout = if( fname != null )
+        var fout;
+        if( fname != null )
         {
             if( FileSystem.exists(fname) )
                 throw "file exists: " + FileSystem.fullPath(fname);
             else
                 try {
-                    File.write(fname);
+                    fout = File.write(fname);
                 } catch( e:Dynamic ) {
                     throw "couldn't open output file: " + fname;
                 }
+            Lib.println("writing csv to: " + fname);
         }
         else
-            File.stdout();
-        Lib.println("writing csv to: " + fname);
+            fout = File.stdout();
 
         var occurrences = selectRange(range, false);
         fout.writeString("date,metric,value\n");
@@ -210,7 +211,7 @@ class Tracker
             if( metricId == null )
                 throw "metric doesn't exist: " + metric;
             db.request("INSERT INTO tags VALUES ("+ db.quote(tag) +", "+ metricId +")");
-            Lib.println("added tag '"+ tag +"' to '"+ metric +"'");
+            Lib.println("added tag '"+ tag +"' to metric '"+ metric +"'");
         }
     }
 
@@ -225,7 +226,7 @@ class Tracker
             if( metricId == null )
                 throw "metric doesn't exist: " + metric;
             db.request("DELETE FROM tags WHERE (name="+ db.quote(tag) +" AND metricId="+ metricId +")");
-            Lib.println("removed tag '"+ tag +"' from '"+ metric +"'");
+            Lib.println("removed tag '"+ tag +"' from metric '"+ metric +"'");
         }
     }
 
