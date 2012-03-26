@@ -8,9 +8,11 @@ tracker is a tool to help track daily personal metrics.  each metric
 is a count of something per day.  the point is to measure behaviors
 that you are trying to increase (like excercise) or decrease (like
 watching buffy the vampire slayer) so that you can see if you are
-making progress toward that goal.  You cannot measure something
-without affecting it.  Heisenberg wasn't thinking about personal
-decisions, but it probably applies.
+making progress toward that goal.
+
+You cannot measure something without affecting it.  can't argue;
+that's science.  personal decisions are probably outside the scope of
+quantum mechanics, but lets not get caught up in details.
 
 tracker keeps a repository of occurrences for each metric from which
 it can generate a variety of reports.  tracker is like a spreadsheet
@@ -291,6 +293,9 @@ must end in '.png' or '.svg'.  the following command will create a
 graph image named 'out.png' in the current directory.
 
     > tracker graph watchedtv -week -o out.png
+
+there are some examples of tracker graph images 
+[here](https://github.com/ianxm/tracker/wiki/example-graphs).
 
 ### tags
 
