@@ -26,6 +26,7 @@ class LogReport implements Report
     private var buf         :StringBuf;                     // output buffer
     private var cmd         :Command;                       // which log command
     private var dateToBin   :Gregorian->String;             // convert date to bin key
+    private var startOfBin  :Gregorian->Gregorian;          // go to the first day of the bin
     private var valToBin    :Float -> Gregorian -> Float;   // convert value to pack in bin
     private var getDuration :Gregorian -> Int;              // get num days for averaging
     private var printVal    :Float -> Float;                // set precision of output
@@ -44,30 +45,35 @@ class LogReport implements Report
         case DAY:
             {
                 dateToBin = RecordReport.dateToDayBin;
+                startOfBin = function(date) { return null; } // shouldn't need this
                 getDuration = function(date) { return 1; }
                 gapCheck = false;
             }
         case WEEK:
             {
                 dateToBin = RecordReport.dateToWeekBin;
+                startOfBin = startOfWeekBin;
                 getDuration = function(date) { return 7; }
                 gapCheck = true;
             }
         case MONTH:
             {
                 dateToBin = RecordReport.dateToMonthBin;
+                startOfBin = startOfMonthBin;
                 getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
                 gapCheck = true;
             }
         case YEAR:
             {
                 dateToBin = RecordReport.dateToYearBin;
+                startOfBin = startOfYearBin;
                 getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
                 gapCheck = true;
             }
         case FULL: 
             {
                 dateToBin = function(date) { return "all-time"; }
+                startOfBin = function(date) { return null; } // shouldnt need this
                 getDuration = function(date) { return 1; }  // must track full duration
                 gapCheck = false;
             }
@@ -108,38 +114,38 @@ class LogReport implements Report
 
     public function include(thisDay :Gregorian, val :Float)
     {
-        if( Main.IS_NO_DATA(val) )
-            return;
-
+        //trace("top: " + thisDay + " " + val);
         if( firstDay == null )
             firstDay = thisDay;
 
-        var binStr = dateToBin(thisDay);                    // get bin key
-        val = valToBin(val, thisDay);
-        if( lastBin == null )
+        if( Main.IS_NO_DATA(val) )
         {
-            lastBin = binStr;
+            writeLastBin(thisDay);
+            var thisBin = dateToBin(thisDay);
+            if( lastDay!=null && thisBin!=lastBin && gapCheck )
+                buf.add("  " + thisBin + ": 0\n");
+            lastBin = thisBin;
+            lastVal = 0;
+            lastDay = thisDay;
+            return;
+        }
+
+        var thisBin = dateToBin(thisDay);                   // get bin key
+        val = valToBin(val, thisDay);
+
+        if( lastBin == null )                               // first value
+        {
+            lastBin = thisBin;
             lastVal = val;
         }
         else
         {
-            if( binStr == lastBin )                         // same bin as last
+            if( thisBin == lastBin )                        // same bin as last and not end range
                 lastVal += val;
             else
             {
-                if( lastBin != null )                       // add new occ
-                    buf.add("  " + lastBin + ": " + printVal(lastVal) + "\n");
-
-                // check for gaps
-                if( gapCheck && lastDay!=null )
-                    while( true )
-                    {
-                        lastDay.day += getDuration(lastDay);
-                        if( lastDay.value+getDuration(lastDay) >= thisDay.value )
-                            break;
-                        buf.add("  " + dateToBin(lastDay) + ": 0\n");
-                    }
-                lastBin = binStr;
+                writeLastBin(thisDay);
+                lastBin = thisBin;
                 lastVal = val;
             }
         }
@@ -148,17 +154,56 @@ class LogReport implements Report
 
     public function toString()
     {
-        if( lastBin != null )
-            buf.add("  " + lastBin + ": " + printVal(lastVal) + "\n");
-
         return if( buf.toString().length>0 )
             buf.toString();
         else
             "no occurrences\n";
     }
 
+    // write the last bin to the log
+    // then write gaps from lastDay till thisDay to the log
+    private function writeLastBin(thisDay :Gregorian)
+    {
+        if( lastBin != null )
+            buf.add("  " + lastBin + ": " + printVal(lastVal) + "\n");
+
+        if( gapCheck && lastDay!=null )
+        {
+            var gapCheckDay = startOfBin(lastDay);          // copy date obj
+            while( true )
+            {
+                gapCheckDay.day += getDuration(gapCheckDay); // move to start of next bin
+                if( gapCheckDay.value+getDuration(gapCheckDay) > thisDay.value )
+                    break;
+                buf.add("  " + dateToBin(gapCheckDay) + ": 0\n");
+            }
+        }
+    }
+
     inline public function getLabel()
     {
         return "";
+    }
+
+    // go to start of bin
+    inline private static function startOfYearBin(date)
+    {
+        var ret = new Gregorian();
+        ret.set(false, null, date.year, 0, 1);
+        return ret;
+    }
+
+    inline private static function startOfMonthBin(date)
+    {
+        var ret = new Gregorian();
+        ret.set(false, null, date.year, date.month, 1);
+        return ret;
+    }
+
+    inline private static function startOfWeekBin(date)
+    {
+        var ret = new Gregorian();
+        ret.set(false, null, date.year, date.month, date.day-date.dayOfWeek());
+        return ret;
     }
 }

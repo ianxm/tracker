@@ -213,7 +213,7 @@ class RecordReport implements Report
         return date.toString();
     }
 
-    // how to bin (chosen by bin strategy)
+    // step back one unit of time
     inline private function lastYear(date)
     {
         var ret = new Gregorian();

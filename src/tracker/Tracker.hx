@@ -277,9 +277,12 @@ class Tracker
         var graphGenerator = new GraphGenerator(metrics.list().join(", "), graphType, fname);
         graphGenerator.setReport(groupType, valType);
 
+        if( range[0] != null )                              // start..
+            graphGenerator.include(range[0], Main.NO_DATA);
         var occurrences = selectRange(range);
         for( occ in occurrences )
             graphGenerator.include(Utils.dayFromJulian(occ.date), occ.value);
+        graphGenerator.include(range[1], Main.NO_DATA);    // ..end (cant be null)
 
         graphGenerator.render();
     }
