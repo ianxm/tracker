@@ -5,11 +5,8 @@
 ::elseif makeSvg::
   set term svg size 600, 400
   set output "::fname::"
-::elseif useMagick::
-  set term svg size 600, 400
-  set output "|display"
 ::else::
-  set term x11 persist
+  set term wxt persist
 ::end::
   
   set title "::title:: per ::grouping::"
