@@ -24,7 +24,6 @@ dependencies
 
 - nekovm
 - gnuplot (for rendering graphs)
-- ImageMagick (for displaying graphs better)
 
 
 installation
@@ -40,7 +39,11 @@ you can run with:
 
 on linux, setting an alias can save a few keystrokes.
 
+to use the `graph` command you must have gnuplot installed and on your
+system path.  be sure to install the full gnuplot package, which
+includes the cairo libraries.
 
+ 
 tutorial
 --------
 
@@ -268,10 +271,9 @@ options are available here also.
 
 ### graphs
 
-tracker can generate graphs with the help of gnuplot.  by default
-tracker will pop up a graph using ImageMagick (if it is found)
-otherwise using gnuplot's native plotter.  ImageMagick looks a bit
-nicer.
+tracker can generate graphs with the help of gnuplot.  the `graph`
+command will result in a graph popping up in gnuplot's native
+plotter.
 
 the graph command works the same way as the log command.  the
 following command will produce a graph of average tv watching per
