@@ -323,8 +323,6 @@ reference
 
     usage: tracker command [options] [metric [metric..]]
     
-        if no date range is specified, the range is all days.
-    
     commands:
       general:
         init           initialize a repository
@@ -332,8 +330,8 @@ reference
         help           show help
     
       modify repository:
-        set            set or increment a value
-                       see 'set command options' below
+        set SETVAL     set or increment a value
+                       see SETVAL below
         rm             remove occurrences
     
       import/export:
@@ -356,13 +354,9 @@ reference
         listtags       list all tags
     
     options:
-      set command options:
-        =N             set metrics to N
-        +N             increment metrics by N
-        -N             decrement metrics by N
-    
       general:
         -d RANGE       specify date range (see RANGE below)
+                       see RANGE below
         -o FILE        write graph image to a file
         -N             limit output to the last N items
                        this only affects the 'streaks' and 'log' commands
@@ -390,6 +384,11 @@ reference
         -line          draw a line graph (default)
         -bar           draw a bar graph
         -point         draw a point graph
+    
+    SETVAL:
+      =N           set metrics to N
+      +N           increment metrics by N
+      -N           decrement metrics by N
     
     RANGE:
       DATE         only the specified date
