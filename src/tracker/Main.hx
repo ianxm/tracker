@@ -252,6 +252,8 @@ class Main
             if( range[0] == null )
                 range[0] = Utils.today();
             range[0].day = 1;
+            if( range[0] == range[1] )
+                range[1] = range[0].toDate();
             range[1].month += 1;
             range[1].day = 0;
         }
