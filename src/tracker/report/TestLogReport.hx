@@ -101,7 +101,7 @@ class TestLogReport extends haxe.unit.TestCase
 
     public function testWeekAvg()
     {
-        var report = new LogReport(WEEK, AVG);
+        var report = new LogReport(WEEK, AVG_WEEK);
         report.include(Utils.dayFromString("2012-01-01"), 1);
         report.include(Utils.dayFromString("2012-01-02"), 2);
         report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);
@@ -110,7 +110,7 @@ class TestLogReport extends haxe.unit.TestCase
 
     public function testWeekPercent()
     {
-        var report = new LogReport(WEEK, PCT);
+        var report = new LogReport(WEEK, PCT_WEEK);
         report.include(Utils.dayFromString("2012-01-01"), 1);
         report.include(Utils.dayFromString("2012-01-02"), 2);
         report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);

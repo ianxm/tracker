@@ -23,18 +23,19 @@ import tracker.Main;
 
 class LogReport implements Report
 {
-    private var buf         :StringBuf;                     // output buffer
-    private var cmd         :Command;                       // which log command
-    private var dateToBin   :Gregorian->String;             // convert date to bin key
-    private var startOfBin  :Gregorian->Gregorian;          // go to the first day of the bin
-    private var valToBin    :Float -> Gregorian -> Float;   // convert value to pack in bin
-    private var getDuration :Gregorian -> Int;              // get num days for averaging
-    private var printVal    :Float -> Float;                // set precision of output
-    private var lastBin     :String;                        // key of last bin
-    private var lastVal     :Float;                         // value in last bin
-    private var firstDay    :Gregorian;                     // needed for full grouping
-    private var lastDay     :Gregorian;                     // needed for full grouping
-    private var gapCheck    :Bool;                          // if true, check for gaps
+    private var buf            :StringBuf;                     // output buffer
+    private var cmd            :Command;                       // which log command
+    private var dateToBin      :Gregorian->String;             // convert date to bin key
+    private var startOfBin     :Gregorian->Gregorian;          // go to the first day of the bin
+    private var valToBin       :Float -> Gregorian -> Float;   // convert value to pack in bin
+    private var getDuration    :Gregorian -> Int;              // get num days for averaging
+    private var getBinDuration :Gregorian -> Int;              // get num days in each bin
+    private var printVal       :Float -> Float;                // set precision of output
+    private var lastBin        :String;                        // key of last bin
+    private var lastVal        :Float;                         // value in last bin
+    private var firstDay       :Gregorian;                     // needed for full grouping
+    private var lastDay        :Gregorian;                     // needed for full grouping
+    private var gapCheck       :Bool;                          // if true, check for gaps
 
     public function new(gt, vt)
     {
@@ -46,37 +47,46 @@ class LogReport implements Report
             {
                 dateToBin = RecordReport.dateToDayBin;
                 startOfBin = function(date) { return null; } // shouldn't need this
-                getDuration = function(date) { return 1; }
+                getBinDuration = function(date) { return 1; }
                 gapCheck = false;
             }
         case WEEK:
             {
                 dateToBin = RecordReport.dateToWeekBin;
                 startOfBin = startOfWeekBin;
-                getDuration = function(date) { return 7; }
+                getBinDuration = function(date) { return 7; }
                 gapCheck = true;
             }
         case MONTH:
             {
                 dateToBin = RecordReport.dateToMonthBin;
                 startOfBin = startOfMonthBin;
-                getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
+                getBinDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
                 gapCheck = true;
             }
         case YEAR:
             {
                 dateToBin = RecordReport.dateToYearBin;
                 startOfBin = startOfYearBin;
-                getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
+                getBinDuration = function(date) { return 365; }
                 gapCheck = true;
             }
         case FULL: 
             {
                 dateToBin = function(date) { return "all-time"; }
                 startOfBin = function(date) { return null; } // shouldnt need this
-                getDuration = function(date) { return 1; }  // must track full duration
+                getBinDuration = function(date) { return 1; }   // must track full duration
                 gapCheck = false;
             }
+        }
+
+        switch( vt )
+        {
+        case TOTAL, COUNT:         getDuration = function(date) { return 1; }
+        case AVG_WEEK, PCT_WEEK:   getDuration = function(date) { return 7; }
+        case AVG_MONTH, PCT_MONTH: getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
+        case AVG_YEAR, PCT_YEAR:   getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
+        case AVG_FULL, PCT_FULL:   getDuration = function(date) { return 1; }   // must track full duration
         }
 
         switch( vt )
@@ -91,7 +101,7 @@ class LogReport implements Report
                 valToBin = function(val,date) { return 1; }
                 printVal = Math.round;
             }
-        case AVG:
+        case AVG_WEEK, AVG_MONTH, AVG_YEAR, AVG_FULL:
             {
                 valToBin = function(val,date) { return val/getDuration(date); }
                 printVal = function(val) {    // for full duration we have to put off evaluating the
@@ -100,7 +110,7 @@ class LogReport implements Report
                     return Math.round(val*10)/10;
                 }
             }
-        case PCT:
+        case PCT_WEEK, PCT_MONTH, PCT_YEAR, PCT_FULL:
             {
                 valToBin = function(val,date) { return 1/getDuration(date)*100; }
                 printVal = function(val) {                  // ditto whats said for AVG
@@ -172,8 +182,8 @@ class LogReport implements Report
             var gapCheckDay = startOfBin(lastDay);          // copy date obj
             while( true )
             {
-                gapCheckDay.day += getDuration(gapCheckDay); // move to start of next bin
-                if( gapCheckDay.value+getDuration(gapCheckDay) > thisDay.value )
+                gapCheckDay.day += getBinDuration(gapCheckDay); // move to start of next bin
+                if( gapCheckDay.value+getBinDuration(gapCheckDay) > thisDay.value )
                     break;
                 buf.add("  " + dateToBin(gapCheckDay) + ": 0\n");
             }

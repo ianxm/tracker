@@ -10,7 +10,7 @@ that you are trying to increase (like excercise) or decrease (like
 watching buffy the vampire slayer) so that you can see if you are
 making progress toward that goal.
 
-You cannot measure something without affecting it.  can't argue;
+You cannot measure something without affecting it.  don't argue;
 that's science.  personal decisions are probably outside the scope of
 quantum mechanics, but lets not get caught up in details.
 
@@ -191,15 +191,15 @@ note: logs, like all reports, can be constrained using date ranges.
 
 this is a log where each entry lists the totals for that week.
 
-    > tracker log watchedtv -week
+    > tracker log watchedtv -by-week
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 8
       2012-02-12: 12
 
 so, on the week of the 12th, you spent 12 hours watching tv.  you
-should pare that back.  in addition to `-week`, tracker provides
-`-month`, `-year`, and `-full`, which combines all data into a single
-entry.
+should pare that back.  in addition to `-by-week`, tracker provides
+`-by-day`, `-by-month`, `-by-year`, and `-by-full`, which combines all
+data into a single entry.
 
 note: day logs omit gaps in data, but the other date groupings show
 gaps as zero entries.
@@ -208,7 +208,7 @@ in the last example the values reported were sums of the metric
 values.  that's the default, but tracker can also provide counts of
 occurrences:
 
-    > tracker log watchedtv -week -count
+    > tracker log watchedtv -by-week -count
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 2
       2012-02-12: 3
@@ -220,7 +220,7 @@ you can also get averages of values.  here, tracker totals the values,
 then divides by the number of days in the interval (7 in this example,
 since we're looking at weeks).
 
-    > tracker log watchedtv -week -avg
+    > tracker log watchedtv -by-week -avg-week
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 1.1
       2012-02-12: 1.7
@@ -232,7 +232,7 @@ you can also get percentages of occurrences.  here, tracker counts the
 occurrences, then divides by the number of days in the interval (7
 again) then converts to a percent.
 
-    > tracker log watchedtv -week -pct
+    > tracker log watchedtv -by-week -pct-week
     duration: 17 days from 2012-02-10 to 2012-02-26
       2012-02-05: 29
       2012-02-12: 43
@@ -266,7 +266,7 @@ interval.
     longest off streak:   4 days starting on 2012-02-21
         current streak:   2 days starting on 2012-02-25 (on)
 
-that example shows totals, but the `-count`, `-avg` and `-pct`
+that example shows totals, but the `-count`, `-avg-week` and `-pct-week`
 options are available here also.
 
 ### graphs
@@ -279,14 +279,14 @@ the graph command works the same way as the log command.  the
 following command will produce a graph of average tv watching per
 week.
 
-    > tracker graph watchedtv -week -avg
+    > tracker graph watchedtv -by-week -avg-week
 
 in addition to 'date grouping' and 'value type' options, the graph
 type can be set.  the default is a line graph, but tracker can produce
 bar and point graphs.  this command produces a graph of the same data,
 but as a bar graph.
 
-    > tracker graph watchedtv -week -avg -bar
+    > tracker graph watchedtv -by-week -avg-week -bar
 
 if an output filename is provided tracker will save the
 graph to that file instead of popping up a graph window.  tracker
@@ -294,7 +294,7 @@ determines the image file type from the given filename.  the filename
 must end in '.png' or '.svg'.  the following command will create a
 graph image named 'out.png' in the current directory.
 
-    > tracker graph watchedtv -week -o out.png
+    > tracker graph watchedtv -by-week -o out.png
 
 there are some examples of tracker graph images 
 [here](https://github.com/ianxm/tracker/wiki/example-graphs).
@@ -368,17 +368,23 @@ reference
     
       date groupings:
         (these are only used by the 'log' and 'graph' commands)
-        -day           each day is separate (default)
-        -week          group weeks together
-        -month         group months together
-        -year          group years together
-        -full          group the full date range together
+        -by-day        each day is separate (default)
+        -by-week       group weeks together
+        -by-month      group months together
+        -by-year       group years together
+        -by-full       group the full date range together
     
-      value types:
+      values in reports:
         -total         total values (default)
         -count         count of occurrences
-        -avg           average values by duration
-        -pct           show values as the percent of occurrence of duration
+        -avg-week      average total per week
+        -avg-month     average total per month
+        -avg-year      average total per year
+        -avg-full      average total for full date range
+        -pct-week      percent of days with occurrences per week
+        -pct-month     percent of days with occurrences per month
+        -pct-year      percent of days with occurrences per year
+        -pct-full      percent of days with occurrences of full date range
     
       graphs:
         -line          draw a line graph (default)

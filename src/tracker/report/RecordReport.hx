@@ -39,7 +39,7 @@ class RecordReport implements Report
     private var printVal     :Float -> Float;              // set precision of output
     private var oneBack      :Gregorian->Gregorian;        // get date one (day/week/month/year) ago
 
-    public function new( bin :BinStrategy, keep :FilterStrategy, vt )
+    public function new( bin :BinStrategy, keep :FilterStrategy, vt :ValType )
     {
         bestScore = 0;
         bestDateStr = null;
@@ -73,7 +73,6 @@ class RecordReport implements Report
                 dateToBin = dateToYearBin;
                 oneBack = lastYear;
                 bestDateStr = dateToBin(Utils.today());
-                getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
             }
         case BIN_MONTH:
             {
@@ -81,7 +80,6 @@ class RecordReport implements Report
                 dateToBin = dateToMonthBin;
                 oneBack = lastMonth;
                 bestDateStr = dateToBin(Utils.today());
-                getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
             }
         case BIN_WEEK:
             {
@@ -89,7 +87,6 @@ class RecordReport implements Report
                 dateToBin = dateToWeekBin;
                 oneBack = lastWeek;
                 bestDateStr = dateToBin(Utils.today());
-                getDuration = function(date) { return 7; }
             }
         case BIN_DAY:
             {
@@ -97,8 +94,16 @@ class RecordReport implements Report
                 dateToBin = dateToDayBin;
                 oneBack = yesterday;
                 bestDateStr = dateToBin(Utils.today());
-                getDuration = function(date) { return 1; }
             }
+        }
+
+        switch( vt )
+        {
+        case TOTAL, COUNT:         getDuration = function(date) { return 1; }
+        case AVG_WEEK, PCT_WEEK:   getDuration = function(date) { return 7; }
+        case AVG_MONTH, PCT_MONTH: getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
+        case AVG_YEAR, PCT_YEAR:   getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
+        case AVG_FULL, PCT_FULL:   getDuration = function(date) { return 1; }   // must track full duration
         }
 
         switch( vt )
@@ -113,12 +118,12 @@ class RecordReport implements Report
                 valToBin = function(val,date) { return 1; }
                 printVal = Math.round;
             }
-        case AVG:
+        case AVG_WEEK, AVG_MONTH, AVG_YEAR, AVG_FULL:
             {
                 valToBin = function(val,date) { return val/getDuration(date); }
                 printVal = function(val) { return Math.round(val*10)/10; }
             }
-        case PCT:
+        case PCT_WEEK, PCT_MONTH, PCT_YEAR, PCT_FULL:
             {
                 valToBin = function(val,date) { return 1/getDuration(date)*100; }
                 printVal = Math.round;
