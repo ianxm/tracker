@@ -352,8 +352,19 @@ class Tracker
     {
         if( (Utils.today().value - day.value) < 0 )
             throw "Cannot set metrics in the future";
+
+                                                            // get old value
+        var rs = db.request("SELECT * FROM full WHERE metricId='"+ metricId +"' AND date='"+ day.value +"'");
+        var oldVal = if( rs.length != 0 )
+            rs.next().value;
+        else
+            null;
+
         db.request("INSERT OR REPLACE INTO occurrences VALUES ('"+ metricId +"','"+ day.value +"','"+ val +"')");
-        Lib.println("set " + metric + " to " + val + " for " + day);
+        if( oldVal == null )
+            Lib.println("set "+ metric +" to "+ val +" for "+ day);
+        else
+            Lib.println("changed "+ metric +" from "+ oldVal +" to "+ val +" for "+ day);
     }
 
     // clear values
