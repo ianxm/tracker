@@ -27,7 +27,7 @@ import altdate.Gregorian;
 
 class Main
 {
-    private static var VERSION = "v0.15";
+    private static var VERSION = "v0.16";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;
@@ -43,8 +43,9 @@ class Main
     private var fname      :String;
     private var tail       :Int;
     private var tag        :String;
+    private var undoMode   :Bool;
 
-    public function new()
+    public function new(?u = false)
     {
         cmd = null;
         groupType = DAY;
@@ -52,15 +53,16 @@ class Main
         graphType = LINE;
         metrics = new Set<String>();
         range = [null, null];
+        undoMode = u;
     }
 
-    public function run()
+    public function run(args)
     {
         try {
-            parseArgs();
+            parseArgs(args);
             setDefaults();
 
-            var worker = new Tracker(dbFile, metrics, range);
+            var worker = new Tracker(dbFile, metrics, range, undoMode);
             switch (cmd)
             {
             case INIT:       worker.init();
@@ -85,10 +87,8 @@ class Main
         }
     }
 
-    private function parseArgs()
+    private function parseArgs(args)
     {
-        var args = Sys.args();
-
         var arg = args.shift();
         switch( arg )                                       // process command first
         {
@@ -424,7 +424,7 @@ examples:
 
     public static function main()
     {
-        new Main().run();
+        new Main().run(Sys.args());
     }
 }
 

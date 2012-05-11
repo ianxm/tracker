@@ -33,16 +33,18 @@ import utils.Utils;
 
 class Tracker
 {
-    private var dbFile  :String;
-    private var metrics :Set<String>;
-    private var range   :Array<Gregorian>;
-    private var db      :Connection;
+    private var dbFile   :String;
+    private var metrics  :Set<String>;
+    private var range    :Array<Gregorian>;
+    private var db       :Connection;
+    private var undoMode :Bool;
 
-    public function new(f, m, r)
+    public function new(f, m, r, u)
     {
         dbFile = f;
         metrics = m;
         range = r;
+        undoMode = u;
     }
 
     // create db file
@@ -73,7 +75,7 @@ class Tracker
                    "WHERE tags.metricId=metrics.id");
         db.request("CREATE TABLE hist (" +
                    "id INTEGER PRIMARY KEY, " +
-                   "isUserCmd INTEGER NOT NULL, " +         // 1 if user command, 0 if sub command
+                   "refId INTEGER, " +         // null if user command, else id of parent cmd
                    "date DATE, " +
                    "cmd TEXT NOT NULL)");
     }
@@ -143,7 +145,7 @@ class Tracker
             " LIMIT " + tail;
         else
             "";
-        var rs = db.request("SELECT * FROM hist WHERE isUserCmd='1' ORDER BY id DESC" + limitStr);
+        var rs = db.request("SELECT * FROM hist WHERE refId IS NULL ORDER BY id DESC" + limitStr);
         for( result in rs )
         {
             var date = new JulianDay(true, result.date);
@@ -153,6 +155,16 @@ class Tracker
 
     public function undo()
     {
+        connect();
+        var parentCmdId = getLastCmdId();
+        var rs = db.request("SELECT cmd FROM hist WHERE refId='"+parentCmdId+"' ORDER BY id DESC");
+        var cmds = rs.results().map(function(ii) return ii.cmd);
+        db.close();
+        for( cmd in cmds )
+            new Main(true).run(Std.string(cmd + " --repo " + dbFile).split(" "));
+        connect();
+        db.request("DELETE FROM hist WHERE refId='"+parentCmdId+"'");
+        db.request("DELETE FROM hist WHERE id='"+parentCmdId+"'");
     }
 
     // output all metrics as a csv
@@ -198,7 +210,9 @@ class Tracker
             File.read(fname);
         }
 
-        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("import "+fname) +" )");
+        if( !undoMode )
+            db.request("INSERT INTO hist VALUES (null, null, '"+ Utils.now().value +"', "+ db.quote("import "+fname) +" )");
+        var parentCmdId = getLastCmdId();
 
         try
         {
@@ -220,7 +234,7 @@ class Tracker
                     continue;
                 }
                 var metricId = getOrCreateMetric(fields[1]);
-                setOrUpdate(fields[1], metricId, day, val);
+                setOrUpdate(fields[1], metricId, day, val, parentCmdId);
             }
         } catch( e:haxe.io.Eof ) {
         }
@@ -322,7 +336,10 @@ class Tracker
             ""+range[0];
         else
             ""+range[0]+".."+range[1];
-        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("set "+((val>0)?"+":"")+val+" -d "+ rangeStr + " " + Lambda.list(metrics).join(" ")) + " )");
+        if( !undoMode )
+            db.request("INSERT INTO hist VALUES (null, null, '"+ Utils.now().value +"', "+
+                       db.quote("set "+ ((val>0)?"+":"") + val +" -d "+ rangeStr + " " + Lambda.list(metrics).join(" ")) + " )");
+        var parentCmdId = getLastCmdId();
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);
@@ -334,7 +351,7 @@ class Tracker
                     rs.next().value+val;
                 else
                     val;
-                setOrUpdate( metric,  metricId, day, val );
+                setOrUpdate( metric,  metricId, day, val, parentCmdId );
 
                 day.day += 1;
             } while( range[1]!=null && range[1].value-day.value>=0 );
@@ -349,17 +366,29 @@ class Tracker
             ""+range[0];
         else
             ""+range[0]+".."+range[1];
-        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("set ="+val+" -d "+ rangeStr + " " + Lambda.list(metrics).join(" ")) + " )");
+        if( !undoMode )
+            db.request("INSERT INTO hist VALUES (null, null, '"+ Utils.now().value +"', "+
+                       db.quote("set ="+ val +" -d "+ rangeStr + " " + Lambda.list(metrics).join(" ")) + " )");
+        var parentCmdId = getLastCmdId();
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);
             var day = range[0].toDate();
             do
             {
-                setOrUpdate( metric, metricId, day, val );
+                setOrUpdate( metric, metricId, day, val, parentCmdId );
                 day.day += 1;
             } while( range[1]!=null && range[1].value-day.value>=0 );
         }
+    }
+
+    // get id of last (most recent) user command in history
+    inline private function getLastCmdId() :Int
+    {
+        var rs = db.request("SELECT * FROM hist WHERE refId IS NULL ORDER BY id DESC LIMIT 1");
+        if( rs.length == 0 )
+            throw "no history";
+        return rs.next().id;
     }
 
     // get a metric id, create it if it doesn't exist
@@ -385,7 +414,7 @@ class Tracker
     }
 
     // set a value 
-    private function setOrUpdate(metric :String, metricId :Int, day :Gregorian, val :Float)
+    private function setOrUpdate(metric :String, metricId :Int, day :Gregorian, val :Float, parentCmdId :Int)
     {
         if( (Utils.today().value - day.value) < 0 )
             throw "Cannot set metrics in the future";
@@ -399,9 +428,17 @@ class Tracker
 
         db.request("INSERT OR REPLACE INTO occurrences VALUES ('"+ metricId +"','"+ day.value +"','"+ val +"')");
         if( oldVal == null )
+        {
+            if( !undoMode )
+                db.request("INSERT INTO hist VALUES (null, "+ parentCmdId +", null, "+ db.quote("rm -d "+ day + " " + metric) + " )");
             Lib.println("set "+ metric +" to "+ val +" for "+ day);
+        }
         else
+        {
+            if( !undoMode )
+                db.request("INSERT INTO hist VALUES (null, "+ parentCmdId +", null, "+ db.quote("set ="+oldVal+" -d "+ day + " " + metric) + " )");
             Lib.println("changed "+ metric +" from "+ oldVal +" to "+ val +" for "+ day);
+        }
     }
 
     // clear values

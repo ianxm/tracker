@@ -327,6 +327,8 @@ reference
       general:
         init           initialize a repository
         list           list existing metrics and date ranges
+        undo           undo the last modify command used
+        hist           list recently used modify commands
         help           show help
     
       modify repository:
