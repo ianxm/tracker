@@ -65,6 +65,8 @@ class Main
             {
             case INIT:       worker.init();
             case LIST:       worker.list();
+            case HIST:       worker.hist(tail);
+            case UNDO:       worker.undo();
             case SET:        worker.set(val);
             case INCR:       worker.incr(val);
             case REMOVE:     worker.remove();
@@ -92,6 +94,8 @@ class Main
         {
         case "init":    cmd = INIT;
         case "list":    cmd = LIST;
+        case "hist":    cmd = HIST;
+        case "undo":    cmd = UNDO;
 
         case "set":     cmd = SET;
         case "rm":      cmd = REMOVE;
@@ -247,7 +251,7 @@ class Main
             throw "you must specify a value";
 
                                                             // list metrics if no metrics specified
-        if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT && cmd!=LIST && cmd!=LIST_TAGS  )
+        if( metrics.isEmpty() && cmd!=INIT && cmd!=CSV_IMPORT && cmd!=LIST && cmd!=HIST && cmd!=UNDO && cmd!=LIST_TAGS  )
             throw "you must specify a metric";
 
                                                             // fix range if not specified
@@ -313,6 +317,8 @@ commands:
   general:
     init           initialize a repository
     list           list existing metrics and date ranges
+    undo           undo the last modify command used
+    hist           list recently used modify commands
     help           show help
 
   modify repository:
@@ -344,7 +350,7 @@ options:
     -d RANGE       specify date range (see RANGE below)
     -o FILE        write graph image or csv export to a file
     -N             limit output to the last N items
-                   this only affects the 'streaks' and 'log' commands
+                   this only affects the 'streaks', 'log', 'hist'
     --all          select all existing metrics
     --repo FILE    specify a repository filename
     --min VAL      min threshold to count as an occurrence
@@ -426,6 +432,8 @@ enum Command
 {
     INIT;                                                   // initialize a db file
     LIST;                                                   // metrics list and duration
+    HIST;                                                   // list recent commands
+    UNDO;                                                   // undo last command
     SET;                                                    // set the value for a day
     INCR;                                                   // incrthe value for a day
     REMOVE;                                                 // clear a value for a day

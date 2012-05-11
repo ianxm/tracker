@@ -27,6 +27,7 @@ import neko.db.Sqlite;
 import neko.db.Connection;
 import neko.db.Manager;
 import altdate.Gregorian;
+import altdate.JulianDay;
 import tracker.Main;
 import utils.Utils;
 
@@ -70,6 +71,11 @@ class Tracker
                    "tags.name AS tag, metrics.name AS metric " + 
                    "FROM tags, metrics " +
                    "WHERE tags.metricId=metrics.id");
+        db.request("CREATE TABLE hist (" +
+                   "id INTEGER PRIMARY KEY, " +
+                   "isUserCmd INTEGER NOT NULL, " +         // 1 if user command, 0 if sub command
+                   "date DATE, " +
+                   "cmd TEXT NOT NULL)");
     }
 
     // open db file
@@ -130,6 +136,25 @@ class Tracker
         Lib.println(buf.toString());
     }
 
+    public function hist(tail :Int)
+    {
+        connect();
+        var limitStr = if( tail != null )
+            " LIMIT " + tail;
+        else
+            "";
+        var rs = db.request("SELECT * FROM hist WHERE isUserCmd='1' ORDER BY id DESC" + limitStr);
+        for( result in rs )
+        {
+            var date = new JulianDay(true, result.date);
+            Lib.println(JulianDay.convertToGregorianDateTime(date).toString() +"  "+ result.cmd);
+        }
+    }
+
+    public function undo()
+    {
+    }
+
     // output all metrics as a csv
     public function exportCsv(fname)
     {
@@ -172,6 +197,8 @@ class Tracker
                 throw "file not found: " + fname;
             File.read(fname);
         }
+
+        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("import "+fname) +" )");
 
         try
         {
@@ -288,9 +315,10 @@ class Tracker
     }
 
     // increment values
-    public function incr(val)
+    public function incr(val :Float)
     {
         connect();
+        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("set "+((val>0)?"+":"")+val+" -d "+ range[0]+".."+range[1] + " " + Lambda.list(metrics).join(" ")) + " )");
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);
@@ -310,9 +338,10 @@ class Tracker
     }
 
     // set values
-    public function set(val)
+    public function set(val :Float)
     {
         connect();
+        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("set ="+val+" -d "+ range[0]+".."+range[1] + " " + Lambda.list(metrics).join(" ")) + " )");
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);

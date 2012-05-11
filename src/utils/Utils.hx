@@ -55,6 +55,14 @@ class Utils
         return g;
     }
 
+    inline public static function now() :Gregorian
+    {
+        var g = new Gregorian();
+        var date = Date.now();
+        g.set(true, null, date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+        return g;
+    }
+
     // copies and shifts
     inline public static function dayShift( date :Gregorian, days :Int )
     {
