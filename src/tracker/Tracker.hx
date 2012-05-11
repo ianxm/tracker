@@ -318,7 +318,11 @@ class Tracker
     public function incr(val :Float)
     {
         connect();
-        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("set "+((val>0)?"+":"")+val+" -d "+ range[0]+".."+range[1] + " " + Lambda.list(metrics).join(" ")) + " )");
+        var rangeStr = if( range[0].value == range[1].value )
+            ""+range[0];
+        else
+            ""+range[0]+".."+range[1];
+        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("set "+((val>0)?"+":"")+val+" -d "+ rangeStr + " " + Lambda.list(metrics).join(" ")) + " )");
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);
@@ -341,7 +345,11 @@ class Tracker
     public function set(val :Float)
     {
         connect();
-        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("set ="+val+" -d "+ range[0]+".."+range[1] + " " + Lambda.list(metrics).join(" ")) + " )");
+        var rangeStr = if( range[0].value == range[1].value )
+            ""+range[0];
+        else
+            ""+range[0]+".."+range[1];
+        db.request("INSERT INTO hist VALUES (null, 1, '"+ Utils.now().value +"', "+ db.quote("set ="+val+" -d "+ rangeStr + " " + Lambda.list(metrics).join(" ")) + " )");
         for( metric in metrics )
         {
             var metricId = getOrCreateMetric(metric);
