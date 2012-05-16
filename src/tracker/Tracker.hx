@@ -447,11 +447,25 @@ class Tracker
         var count = 0;
         connect();
         checkMetrics();
-        var occurrences = selectRange(range, false).results().map(function(ii) return {metricId: ii.metricId, metric: ii.metric, date: ii.date});
+
+        var rangeStr = if( range[0].value == range[1].value )
+            ""+range[0];
+        else
+            ""+range[0]+".."+range[1];
+        if( !undoMode )
+            db.request("INSERT INTO hist VALUES (null, null, '"+ Utils.now().value +"', "+
+                       db.quote("rm -d "+ rangeStr + " " + Lambda.list(metrics).join(" ")) + " )");
+        var parentCmdId = getLastCmdId();
+
+        var occurrences = selectRange(range, false).results().map(function(ii) return {metricId: ii.metricId, metric: ii.metric, date: ii.date, value: ii.value});
         for( occ in occurrences )
         {
             var date = Utils.dayFromJulian(occ.date);
-            db.request("DELETE FROM occurrences WHERE metricId='"+ occ.metricId +"' AND date='"+ date.value +"'");
+            db.request("DELETE FROM occurrences WHERE metricId='"+ occ.metricId +"' AND date='"+ occ.date +"'");
+
+            if( !undoMode )
+                db.request("INSERT INTO hist VALUES (null, "+ parentCmdId +", null, "+ db.quote("set ="+occ.value+" -d "+ date + " " + occ.metric) + " )");
+
             Lib.println("removed " + occ.metric + " for " + date.toString());
             count++;
         }
