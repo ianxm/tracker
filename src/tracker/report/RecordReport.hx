@@ -111,17 +111,17 @@ class RecordReport implements Report
         case TOTAL:
             {
                 valToBin = function(val,date) { return val; }
-                printVal = Math.round;
+                printVal = function(val) { return Math.round(val*100)/100; }
             }
         case COUNT:
             {
                 valToBin = function(val,date) { return 1; }
-                printVal = Math.round;
+                printVal = function(val) { return val; }
             }
         case AVG_WEEK, AVG_MONTH, AVG_YEAR, AVG_FULL:
             {
                 valToBin = function(val,date) { return val/getDuration(date); }
-                printVal = function(val) { return Math.round(val*10)/10; }
+                printVal = function(val) { return Math.round(val*100)/100; }
             }
         case PCT_WEEK, PCT_MONTH, PCT_YEAR, PCT_FULL:
             {
