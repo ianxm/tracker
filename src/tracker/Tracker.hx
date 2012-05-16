@@ -99,7 +99,7 @@ class Tracker
             getAllMetrics();
         if( allMetrics.isEmpty() )
         {
-            Lib.println("No metrics found");
+            Lib.println("no metrics found");
             return;
         }
 
@@ -400,6 +400,7 @@ class Tracker
         else
         {                                                   // add metric if its new
             db.request("INSERT INTO metrics VALUES (null, "+ db.quote(metric) +")");
+            Lib.println("created new metric: " + metric);
             getOrCreateMetric(metric);
         }
     }
@@ -534,7 +535,7 @@ class Tracker
         var rs = db.request("SELECT name FROM metrics");
         if( rs.length == 0 )
         {
-            Lib.println("No metrics found");
+            Lib.println("no metrics found");
             Sys.exit(0);
         }
 
