@@ -44,7 +44,8 @@ class ReportGenerator
         case RECORDS:
             {
                 indent = true;
-                reports.add(new tracker.report.DurationReport());
+                if( tail == null )
+                    reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.Spacer());
 
                 reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_HIGHEST, valType));
@@ -74,17 +75,20 @@ class ReportGenerator
             }
         case LOG:
             {
-                reports.add(new tracker.report.DurationReport());
+                if( tail == null )
+                    reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.LogReport(groupType, valType));
             }
         case STREAKS:
             {
-                reports.add(new tracker.report.DurationReport());
+                if( tail == null )
+                    reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.StreakLogReport());
             }
         case CAL:
             {
-                reports.add(new tracker.report.DurationReport());
+                if( tail == null )
+                    reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.CalReport(valType));
                 tail = null;
             }
