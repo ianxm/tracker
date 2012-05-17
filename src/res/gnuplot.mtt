@@ -15,10 +15,24 @@
   set ylabel "total"
 ::elseif (valType=="count")::
   set ylabel "count"
-::elseif (valType=="avg")::
-  set ylabel "average value per day"
+::elseif (valType=="avg_week")::
+  set ylabel "average value per week"
+::elseif (valType=="avg_month")::
+  set ylabel "average value per month"
+::elseif (valType=="avg_year")::
+  set ylabel "average value per year"
+::elseif (valType=="avg_full")::
+  set ylabel "average value over full period"
+::elseif (valType=="pct_week")::
+  set ylabel "percent of days with occurrences per week"
+::elseif (valType=="pct_month")::
+  set ylabel "percent of days with occurrences per month"
+::elseif (valType=="pct_year")::
+  set ylabel "percent of days with occurrences per year"
+::elseif (valType=="pct_full")::
+  set ylabel "percent of days with occurrences over full period"
 ::else::
-  set ylabel "percent of days with occurrences"
+  set ylabel "value"
 ::end::
 
 ::if ((grouping=="day")||(grouping=="week"))::
