@@ -105,12 +105,12 @@ class TestLogReport extends haxe.unit.TestCase
         report.include(Utils.dayFromString("2012-01-01"), 1);
         report.include(Utils.dayFromString("2012-01-02"), 2);
         report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);
-        assertEquals("  2012-01-01: 0.4\n", report.toString());
+        assertEquals("  2012-01-01: 3\n", report.toString());
     }
 
     public function testWeekPercent()
     {
-        var report = new LogReport(WEEK, PCT_WEEK);
+        var report = new LogReport(WEEK, PERCENT);
         report.include(Utils.dayFromString("2012-01-01"), 1);
         report.include(Utils.dayFromString("2012-01-02"), 2);
         report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);

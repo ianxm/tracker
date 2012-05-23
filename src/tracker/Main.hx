@@ -27,7 +27,7 @@ import altdate.Gregorian;
 
 class Main
 {
-    private static var VERSION = "v0.17";
+    private static var VERSION = "v0.18";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;
@@ -146,26 +146,23 @@ class Main
             case "-h",
                 "--help":     printHelp();
 
-            case "-by-day":      groupType = DAY;
-            case "-by-week":     groupType = WEEK;
-            case "-by-month":    groupType = MONTH;
-            case "-by-year":     groupType = YEAR;
-            case "-by-full":     groupType = FULL;
+            case "-by-day":    groupType = DAY;
+            case "-by-week":   groupType = WEEK;
+            case "-by-month":  groupType = MONTH;
+            case "-by-year":   groupType = YEAR;
+            case "-by-full":   groupType = FULL;
 
-            case "-total":       valType = TOTAL;
-            case "-count":       valType = COUNT;
-            case "-avg-week":    valType = AVG_WEEK;
-            case "-avg-month":   valType = AVG_MONTH;
-            case "-avg-year":    valType = AVG_YEAR;
-            case "-avg-full":    valType = AVG_FULL;
-            case "-pct-week":    valType = PCT_WEEK;
-            case "-pct-month":   valType = PCT_MONTH;
-            case "-pct-year":    valType = PCT_YEAR;
-            case "-pct-full":    valType = PCT_FULL;
+            case "-total":     valType = TOTAL;
+            case "-count":     valType = COUNT;
+            case "-percent":   valType = PERCENT;
+            case "-per-day":   valType = AVG_DAY;
+            case "-per-week":  valType = AVG_WEEK;
+            case "-per-month": valType = AVG_MONTH;
+            case "-per-year":  valType = AVG_YEAR;
 
-            case "-line":     graphType = LINE;
-            case "-bar":      graphType = BAR;
-            case "-point":    graphType = POINT;
+            case "-line":      graphType = LINE;
+            case "-bar":       graphType = BAR;
+            case "-point":     graphType = POINT;
 
             default:                                        // else assume it is a metric
                 if( StringTools.startsWith(arg, "=") )
@@ -271,25 +268,20 @@ class Main
             range[1].day = 0;
         }
 
-        if( (valType==AVG_WEEK || valType==PCT_WEEK) && groupType==DAY )
+        if( valType==AVG_WEEK && groupType==DAY )
         {
             Lib.println("WARNING: grouping by week");
             groupType = WEEK;
         }
-        else if( (valType==AVG_MONTH || valType==PCT_MONTH) && (groupType==DAY || groupType==WEEK) )
+        else if( valType==AVG_MONTH && (groupType==DAY || groupType==WEEK) )
         {
             Lib.println("WARNING: grouping by month");
             groupType = MONTH;
         }
-        else if( (valType==AVG_YEAR || valType==PCT_YEAR) && (groupType==DAY || groupType==WEEK || groupType==MONTH) )
+        else if( valType==AVG_YEAR && (groupType==DAY || groupType==WEEK || groupType==MONTH) )
         {
             Lib.println("WARNING: grouping by year");
             groupType = YEAR;
-        }
-        else if( (valType==AVG_FULL || valType==PCT_FULL) )
-        {
-            Lib.println("WARNING: grouping by full duration");
-            groupType = FULL;
         }
 
         if( dbFile == null )                                // use default repo
@@ -368,14 +360,11 @@ options:
   values in reports:
     -total         total values (default)
     -count         count of occurrences
-    -avg-week      average total per week
-    -avg-month     average total per month
-    -avg-year      average total per year
-    -avg-full      average total for full date range
-    -pct-week      percent of days with occurrences per week
-    -pct-month     percent of days with occurrences per month
-    -pct-year      percent of days with occurrences per year
-    -pct-full      percent of days with occurrences of full date range
+    -percent       percent of days with occurrences
+    -per-day       average per day
+    -per-week      average per week
+    -per-month     average per month
+    -per-year      average per year
 
   graphs:
     -line          draw a line graph (default)
@@ -462,14 +451,11 @@ enum ValType
 {
     TOTAL;                                                  // total values
     COUNT;                                                  // count occurrences
+    PERCENT;                                                // percent of occurrence days
+    AVG_DAY;                                                // average values by day
     AVG_WEEK;                                               // average values by week
     AVG_MONTH;                                              // average values by month
     AVG_YEAR;                                               // average values by year
-    AVG_FULL;                                               // average all values
-    PCT_WEEK;                                               // percent of occurrence days per week
-    PCT_MONTH;                                              // percent of occurrence days per month
-    PCT_YEAR;                                               // percent of occurrence days per year
-    PCT_FULL;                                               // percent of occurrence days for full duration
 }
 
 enum GraphType

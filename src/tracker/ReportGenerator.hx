@@ -48,25 +48,39 @@ class ReportGenerator
                     reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.Spacer());
 
-                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_HIGHEST, valType));
-                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_LOWEST, valType));
-                reports.add(new tracker.report.RecordReport(BIN_YEAR,  KEEP_CURRENT, valType));
-                reports.add(new tracker.report.Spacer());
+                if( valType==TOTAL || valType==PERCENT || 
+                    valType==AVG_DAY || valType==AVG_WEEK || valType==AVG_MONTH  || valType==AVG_YEAR )
+                {
+                    reports.add(new tracker.report.RecordReport(YEAR,  KEEP_HIGHEST, valType));
+                    reports.add(new tracker.report.RecordReport(YEAR,  KEEP_LOWEST,  valType));
+                    reports.add(new tracker.report.RecordReport(YEAR,  KEEP_CURRENT, valType));
+                    reports.add(new tracker.report.Spacer());
+                }
 
-                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_HIGHEST, valType));
-                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_LOWEST, valType));
-                reports.add(new tracker.report.RecordReport(BIN_MONTH, KEEP_CURRENT, valType));
-                reports.add(new tracker.report.Spacer());
+                if( valType==TOTAL || valType==PERCENT || 
+                    valType==AVG_DAY || valType==AVG_WEEK || valType==AVG_MONTH )
+                {
+                    reports.add(new tracker.report.RecordReport(MONTH, KEEP_HIGHEST, valType));
+                    reports.add(new tracker.report.RecordReport(MONTH, KEEP_LOWEST,  valType));
+                    reports.add(new tracker.report.RecordReport(MONTH, KEEP_CURRENT, valType));
+                    reports.add(new tracker.report.Spacer());
+                }
 
-                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_HIGHEST, valType));
-                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_LOWEST, valType));
-                reports.add(new tracker.report.RecordReport(BIN_WEEK,  KEEP_CURRENT, valType));
-                reports.add(new tracker.report.Spacer());
+                if( valType==TOTAL || valType==PERCENT || valType==AVG_DAY || valType==AVG_WEEK )
+                {
+                    reports.add(new tracker.report.RecordReport(WEEK,  KEEP_HIGHEST, valType));
+                    reports.add(new tracker.report.RecordReport(WEEK,  KEEP_LOWEST,  valType));
+                    reports.add(new tracker.report.RecordReport(WEEK,  KEEP_CURRENT, valType));
+                    reports.add(new tracker.report.Spacer());
+                }
 
-                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_HIGHEST, valType));
-                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_LOWEST, valType));
-                reports.add(new tracker.report.RecordReport(BIN_DAY,   KEEP_CURRENT, valType));
-                reports.add(new tracker.report.Spacer());
+                if( valType==TOTAL || valType==PERCENT || valType==AVG_DAY )
+                {
+                    reports.add(new tracker.report.RecordReport(DAY,   KEEP_HIGHEST, valType));
+                    reports.add(new tracker.report.RecordReport(DAY,   KEEP_LOWEST,  valType));
+                    reports.add(new tracker.report.RecordReport(DAY,   KEEP_CURRENT, valType));
+                    reports.add(new tracker.report.Spacer());
+                }
 
                 reports.add(new tracker.report.StreakReport(KEEP_HIGHEST));
                 reports.add(new tracker.report.StreakReport(KEEP_LOWEST));

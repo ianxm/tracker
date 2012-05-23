@@ -80,13 +80,45 @@ class LogReport implements Report
             }
         }
 
-        switch( vt )
+        getDuration = switch( vt )
         {
-        case TOTAL, COUNT:         getDuration = function(date) { return 1; }
-        case AVG_WEEK, PCT_WEEK:   getDuration = function(date) { return 7; }
-        case AVG_MONTH, PCT_MONTH: getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
-        case AVG_YEAR, PCT_YEAR:   getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
-        case AVG_FULL, PCT_FULL:   getDuration = function(date) { return 1; }   // must track full duration
+        case TOTAL, COUNT:  function(date) { return 1; }
+        case AVG_YEAR:      function(date) { return 365; } // do I care about leap day?  I do not.
+        case AVG_MONTH:     function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
+        case AVG_WEEK:      function(date) { return 7; }
+        case AVG_DAY:       function(date) { return 1; }
+        case PERCENT: switch( gt ) {
+            case FULL:       function(date) { return 1; }
+            case YEAR:       function(date) { return 365; }
+            case MONTH:      function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
+            case WEEK:       function(date) { return 7; }
+            case DAY:        function(date) { return 1; }
+            }
+        }
+
+        var divideBy = switch( vt )
+        {
+        case AVG_MONTH: switch( gt ) {
+            case FULL: 1;
+            case YEAR: 12;
+            case MONTH: 1;
+            default: throw "bad bin";
+            }
+        case AVG_WEEK: switch( gt ) {
+            case FULL: 1;   // handle it later
+            case YEAR: 52;
+            case MONTH: 4;
+            case WEEK: 1;
+            default: throw "bad bin";
+            }
+        case AVG_DAY: switch( gt ) {
+            case FULL: 1;   // handle it later
+            case YEAR: 365; // leap day?
+            case MONTH: 30; // about
+            case WEEK: 7;
+            case DAY: 1;
+            }
+        default: 1;
         }
 
         switch( vt )
@@ -101,21 +133,28 @@ class LogReport implements Report
                 valToBin = function(val,date) { return 1; }
                 printVal = function(val) { return val; }
             }
-        case AVG_WEEK, AVG_MONTH, AVG_YEAR, AVG_FULL:
+        case AVG_DAY, AVG_WEEK, AVG_MONTH, AVG_YEAR:
             {
-                valToBin = function(val,date) { return val/getDuration(date); }
+                valToBin = function(val,date) { return val/divideBy; }
                 printVal = function(val) {    // for full duration we have to put off evaluating the
+                    var divBy = switch( vt ) {
+                    case AVG_YEAR: 365;
+                    case AVG_MONTH: 30;
+                    case AVG_WEEK: 7;
+                    case AVG_DAY: 1;
+                    default: 1;
+                    }
                     if( gt == FULL )          // duration until all data has been processed
-                        val = val/(lastDay.value-firstDay.value) + 1;
+                        val = val/Math.ceil((lastDay.value-firstDay.value+1)/divBy);
                     return Math.round(val*100)/100;
                 }
             }
-        case PCT_WEEK, PCT_MONTH, PCT_YEAR, PCT_FULL:
+        case PERCENT:
             {
                 valToBin = function(val,date) { return 1/getDuration(date)*100; }
                 printVal = function(val) {                  // ditto whats said for AVG
                     if( gt == FULL )
-                        val = val/(lastDay.value-firstDay.value) + 1;
+                        val = val/(lastDay.value-firstDay.value+1);
                     return Math.round(val);
                 }
             }

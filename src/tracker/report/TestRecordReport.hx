@@ -24,13 +24,13 @@ class TestRecordReport extends haxe.unit.TestCase
 {
   public function testYearEmpty()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_HIGHEST, TOTAL);
       assertEquals("2012 (0)\n", report.toString());
   }
 
   public function testYearOne()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       assertEquals("2012 (1)\n", report.toString());
@@ -38,7 +38,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testYearOneFixedStartStop()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
@@ -47,7 +47,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testYearTwo()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 2);
       report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);
@@ -56,7 +56,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testYearTwoYears()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2011-11-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 2);
       report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
@@ -65,7 +65,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testYearTwoYearsIncrement()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2011-11-01"), 2);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       report.include(Utils.dayFromString("2012-01-05"), 1);
@@ -76,7 +76,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testYearFirstYearBigger()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2011-11-01"), 2);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
@@ -85,7 +85,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testYearLowestYear()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_LOWEST, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_LOWEST, TOTAL);
       report.include(Utils.dayFromString("2011-11-01"), 2);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
@@ -94,7 +94,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testYearLowestFirst()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_LOWEST, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_LOWEST, TOTAL);
       report.include(Utils.dayFromString("2011-11-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 2);
       report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
@@ -105,7 +105,7 @@ class TestRecordReport extends haxe.unit.TestCase
       this test uses Date.now()
   public function testYearCurrent()
   {
-      var report = new RecordReport(BIN_YEAR, KEEP_CURRENT, TOTAL);
+      var report = new RecordReport(YEAR, KEEP_CURRENT, TOTAL);
       report.include(Utils.dayFromString("2011-11-01"), 2);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       report.include(Utils.dayFromString("2012-01-05"), 0);
@@ -118,14 +118,14 @@ class TestRecordReport extends haxe.unit.TestCase
     /*
   public function testMonthEmpty()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_HIGHEST, TOTAL);
       assertEquals("2012-02 (0)\n", report.toString());
   }
 */
 
   public function testMonthOne()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       assertEquals("2012-01 (1)\n", report.toString());
@@ -133,7 +133,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testMonthOneFixedStartStop()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
@@ -142,7 +142,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testMonthTwo()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 2);
       report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);
@@ -151,7 +151,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testMonthTwoMonths()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-02-02"), 2);
       report.include(Utils.dayFromString("2012-02-05"), Main.NO_DATA);
@@ -160,7 +160,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testMonthTwoYears()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2011-12-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 2);
       report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
@@ -169,7 +169,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testMonthTwoMonthsIncrement()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2012-01-01"), 2);
       report.include(Utils.dayFromString("2012-02-02"), 1);
       report.include(Utils.dayFromString("2012-02-05"), 1);
@@ -180,7 +180,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testMonthFirstMonthBigger()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_HIGHEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_HIGHEST, TOTAL);
       report.include(Utils.dayFromString("2011-12-01"), 2);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
@@ -189,7 +189,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testMonthLowestMonth()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_LOWEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_LOWEST, TOTAL);
       report.include(Utils.dayFromString("2011-12-01"), 2);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
@@ -198,7 +198,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testMonthLowestFirst()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_LOWEST, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_LOWEST, TOTAL);
       report.include(Utils.dayFromString("2011-12-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 2);
       report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
@@ -207,7 +207,7 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testWeekHighestCount()
   {
-      var report = new RecordReport(BIN_WEEK, KEEP_HIGHEST, COUNT);
+      var report = new RecordReport(WEEK, KEEP_HIGHEST, COUNT);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-08"), 2);
       report.include(Utils.dayFromString("2012-01-08"), Main.NO_DATA);
@@ -216,16 +216,16 @@ class TestRecordReport extends haxe.unit.TestCase
 
   public function testWeekHighestAvg()
   {
-      var report = new RecordReport(BIN_WEEK, KEEP_HIGHEST, AVG_WEEK);
+      var report = new RecordReport(WEEK, KEEP_HIGHEST, AVG_WEEK);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-08"), 2);
       report.include(Utils.dayFromString("2012-01-08"), Main.NO_DATA);
-      assertEquals("2012-01-08 (0.3)\n", report.toString());
+      assertEquals("2012-01-08 (2)\n", report.toString());
   }
 
   public function testWeekHighestPercent()
   {
-      var report = new RecordReport(BIN_WEEK, KEEP_HIGHEST, PCT_WEEK);
+      var report = new RecordReport(WEEK, KEEP_HIGHEST, PERCENT);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-08"), 2);
       report.include(Utils.dayFromString("2012-01-08"), Main.NO_DATA);
@@ -236,7 +236,7 @@ class TestRecordReport extends haxe.unit.TestCase
     //      this test uses Date.now()
   public function testMonthCurrent()
   {
-      var report = new RecordReport(BIN_MONTH, KEEP_CURRENT, TOTAL);
+      var report = new RecordReport(MONTH, KEEP_CURRENT, TOTAL);
       report.include(Utils.dayFromString("2011-11-01"), 2);
       report.include(Utils.dayFromString("2012-02-02"), 1);
       report.include(Utils.dayFromString("2012-02-05"), Main.NO_DATA);

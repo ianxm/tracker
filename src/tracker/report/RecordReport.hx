@@ -35,11 +35,11 @@ class RecordReport implements Report
     private var checkBest    :Float->String->Float->Bool;  // check for the record
     private var dateToBin    :Gregorian->String;           // convert date to bin string
     private var valToBin     :Float -> Gregorian -> Float; // convert value to pack in bin
-    private var getDuration  :Gregorian -> Int;            // get num days for averaging
+    private var getDuration  :Gregorian -> Int;            // get num days for computing percent
     private var printVal     :Float -> Float;              // set precision of output
     private var oneBack      :Gregorian->Gregorian;        // get date one (day/week/month/year) ago
 
-    public function new( bin :BinStrategy, keep :FilterStrategy, vt :ValType )
+    public function new( gt :GroupType, keep :FilterStrategy, vt :ValType )
     {
         bestScore = 0;
         bestDateStr = null;
@@ -65,45 +65,77 @@ class RecordReport implements Report
             }
         }
 
-        switch( bin )
+        switch( gt )
         {
-        case BIN_YEAR:
+        case YEAR:
             {
                 binName = "year";
                 dateToBin = dateToYearBin;
                 oneBack = lastYear;
                 bestDateStr = dateToBin(Utils.today());
             }
-        case BIN_MONTH:
+        case MONTH:
             {
                 binName = "month";
                 dateToBin = dateToMonthBin;
                 oneBack = lastMonth;
                 bestDateStr = dateToBin(Utils.today());
             }
-        case BIN_WEEK:
+        case WEEK:
             {
                 binName = "week";
                 dateToBin = dateToWeekBin;
                 oneBack = lastWeek;
                 bestDateStr = dateToBin(Utils.today());
             }
-        case BIN_DAY:
+        case DAY:
             {
                 binName = "day";
                 dateToBin = dateToDayBin;
                 oneBack = yesterday;
                 bestDateStr = dateToBin(Utils.today());
             }
+        default: throw "bad group";
+
         }
 
-        switch( vt )
+        getDuration = switch( vt )
         {
-        case TOTAL, COUNT:         getDuration = function(date) { return 1; }
-        case AVG_WEEK, PCT_WEEK:   getDuration = function(date) { return 7; }
-        case AVG_MONTH, PCT_MONTH: getDuration = function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
-        case AVG_YEAR, PCT_YEAR:   getDuration = function(date) { return 365; } // do I care about leap day?  I do not.
-        case AVG_FULL, PCT_FULL:   getDuration = function(date) { return 1; }   // must track full duration
+        case TOTAL, COUNT:  function(date) { return 1; }
+        case AVG_DAY:       function(date) { return 1; }
+        case AVG_WEEK:      function(date) { return 7; }
+        case AVG_MONTH:     function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
+        case AVG_YEAR:      function(date) { return 365; } // do I care about leap day?  I do not.
+        case PERCENT: switch( gt ) {
+            case FULL:       function(date) { return 1; }
+            case YEAR:       function(date) { return 365; }
+            case MONTH:      function(date) { return DateTools.getMonthDays(new Date(date.year, date.month, 1, 0, 0, 0)); }
+            case WEEK:       function(date) { return 7; }
+            case DAY:        function(date) { return 1; }
+            }
+        }
+
+        var divideBy = switch( vt )
+        {
+        case AVG_MONTH: switch( gt ) {
+            case YEAR: 12;
+            case MONTH: 1;
+            default: 0;
+            }
+        case AVG_WEEK: switch( gt ) {
+            case YEAR: 52;
+            case MONTH: 4;
+            case WEEK: 1;
+            default: 0;
+            }
+        case AVG_DAY: switch( gt ) {
+            case YEAR: 365; // leap day?
+            case MONTH: 30; // about
+            case WEEK: 7;
+            case DAY: 1;
+            default: 0;
+            }
+        default: 1;
         }
 
         switch( vt )
@@ -118,12 +150,12 @@ class RecordReport implements Report
                 valToBin = function(val,date) { return 1; }
                 printVal = function(val) { return val; }
             }
-        case AVG_WEEK, AVG_MONTH, AVG_YEAR, AVG_FULL:
+        case AVG_DAY, AVG_WEEK, AVG_MONTH, AVG_YEAR:
             {
-                valToBin = function(val,date) { return val/getDuration(date); }
+                valToBin = function(val,date) { return val/divideBy; }
                 printVal = function(val) { return Math.round(val*100)/100; }
             }
-        case PCT_WEEK, PCT_MONTH, PCT_YEAR, PCT_FULL:
+        case PERCENT:
             {
                 valToBin = function(val,date) { return 1/getDuration(date)*100; }
                 printVal = Math.round;
@@ -246,14 +278,6 @@ class RecordReport implements Report
         ret.set(false, null, date.year, date.month, date.day-1);
         return ret;
     }
-}
-
-enum BinStrategy
-{
-    BIN_YEAR;
-    BIN_MONTH;
-    BIN_WEEK;
-    BIN_DAY;
 }
 
 enum FilterStrategy
