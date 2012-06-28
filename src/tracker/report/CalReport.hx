@@ -33,6 +33,7 @@ class CalReport implements Report
     private var firstDay :Gregorian;
     private var lastDay :Gregorian;
     private var valToBin :Float -> Float;
+    public var include :Gregorian -> Float -> Void;
 
     public function new(vt)
     {
@@ -43,9 +44,10 @@ class CalReport implements Report
         case COUNT: valToBin = function(ii) { return 1; }
         default: throw "calendar reports only support 'total' or 'count' values";
         }
+        include = myInclude;
     }
 
-    public function include(thisDay :Gregorian, val :Float)
+    public function myInclude(thisDay :Gregorian, val :Float)
     {
         if( firstDay == null )
             firstDay = thisDay;

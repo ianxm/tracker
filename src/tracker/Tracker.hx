@@ -173,7 +173,7 @@ class Tracker
         connect();
         checkMetrics();                                     // check that all requested metrics exist
 
-        var fout;
+        var fout :haxe.io.Output;
         if( fname != null )
         {
             if( FileSystem.exists(fname) )
@@ -187,7 +187,7 @@ class Tracker
             Lib.println("writing csv to: " + fname);
         }
         else
-            fout = File.stdout();
+            fout = Sys.stdout();
 
         var occurrences = selectRange(range, false);
         fout.writeString("date,metric,value\n");
@@ -202,7 +202,7 @@ class Tracker
         connect();
 
         var fin = if( fname == "-" )
-            File.stdin();
+            Sys.stdin();
         else 
         {
             if( !FileSystem.exists(fname) )

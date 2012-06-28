@@ -36,6 +36,7 @@ class LogReport implements Report
     private var firstDay       :Gregorian;                     // needed for full grouping
     private var lastDay        :Gregorian;                     // needed for full grouping
     private var gapCheck       :Bool;                          // if true, check for gaps
+    public var include :Gregorian -> Float -> Void;
 
     public function new(gt, vt)
     {
@@ -159,9 +160,10 @@ class LogReport implements Report
                 }
             }
         }
+        include = myInclude;
     }
 
-    public function include(thisDay :Gregorian, val :Float)
+    public function myInclude(thisDay :Gregorian, val :Float)
     {
         //trace("top: " + thisDay + " " + val);
         if( firstDay == null )

@@ -21,10 +21,14 @@ import altdate.Gregorian;
 
 class Spacer implements Report
 {
-    public function new()
-    {}
+    public var include :Gregorian -> Float -> Void;
 
-    inline public function include(thisDay :Gregorian, val :Float)
+    public function new()
+    {
+        include = myInclude;
+    }
+
+    inline public function myInclude(thisDay :Gregorian, val :Float)
     {}
 
     inline public function getLabel()
