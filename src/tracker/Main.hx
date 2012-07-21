@@ -27,7 +27,7 @@ import altdate.Gregorian;
 
 class Main
 {
-    private static var VERSION = "v0.18";
+    private static var VERSION = "v0.19";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;
@@ -35,7 +35,8 @@ class Main
     private var dbFile     :String;
     private var metrics    :Set<String>;
     private var range      :Array<Gregorian>;
-    private var val        :Float;
+    private var val        :Float;                          // val to set or increment
+    private var min        :Float;                          // min threshold
     private var cmd        :Command;
     private var valType    :ValType;
     private var groupType  :GroupType;
@@ -54,6 +55,7 @@ class Main
         metrics = new Set<String>();
         range = [null, null];
         undoMode = u;
+        min = null;
     }
 
     public function run(args)
@@ -78,7 +80,7 @@ class Main
             case RM_TAG:     worker.rmTag(tag);
             case LIST_TAGS:  worker.listTags();
             case GRAPH:      worker.graph(fname, graphType, groupType, valType);
-            default:         worker.view(cmd, groupType, valType, tail);
+            default:         worker.view(cmd, groupType, valType, tail, min);
             }
             worker.close();
         } catch ( e:Dynamic ) {
@@ -139,7 +141,7 @@ class Main
                 }
             case "-o":        fname = args.shift();         // save image or csv file
             case "--all":     metrics.add("*");             // select all metrics
-            case "--min":     throw "the min option has not been implemented yet";
+            case "--min":     min = Std.parseFloat(args.shift());
             case "--repo":    dbFile = args.shift();        // set filename
             case "-v",
                 "--version":  printVersion();

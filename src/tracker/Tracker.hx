@@ -38,6 +38,7 @@ class Tracker
     private var range    :Array<Gregorian>;
     private var db       :Connection;
     private var undoMode :Bool;
+    private var min      :Float;
 
     public function new(f, m, r, u)
     {
@@ -291,8 +292,9 @@ class Tracker
     }
 
     // run the report generator to view the data
-    public function view(cmd, groupType, valType, tail)
+    public function view(cmd, groupType, valType, tail, min)
     {
+        this.min = min;
         connect();
         checkMetrics();                                     // check that all requested metrics exist
 
@@ -543,10 +545,12 @@ class Tracker
         select.add("SELECT ");
         select.add((shouldCombine) ? "metric, date, sum(value) AS value " : "* ");
         select.add("FROM full WHERE ("+ metrics.map(function(ii) return "metric="+db.quote(ii)).join(" OR ") +") ");
-        if( range[0]!=null )                               // start..
+        if( range[0] != null )                               // start..
             select.add("AND date >= '"+ range[0].value +"' ");
-        if( range[1]!=null )                               // ..end
+        if( range[1] != null )                               // ..end
             select.add("AND date <= '"+ range[1].value +"' ");
+        if( min != null )
+            select.add("AND value >= '"+ min +"' ");
         select.add((shouldCombine) ? "GROUP BY date " : " ");
         select.add("ORDER BY date");
 
