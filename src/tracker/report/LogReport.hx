@@ -36,7 +36,7 @@ class LogReport implements Report
     private var firstDay       :Gregorian;                     // needed for full grouping
     private var lastDay        :Gregorian;                     // needed for full grouping
     private var gapCheck       :Bool;                          // if true, check for gaps
-    public var include :Gregorian -> Float -> Void;
+    dynamic public function include(thisDay :Gregorian, val :Float) {}
 
     public function new(gt, vt)
     {

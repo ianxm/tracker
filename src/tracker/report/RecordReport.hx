@@ -38,7 +38,7 @@ class RecordReport implements Report
     private var getDuration  :Gregorian -> Int;            // get num days for computing percent
     private var printVal     :Float -> Float;              // set precision of output
     private var oneBack      :Gregorian->Gregorian;        // get date one (day/week/month/year) ago
-    public var include       :Gregorian -> Float -> Void;
+    dynamic public function include(thisDay :Gregorian, val :Float) {}
 
     public function new( gt :GroupType, keep :FilterStrategy, vt :ValType )
     {

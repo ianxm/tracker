@@ -28,7 +28,6 @@ class StreakLogReport implements Report
     private var startOfStreak :Gregorian;
     private var lastDay       :Gregorian;
     private var count         :Int;
-    public var include :Gregorian -> Float -> Void;
 
     public function new()
     {
@@ -36,11 +35,10 @@ class StreakLogReport implements Report
         startOfStreak = null;
         lastDay = null;
         count = 0;
-        include = myInclude;
     }
 
     // val may be zero for first and last call
-    public function myInclude(occDay :Gregorian, occVal :Float)
+    dynamic public function include(occDay :Gregorian, occVal :Float)
     {
         if( lastDay == null )                               // first
         {

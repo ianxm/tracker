@@ -20,7 +20,7 @@ import altdate.Gregorian;
 
 interface Report
 {
-    public var include :Gregorian -> Float -> Void;
+    dynamic public function include(thisDay :Gregorian, val :Float) :Void;
     public function getLabel() :String;
     public function toString() :String;
 }

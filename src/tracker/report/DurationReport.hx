@@ -25,16 +25,14 @@ class DurationReport implements Report
 {
     private var firstDate :Gregorian;
     private var lastDate :Gregorian;
-    public var include :Gregorian -> Float -> Void;
 
     public function new()
     {
         firstDate = null;
         lastDate = null;
-        include = myInclude;
     }
 
-    public function myInclude(thisDay :Gregorian, val :Float)
+    dynamic public function include(thisDay :Gregorian, val :Float)
     {
         if( firstDate == null )
             firstDate = thisDay;

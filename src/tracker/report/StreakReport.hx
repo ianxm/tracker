@@ -34,8 +34,8 @@ class StreakReport implements Report
 
     private var filterName :String;
     private var isStreakOn :Bool;
-    public var include :Gregorian -> Float -> Void;
     private var isBest :Int -> Int -> Bool;
+    dynamic public function include(thisDay :Gregorian, val :Float) {}
 
     public function new(keep :FilterStrategy)
     {
