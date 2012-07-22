@@ -5,3 +5,5 @@
 # -lib haxealtdate
 -main tracker.Main
 -resource res/gnuplot.mtt@gnuplot
+#-xml ../doc/umlgen_src.xml
+#-cmd haxelib run HaxeUmlGen dot -b 202030 -f 707080 -o ../doc/uml/ ../doc/umlgen_src.xml
