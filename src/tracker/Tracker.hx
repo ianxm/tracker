@@ -115,7 +115,7 @@ class Tracker
         buf.add("metric");
         for( ii in 0...padding )
             buf.add(" ");
-        buf.add(" count  first       last      days\n");
+        buf.add(" count  first       last      span\n");
         for( metric in allMetrics  )
         {
             count = 0;

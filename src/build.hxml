@@ -1,8 +1,7 @@
 -neko ../bin/tracker.n
 -lib DeepHash
 -lib hxSet
--cp ../../haxealtdate
-# -lib haxealtdate
+-lib haxealtdate
 -main tracker.Main
 -resource res/gnuplot.mtt@gnuplot
 #-xml ../doc/umlgen_src.xml

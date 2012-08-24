@@ -29,6 +29,10 @@ dependencies
 installation
 ------------
 
+there are two options for installing tracker.
+
+### standard install
+
 download the nekovm installer from
 [nekovm.org](http://nekovm.org/download).  once that's installed,
 download tracker.n from
@@ -43,6 +47,23 @@ to use the `graph` command you must have gnuplot installed and on your
 system path.  be sure to install the full gnuplot package, which
 includes the cairo libraries.
 
+
+### haxelib install
+
+install haxe from
+[haxe.org](http://haxe.org/download).
+
+then run
+
+    > haxelib install tracker
+
+to install tracker.
+
+now you can run with:
+
+    > haxelib run tracker
+
+on linux, set an alias for convenience.
  
 tutorial
 --------

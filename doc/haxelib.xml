@@ -2,7 +2,8 @@
 	<user name="ianxm"/>
     <tag v="neko"/>
 	<description>personal metrics tracking tool</description>
-	<version name="0.8">fixed db view for windows</version>
-    <depends name="DeepHash"/>
+	<version name="1.0">compiles against haxealtdate lib</version>
+    <depends name="DeepHash" version="1.2"/>
+    <depends name="haxealtdate" version="1.2.0"/>
 </project>
 
