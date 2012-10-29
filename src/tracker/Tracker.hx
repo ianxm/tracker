@@ -52,7 +52,7 @@ class Tracker
     public function init()
     {
         if( FileSystem.exists(dbFile) )
-            throw "cannot init an existing repository";
+            throw "cannot init an existing repository: " + neko.FileSystem.fullPath(dbFile);
         db = Sqlite.open(dbFile);
         Lib.println("creating repository: " + neko.FileSystem.fullPath(dbFile));
         db.request("CREATE TABLE metrics (" +

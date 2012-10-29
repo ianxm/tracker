@@ -2,7 +2,7 @@
 	<user name="ianxm"/>
     <tag v="neko"/>
 	<description>personal metrics tracking tool</description>
-	<version name="1.0">compiles against haxealtdate lib</version>
+	<version name="0.19">compiles against haxealtdate lib</version>
     <depends name="DeepHash" version="1.2"/>
     <depends name="haxealtdate" version="1.2.0"/>
 </project>
