@@ -31,6 +31,16 @@ import altdate.JulianDay;
 import tracker.Main;
 import utils.Utils;
 
+// only used in list command
+typedef MetricData = {
+    var name  :String;
+    var count :Int;
+    var first :Gregorian;
+    var last  :Gregorian;
+    var since :Int;
+    var span  :Int;
+}
+
 class Tracker
 {
     private var dbFile   :String;
@@ -104,37 +114,53 @@ class Tracker
             return;
         }
 
-        var nameWidth = allMetrics.fold(function(name,width:Int) return Std.int(Math.max(name.length,width)), 5);
-        var count;
-        var firstDate = null;
-        var lastDate = null;
-        var buf = new StringBuf();
-        var padding = Math.round((nameWidth-"metric".length)/2);
-        for( ii in 0...padding )
-            buf.add(" ");
-        buf.add("metric");
-        for( ii in 0...padding )
-            buf.add(" ");
-        buf.add(" count  first       last      span\n");
+        var metricData = new Array<MetricData>();
+        var today = Utils.today();
         for( metric in allMetrics  )
         {
-            count = 0;
-            firstDate = null;
+            var curr :MetricData = {name: metric, count: 0, first: null, last: null, since: 0, span: 0};
             metrics.clear();
             metrics.add(metric);
             var occurrences = selectRange([null, null], false);
             for( occ in occurrences )
             {
-                if( firstDate == null )
-                    firstDate = Utils.dayFromJulian(occ.date);
-                lastDate = Utils.dayFromJulian(occ.date);
-                count++;
+                if( curr.first == null )
+                    curr.first = Utils.dayFromJulian(occ.date);
+                curr.last = Utils.dayFromJulian(occ.date);
+                curr.count++;
             }
-            var duration = lastDate.value-firstDate.value + 1;
-            buf.add(metric.rpad(" ",nameWidth) +"  "+ 
-                    Std.string(count).lpad(" ",3) + 
-                    "  "+ firstDate +"  "+ lastDate +
-                    "  "+ Std.string(duration).lpad(" ",4) + "\n");
+            
+            curr.span = Std.int(curr.last.value-curr.first.value) + 1;
+            curr.since = Std.int(today.value-curr.last.value);
+            metricData.push(curr);
+        }
+
+        // sort list
+        metricData.sort(function(a,b) return Std.int(b.last.value-a.last.value));
+
+        // header
+        var nameWidth = allMetrics.fold(function(name,width:Int) return Std.int(Math.max(name.length,width)), 5);
+        var padding = Math.round((nameWidth-"metric".length)/2);
+        var buf = new StringBuf();
+        for( ii in 0...(padding*2+6) )
+            buf.add(" ");
+        buf.add("        first        last     days   day\n");
+        for( ii in 0...padding )
+            buf.add(" ");
+        buf.add("metric");
+        for( ii in 0...padding )
+            buf.add(" ");
+        buf.add("count    date        date    since  span\n");
+
+        for( curr in metricData  )
+        {
+            buf.add(curr.name.rpad(" ",nameWidth)
+                    +"  "+ Std.string(curr.count).lpad(" ",3)
+                    +"  "+ curr.first
+                    +"  "+ curr.last
+                    +"  "+ Std.string(curr.since).lpad(" ",4)
+                    +"  "+ Std.string(curr.span).lpad(" ",4)
+                    +"\n");
         }
         Lib.println(buf.toString());
     }
