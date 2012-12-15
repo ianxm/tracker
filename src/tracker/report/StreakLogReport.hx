@@ -73,7 +73,14 @@ class StreakLogReport implements Report
         }
 
         if( delta==1 && val>0 )                             // extend current on streak
-            val += (cmd==STREAKS) ? 1 : occVal;
+        {
+            val += if( cmd==STREAKS )
+                1;
+            else if( Main.IS_NO_DATA(occVal) )
+                0;
+            else
+                occVal;
+        }
         else                                                // start new on streak
         {
             if( val > 0 )

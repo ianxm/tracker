@@ -123,8 +123,15 @@ class StreakRecordReport implements Report
 
         var delta = Std.int(occDay.value-lastDay.value);
 
-        if( delta == 1 )                                    // extend current on streak
-            val += (cmd==STREAKS) ? 1 : occVal;
+        if( delta==1 && val>0)                              // extend current on streak
+        {
+            val += if( cmd==STREAKS )
+                1;
+            else if( Main.IS_NO_DATA(occVal) )
+                0;
+            else
+                occVal;
+        }
         else if( !Main.IS_NO_DATA(occVal) )                 // start new streak
         {
             startOfStreak = occDay;

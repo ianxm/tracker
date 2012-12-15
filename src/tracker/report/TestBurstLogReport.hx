@@ -33,7 +33,7 @@ class TestBurstLogReport extends haxe.unit.TestCase
       var report = new StreakLogReport(BURSTS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
-      assertEquals("2012-01-01: 1\n", report.toString());
+      assertEquals("  2012-01-01: 1\n", report.toString());
   }
 
   public function testOnOff()
@@ -41,7 +41,7 @@ class TestBurstLogReport extends haxe.unit.TestCase
       var report = new StreakLogReport(BURSTS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);
-      assertEquals("2012-01-01: 1\n", report.toString());
+      assertEquals("  2012-01-01: 1\n", report.toString());
   }
 
   public function testTwoOnTwoOff()
@@ -50,7 +50,7 @@ class TestBurstLogReport extends haxe.unit.TestCase
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       report.include(Utils.dayFromString("2012-01-04"), Main.NO_DATA);
-      assertEquals("2012-01-01: 2\n", report.toString());
+      assertEquals("  2012-01-01: 2\n", report.toString());
   }
 
   public function testTwoOnTwoOff2()
@@ -59,7 +59,7 @@ class TestBurstLogReport extends haxe.unit.TestCase
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 2);
       report.include(Utils.dayFromString("2012-01-04"), Main.NO_DATA);
-      assertEquals("2012-01-01: 3\n", report.toString());
+      assertEquals("  2012-01-01: 3\n", report.toString());
   }
 
   public function testTwoOnTwoOffZeros()
@@ -84,7 +84,7 @@ class TestBurstLogReport extends haxe.unit.TestCase
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       report.include(Utils.dayFromString("2012-01-03"), Main.NO_DATA);
-      assertEquals("2012-01-01: 1\n2012-01-03: 1\n", report.toString());
+      assertEquals("  2012-01-01: 1\n  2012-01-03: 1\n", report.toString());
   }
 
   public function testOffFixed()
@@ -101,7 +101,7 @@ class TestBurstLogReport extends haxe.unit.TestCase
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);
-      assertEquals("2012-01-02: 1\n", report.toString());
+      assertEquals("  2012-01-02: 1\n", report.toString());
   }
 
   public function testOffOnOff()
@@ -110,7 +110,7 @@ class TestBurstLogReport extends haxe.unit.TestCase
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       report.include(Utils.dayFromString("2012-01-02"), 3);
       report.include(Utils.dayFromString("2012-01-03"), Main.NO_DATA);
-      assertEquals("2012-01-02: 3\n", report.toString());
+      assertEquals("  2012-01-02: 3\n", report.toString());
   }
 
   public function testBigGap1()
@@ -119,7 +119,7 @@ class TestBurstLogReport extends haxe.unit.TestCase
       report.include(Utils.dayFromString("2011-04-01"), Main.NO_DATA);
       report.include(Utils.dayFromString("2011-04-26"), 1);
       report.include(Utils.dayFromString("2011-05-01"), Main.NO_DATA);
-      assertEquals("2011-04-26: 1\n", report.toString());
+      assertEquals("  2011-04-26: 1\n", report.toString());
   }
 
   public function testBigGap2()
@@ -129,6 +129,6 @@ class TestBurstLogReport extends haxe.unit.TestCase
       report.include(Utils.dayFromString("2011-04-26"), 1);
       report.include(Utils.dayFromString("2011-05-01"), 2);
       report.include(Utils.dayFromString("2011-05-01"), Main.NO_DATA);
-      assertEquals("2011-04-26: 1\n2011-05-01: 2\n", report.toString());
+      assertEquals("  2011-04-26: 1\n  2011-05-01: 2\n", report.toString());
   }
 }
