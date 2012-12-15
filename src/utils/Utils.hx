@@ -17,8 +17,6 @@
 */
 package utils;
 
-import neko.Lib;
-import neko.Sys;
 import altdate.Gregorian;
 
 class Utils
