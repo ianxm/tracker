@@ -165,6 +165,9 @@ of the data.  the full date range for report commands is from the
 first occurrence to the current day.  all reports begin by specifying
 the duration of the date range examined.
 
+the `bursts` command is like the `streaks` command except that it sums
+the values over the days of the streak, instead of just counting them.
+
 this is the calendar view of the same data.  here you can easily see
 the runs of on and off days that were listed by the `streaks` output.
 
@@ -367,6 +370,7 @@ reference
         cal            show calendar
         records        show high and low records
         streaks        show consecutive days with or without occurrences
+        bursts         show sum of values for streaks
         graph          draw graph (requires gnuplot)
 
       tags:
@@ -379,7 +383,7 @@ reference
         -d RANGE       specify date range (see RANGE below)
         -o FILE        write graph image or csv export to a file
         -N             limit output to the last N items
-                       this only affects the 'streaks', 'log', 'hist'
+                       this only affects 'streaks', 'bursts', 'log', 'hist'
         --all-metrics  select all existing metrics
         --repo FILE    specify a repository filename
         --min VAL      min threshold to count as an occurrence

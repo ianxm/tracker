@@ -95,10 +95,7 @@ class StreakLogReport implements Report
     {
         var onOrOffStr = onOrOff.lpad(' ', 5);
         var daysStr = Std.string(val).lpad(' ', 3);
-
-        buf.add(onOrOffStr + " " + daysStr + 
-                ((val==1)? " day " : " days") + 
-                " from " + from + "\n");
+        buf.add(onOrOffStr + " " + daysStr + ((val==1)? " day " : " days") + " from " + from + "\n");
     }
 
     private function appendBurst(val :Float, from :Gregorian, onOrOff :String)
