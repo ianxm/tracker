@@ -25,26 +25,29 @@ import tracker.report.RecordReport;
 
 class StreakRecordReport implements Report
 {
-    private var startOfStreak :Gregorian;
-    private var lastDay :Gregorian;
-    private var count :Int;
+    private var startOfStreak    :Gregorian;
+    private var lastDay          :Gregorian;
+    private var val              :Float;
 
-    private var bestStreakLength :Int;
-    private var bestStartDate :Gregorian;
+    private var bestVal          :Float;
+    private var bestStartDate    :Gregorian;
 
-    private var filterName :String;
-    private var isStreakOn :Bool;
-    private var isBest :Int -> Int -> Bool;
+    private var filterName       :String;
+    private var isStreakOn       :Bool;
+    private var isBest           :Float -> Float -> Bool;
+
+    private var cmd              :Command;
     dynamic public function include(thisDay :Gregorian, val :Float) {}
 
-    public function new(keep :FilterStrategy)
+    public function new(keep :FilterStrategy, c :Command)
     {
-        bestStreakLength = 0;
-        bestStartDate = null;
+        cmd = c;
 
+        bestVal = 0;
+        bestStartDate = null;
         startOfStreak = null;
         lastDay = null;
-        count = 0;
+        val = 0;
 
         switch( keep )
         {
@@ -56,13 +59,13 @@ class StreakRecordReport implements Report
             }
         case KEEP_HIGHEST:
             {
-                filterName = "longest on streak: ";
+                filterName = (cmd==STREAKS) ? "longest on streak: " : "highest burst: ";
                 isBest = function(a,b) return a>=b;
                 include = includeOn;
             }
         case KEEP_CURRENT:
             {
-                filterName = "current streak: ";
+                filterName = (cmd==STREAKS) ? "current streak: " : "current burst: ";
                 isBest = function(a,b) return true;
                 include = includeCurrent;
             }
@@ -79,10 +82,12 @@ class StreakRecordReport implements Report
             " (off)\n";
         return if( bestStartDate == null )
             "none\n";
-        else if( bestStreakLength == 1 )
+        else if( cmd == BURSTS )
+            bestVal + " starting on " + bestStartDate +"\n";
+        else if( bestVal == 1 )
             "  1 day  starting on " + bestStartDate + onOrOff;
         else
-            Std.string(bestStreakLength).lpad(' ',3) + " days starting on " + bestStartDate + onOrOff;
+            Std.string(bestVal).lpad(' ',3) + " days starting on " + bestStartDate + onOrOff;
     }
 
     inline public function getLabel()
@@ -90,13 +95,13 @@ class StreakRecordReport implements Report
         return filterName;
     }
 
-    private function checkBest(checkDate, checkLength)
+    private function checkBest(checkDate :Gregorian, checkVal :Float)
     {
-        if( isBest(checkLength, bestStreakLength) )
+        if( isBest(checkVal, bestVal) )
         {
             bestStartDate = checkDate;
-            bestStreakLength = checkLength;
-       }
+            bestVal = checkVal;
+        }
     }
 
     // val may be zero for first and last call
@@ -119,13 +124,13 @@ class StreakRecordReport implements Report
         var delta = Std.int(occDay.value-lastDay.value);
 
         if( delta == 1 )                                    // extend current on streak
-            count++;
+            val += (cmd==STREAKS) ? 1 : occVal;
         else if( !Main.IS_NO_DATA(occVal) )                 // start new streak
         {
             startOfStreak = occDay;
-            count = 1;
+            val = (cmd==STREAKS) ? 1 : occVal;
         }
-        checkBest(startOfStreak, count);                    // check for new best
+        checkBest(startOfStreak, val);                      // check for new best
         lastDay = occDay;
     }
 
@@ -137,24 +142,26 @@ class StreakRecordReport implements Report
 
         var delta = Std.int(occDay.value-lastDay.value);
 
-        if( delta == 1 && !Main.IS_NO_DATA(occVal) )        // extend current on streak
-            count++;
+        if( delta==1  && !Main.IS_NO_DATA(occVal) )        // extend current on streak
+            val += (cmd==STREAKS) ? 1 : occVal;
         else
         {
             if( !Main.IS_NO_DATA(occVal) )                  // start new on streak
             {
                 startOfStreak = occDay;
-                count = 1;
+                val = (cmd==STREAKS) ? 1 : occVal;
                 isStreakOn = true;
             }
-            else if( delta != 0 )                           // end on an off streak
+            else if( delta != 0 )                           // end of an off streak
             {
                 startOfStreak = Utils.dayShift(lastDay, 1);
-                count = delta;
+                val = delta;
                 isStreakOn = false;
+                bestStartDate = null;
             }
         }
-        checkBest(startOfStreak, count);                    // check for new best
+        if( isStreakOn || cmd==STREAKS )
+            checkBest(startOfStreak, val);                  // check for new best
         lastDay = occDay;
     }
 }

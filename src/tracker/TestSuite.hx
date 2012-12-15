@@ -27,7 +27,8 @@ class TestSuite
         r.add(new tracker.report.TestDurationReport());
         r.add(new tracker.report.TestLogReport());
         r.add(new tracker.report.TestCountReport());
-        r.add(new tracker.report.TestStreakReport());
+        r.add(new tracker.report.TestStreakRecordReport());
+        r.add(new tracker.report.TestBurstRecordReport());
         r.add(new tracker.report.TestStreakLogReport());
         r.add(new tracker.report.TestBurstLogReport());
         r.add(new tracker.report.TestCalReport());

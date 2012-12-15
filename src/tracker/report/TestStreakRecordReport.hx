@@ -20,24 +20,24 @@ package tracker.report;
 import utils.Utils;
 import tracker.Main;
 
-class TestStreakReport extends haxe.unit.TestCase
+class TestStreakRecordReport extends haxe.unit.TestCase
 {
   public function testOnEmpty()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       assertEquals("none\n", report.toString());
   }
 
   public function testOnOne()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       assertEquals("  1 day  starting on 2012-01-01\n", report.toString());
   }
 
   public function testOnOneWithFixedStart()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2011-12-01"), Main.NO_DATA);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       assertEquals("  1 day  starting on 2012-01-01\n", report.toString());
@@ -45,7 +45,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOnOneWithFixedEnd()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-05"), Main.NO_DATA);
       assertEquals("  1 day  starting on 2012-01-01\n", report.toString());
@@ -53,7 +53,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOnOneWithFixedEndWithOcc()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       assertEquals("  1 day  starting on 2012-01-01\n", report.toString());
@@ -61,7 +61,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOnReplaceWithNewer()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       assertEquals("  1 day  starting on 2012-01-03\n", report.toString());
@@ -69,7 +69,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOnTwoConsec()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       assertEquals("  2 days starting on 2012-01-01\n", report.toString());
@@ -77,7 +77,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOnTwoConsecWithZero()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 0);
       assertEquals("  2 days starting on 2012-01-01\n", report.toString());
@@ -85,7 +85,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOnOneTwo()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       report.include(Utils.dayFromString("2012-01-04"), 1);
@@ -94,7 +94,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOnTwoOne()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       report.include(Utils.dayFromString("2012-01-04"), 1);
@@ -103,7 +103,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOnOccOnStartDay()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-04"), 1);
@@ -112,7 +112,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOnOccOnEndDay()
   {
-      var report = new StreakReport(KEEP_HIGHEST);
+      var report = new StreakRecordReport(KEEP_HIGHEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-04"), 1);
       report.include(Utils.dayFromString("2012-01-04"), Main.NO_DATA);
@@ -123,13 +123,13 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffEmpty()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       assertEquals("none\n", report.toString());
   }
 
   public function testOffOne()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       assertEquals("  1 day  starting on 2012-01-02\n", report.toString());
@@ -137,7 +137,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffOneWithFixedStart()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       assertEquals("  1 day  starting on 2012-01-02\n", report.toString());
@@ -145,7 +145,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffOneWithFixedEnd()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), Main.NO_DATA);
       assertEquals("  1 day  starting on 2012-01-02\n", report.toString());
@@ -153,7 +153,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffOneWithFixedEndWithOcc()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       assertEquals("none\n", report.toString());
@@ -161,7 +161,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffReplaceWithNewer()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       report.include(Utils.dayFromString("2012-01-05"), 1);
@@ -170,7 +170,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffTwoConsec()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-04"), 1);
       assertEquals("  2 days starting on 2012-01-02\n", report.toString());
@@ -178,7 +178,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffOneTwo()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       report.include(Utils.dayFromString("2012-01-06"), 1);
@@ -187,7 +187,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffTwoOne()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-04"), 1);
       report.include(Utils.dayFromString("2012-01-06"), 1);
@@ -196,7 +196,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffOccOnStartDay()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), Main.NO_DATA);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-04"), 1);
@@ -205,7 +205,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testOffOccOnEndDay()
   {
-      var report = new StreakReport(KEEP_LOWEST);
+      var report = new StreakRecordReport(KEEP_LOWEST, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-04"), 1);
       report.include(Utils.dayFromString("2012-01-04"), Main.NO_DATA);
@@ -217,20 +217,20 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testCurrentEmpty()
   {
-      var report = new StreakReport(KEEP_CURRENT);
+      var report = new StreakRecordReport(KEEP_CURRENT, STREAKS);
       assertEquals("none\n", report.toString());
   }
 
   public function testCurrentOneOn()
   {
-      var report = new StreakReport(KEEP_CURRENT);
+      var report = new StreakRecordReport(KEEP_CURRENT, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       assertEquals("  1 day  starting on 2012-01-01 (on)\n", report.toString());
   }
 
   public function testCurrentTwoOn()
   {
-      var report = new StreakReport(KEEP_CURRENT);
+      var report = new StreakRecordReport(KEEP_CURRENT, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), 1);
       assertEquals("  2 days starting on 2012-01-01 (on)\n", report.toString());
@@ -238,7 +238,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testCurrentOneOff()
   {
-      var report = new StreakReport(KEEP_CURRENT);
+      var report = new StreakRecordReport(KEEP_CURRENT, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-02"), Main.NO_DATA);
       assertEquals("  1 day  starting on 2012-01-02 (off)\n", report.toString());
@@ -246,7 +246,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testCurrentTwoOff()
   {
-      var report = new StreakReport(KEEP_CURRENT);
+      var report = new StreakRecordReport(KEEP_CURRENT, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), Main.NO_DATA);
       assertEquals("  2 days starting on 2012-01-02 (off)\n", report.toString());
@@ -254,7 +254,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testCurrentReplaceWithNewerOn()
   {
-      var report = new StreakReport(KEEP_CURRENT);
+      var report = new StreakRecordReport(KEEP_CURRENT, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       assertEquals("  1 day  starting on 2012-01-03 (on)\n", report.toString());
@@ -262,7 +262,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testCurrentReplaceWithNewerOff()
   {
-      var report = new StreakReport(KEEP_CURRENT);
+      var report = new StreakRecordReport(KEEP_CURRENT, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       report.include(Utils.dayFromString("2012-01-04"), Main.NO_DATA);
@@ -271,7 +271,7 @@ class TestStreakReport extends haxe.unit.TestCase
 
   public function testCurrentEndOnOffDay()
   {
-      var report = new StreakReport(KEEP_CURRENT);
+      var report = new StreakRecordReport(KEEP_CURRENT, STREAKS);
       report.include(Utils.dayFromString("2012-01-01"), 1);
       report.include(Utils.dayFromString("2012-01-03"), 1);
       report.include(Utils.dayFromString("2012-01-03"), Main.NO_DATA);

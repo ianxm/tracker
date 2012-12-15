@@ -27,7 +27,7 @@ import altdate.Gregorian;
 
 class Main
 {
-    private static var VERSION = "v0.21";
+    private static var VERSION = "v0.22";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;

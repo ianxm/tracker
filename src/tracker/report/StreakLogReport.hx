@@ -64,13 +64,11 @@ class StreakLogReport implements Report
             if( val > 0 )
                 append(val, startOfStreak, "on");
             if( delta > 0 )
-            {
                 if( cmd == STREAKS )
                     if( val == 0 )                          // no occurrences
                         append(delta+1, lastDay, "off");
                     else
                         append(delta, Utils.dayShift(lastDay, 1), "off");
-            }
             return;
         }
 
@@ -105,7 +103,7 @@ class StreakLogReport implements Report
 
     private function appendBurst(val :Float, from :Gregorian, onOrOff :String)
     {
-        buf.add(from + ": " + val + "\n");
+        buf.add("  " + from + ": " + val + "\n");
     }
 
     public function toString()
