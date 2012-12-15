@@ -140,7 +140,7 @@ class Main
                     }
                 }
             case "-o":        fname = args.shift();         // save image or csv file
-            case "--all":     metrics.add("*");             // select all metrics
+            case "--all-metrics": metrics.add("*");             // select all metrics
             case "--min":     min = Std.parseFloat(args.shift());
             case "--repo":    dbFile = args.shift();        // set filename
             case "-v",
@@ -345,7 +345,7 @@ options:
     -o FILE        write graph image or csv export to a file
     -N             limit output to the last N items
                    this only affects the 'streaks', 'log', 'hist'
-    --all          select all existing metrics
+    --all-metrics  select all existing metrics
     --repo FILE    specify a repository filename
     --min VAL      min threshold to count as an occurrence
     -v, --version  show version

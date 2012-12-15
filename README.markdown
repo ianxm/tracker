@@ -380,7 +380,7 @@ reference
         -o FILE        write graph image or csv export to a file
         -N             limit output to the last N items
                        this only affects the 'streaks', 'log', 'hist'
-        --all          select all existing metrics
+        --all-metrics  select all existing metrics
         --repo FILE    specify a repository filename
         --min VAL      min threshold to count as an occurrence
         -v, --version  show version
