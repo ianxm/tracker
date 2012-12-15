@@ -27,14 +27,16 @@ import tracker.report.Report;
 class ReportGenerator
 {
     private var reports :List<Report>;
-    private var indent  :Bool;
-    private var tail    :Int;
+    private var indent  :Bool;                              // if true, indent each line of output
+    private var rev     :Bool;                              // reverse lines of output (most recent at top)
+    private var tail    :Int;                               // number of lines to keep (most recent)
 
     public function new(t)
     {
         tail = t;
         reports = new List<Report>();
         indent = false;
+        rev = false;
     }
 
     public function setReport(cmd, groupType, valType)
@@ -92,12 +94,14 @@ class ReportGenerator
                 if( tail == null )
                     reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.LogReport(groupType, valType));
+                rev = true;
             }
         case STREAKS:
             {
                 if( tail == null )
                     reports.add(new tracker.report.DurationReport());
                 reports.add(new tracker.report.StreakLogReport());
+                rev = true;
             }
         case CAL:
             {
@@ -124,24 +128,28 @@ class ReportGenerator
         else
             0;
 
-        var fifo = new List<String>();
+        var stack = new Array<String>();
         for( report in reports )
         {
             var line = report.getLabel().lpad(' ', labelWidth) + report.toString();
-            if( tail == null )
-                Lib.print(line);                          // just write to stdout
-            else
+            if( rev )                                       // reverse output, and check for tail
             {
-                for( ii in line.split("\n") )               // add each line to the fifo
-                {
+                for( ii in line.split("\n") )               // add each line to the stack
                     if( ii != "" )
-                        fifo.add(ii);
-                    if( fifo.length > tail )
-                        fifo.pop();
-                }
+                    {
+                        if( tail!=null && stack.length>=tail )
+                        {
+                            stack.shift();
+                            stack.push(ii);
+                        }
+                        else
+                            stack.push(ii);
+                    }
+                while( stack.length > 0 )                   // dump the stack to stdout
+                    Lib.print(stack.pop() + "\n");
             }
-            while( !fifo.isEmpty() )                            // dump the fifo to stdout
-                Lib.print(fifo.pop() + "\n");
+            else
+                Lib.print(line);                            // dont reverse, just dump output
         }
     }
 }

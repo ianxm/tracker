@@ -35,7 +35,7 @@ class LogReport implements Report
     private var lastVal        :Float;                         // value in last bin
     private var firstDay       :Gregorian;                     // needed for full grouping
     private var lastDay        :Gregorian;                     // needed for full grouping
-    private var gapCheck       :Bool;                          // if true, check for gaps
+    private var gapCheck       :Bool;                          // if true, include zeros in the log
     dynamic public function include(thisDay :Gregorian, val :Float) {}
 
     public function new(gt, vt)
