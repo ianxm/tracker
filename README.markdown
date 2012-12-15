@@ -151,14 +151,14 @@ their date ranges.
     watchedtv   5 2012-02-10 to 2012-02-15     6
 
 the `streaks` command lists runs of consecutive days with or without
-occurrences.
+occurrences.  the most recent information is at the top.
 
     > tracker streaks watchedtv
     duration: 17 days from 2012-02-10 to 2012-02-26
-       on   2 days from 2012-02-10
-      off   1 day  from 2012-02-12
-       on   3 days from 2012-02-13
       off  11 days from 2012-02-16
+       on   3 days from 2012-02-13
+      off   1 day  from 2012-02-12
+       on   2 days from 2012-02-10
 
 since the date range isn't specified, tracker uses the full date range
 of the data.  the full date range for report commands is from the
@@ -198,15 +198,15 @@ for the same day will be summed.
 
 the following is a log of all 'watchedtv' occurrences.  by default,
 logs group occurrences by day, but they can also be grouped in larger
-intervals.
+intervals.  the most recent information is at the top.
 
     > tracker log watchedtv
     duration: 17 days from 2012-02-10 to 2012-02-26
-      2012-02-10: 4
-      2012-02-11: 4
-      2012-02-13: 4
-      2012-02-14: 4
       2012-02-15: 4
+      2012-02-14: 4
+      2012-02-13: 4
+      2012-02-11: 4
+      2012-02-10: 4
 
 note: logs, like all reports, can be constrained using date ranges.
 
@@ -214,8 +214,8 @@ this is a log where each entry lists the totals for that week.
 
     > tracker log watchedtv -by-week
     duration: 17 days from 2012-02-10 to 2012-02-26
-      2012-02-05: 8
       2012-02-12: 12
+      2012-02-05: 8
 
 so, on the week of the 12th, you spent 12 hours watching tv.  you
 should pare that back.  in addition to `-by-week`, tracker provides
@@ -231,8 +231,8 @@ occurrences:
 
     > tracker log watchedtv -by-week -count
     duration: 17 days from 2012-02-10 to 2012-02-26
-      2012-02-05: 2
       2012-02-12: 3
+      2012-02-05: 2
 
 that last line says that you watched tv on three days of the week of
 feb 12th.
@@ -253,8 +253,8 @@ again) then converts to a percent.
 
     > tracker log watchedtv -by-week -percent
     duration: 17 days from 2012-02-10 to 2012-02-26
-      2012-02-05: 29
       2012-02-12: 43
+      2012-02-05: 29
 
 that says that you watched tv on 43% of the days of the week of feb
 12th.
