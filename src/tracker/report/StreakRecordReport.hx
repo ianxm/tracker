@@ -23,7 +23,7 @@ import tracker.Main;
 import utils.Utils;
 import tracker.report.RecordReport;
 
-class StreakReport implements Report
+class StreakRecordReport implements Report
 {
     private var startOfStreak :Gregorian;
     private var lastDay :Gregorian;

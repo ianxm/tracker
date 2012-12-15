@@ -84,9 +84,9 @@ class ReportGenerator
                     reports.add(new tracker.report.Spacer());
                 }
 
-                reports.add(new tracker.report.StreakReport(KEEP_HIGHEST));
-                reports.add(new tracker.report.StreakReport(KEEP_LOWEST));
-                reports.add(new tracker.report.StreakReport(KEEP_CURRENT));
+                reports.add(new tracker.report.StreakRecordReport(KEEP_HIGHEST));
+                reports.add(new tracker.report.StreakRecordReport(KEEP_LOWEST));
+                reports.add(new tracker.report.StreakRecordReport(KEEP_CURRENT));
                 tail = null;
             }
         case LOG:
