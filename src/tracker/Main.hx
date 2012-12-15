@@ -108,6 +108,7 @@ class Main
         case "import":  { cmd = CSV_IMPORT; fname = args.shift(); }
         case "records": cmd = RECORDS;
         case "streaks": cmd = STREAKS;
+        case "bursts":  cmd = BURSTS;
         case "graph":   cmd = GRAPH;
 
         case "addtag":   { cmd = ADD_TAG; tag = args.shift(); }
@@ -332,6 +333,7 @@ commands:
     cal            show calendar
     records        show high and low records
     streaks        show consecutive days with or without occurrences
+    bursts         show sum of values for streaks
     graph          draw graph (requires gnuplot)
 
   tags:
@@ -344,7 +346,7 @@ options:
     -d RANGE       specify date range (see RANGE below)
     -o FILE        write graph image or csv export to a file
     -N             limit output to the last N items
-                   this only affects the 'streaks', 'log', 'hist'
+                   this only affects 'streaks', 'busts', 'log', 'hist'
     --all-metrics  select all existing metrics
     --repo FILE    specify a repository filename
     --min VAL      min threshold to count as an occurrence
@@ -434,6 +436,7 @@ enum Command
     CSV_IMPORT;                                             // import from csv
     RECORDS;                                                // view report
     STREAKS;                                                // show streaks
+    BURSTS;                                                 // show sum of values for streaks
     GRAPH;                                                  // show graph
     ADD_TAG;                                                // add a tag
     RM_TAG;                                                 // remove a tag

@@ -27,14 +27,19 @@ class StreakLogReport implements Report
     private var buf           :StringBuf;
     private var startOfStreak :Gregorian;
     private var lastDay       :Gregorian;
-    private var count         :Int;
+    private var cmd           :Command;
+    private var append        :Float -> Gregorian -> String -> Void;
+    private var val           :Float;                       // number of days for streaks, 
+                                                            // or sum of values over count days for bursts
 
-    public function new()
+    public function new(c :Command)
     {
         buf = new StringBuf();
         startOfStreak = null;
         lastDay = null;
-        count = 0;
+        val = 0;
+        cmd = c;
+        append = (cmd==STREAKS) ? appendStreak : appendBurst;
     }
 
     // val may be zero for first and last call
@@ -46,7 +51,7 @@ class StreakLogReport implements Report
             if( !Main.IS_NO_DATA(occVal) )
             {
                 startOfStreak = occDay;
-                count = 1;
+                val = (cmd==STREAKS) ? 1 : occVal;
             }
             return;
         }
@@ -56,44 +61,51 @@ class StreakLogReport implements Report
 
         if( Main.IS_NO_DATA(occVal) )                       // last
         {
-            if( count > 0 )
-                append("on", count, startOfStreak);
+            if( val > 0 )
+                append(val, startOfStreak, "on");
             if( delta > 0 )
             {
-                if( count == 0 )                            // no occurrences
-                    append("off", delta+1, lastDay);
-                else
-                    append("off", delta, Utils.dayShift(lastDay, 1));
+                if( cmd == STREAKS )
+                    if( val == 0 )                          // no occurrences
+                        append(delta+1, lastDay, "off");
+                    else
+                        append(delta, Utils.dayShift(lastDay, 1), "off");
             }
             return;
         }
 
-        if( delta==1 && count>0 )                           // extend current on streak
-            count++;
+        if( delta==1 && val>0 )                             // extend current on streak
+            val += (cmd==STREAKS) ? 1 : occVal;
         else                                                // start new on streak
         {
-            if( count > 0 )
-                append("on", count, startOfStreak);
+            if( val > 0 )
+                append(val, startOfStreak, "on");
             if( delta > 0 )
-                if( count == 0 )                            // no occurrences
-                    append("off", delta, lastDay);
-                else
-                    append("off", delta-1, Utils.dayShift(lastDay, 1));
+                if( cmd == STREAKS )
+                    if( val == 0 )                          // no occurrences
+                        append(delta, lastDay, "off");
+                    else
+                        append(delta-1, Utils.dayShift(lastDay, 1), "off");
             startOfStreak = occDay;
-            count = 1;
+            val = (cmd==STREAKS) ? 1 : occVal;
         }
 
         lastDay = occDay;
     }
 
-    private function append(onOrOff :String, days :Int, from :Gregorian)
+    private function appendStreak(val :Float, from :Gregorian, onOrOff :String)
     {
         var onOrOffStr = onOrOff.lpad(' ', 5);
-        var daysStr = Std.string(days).lpad(' ', 3);
+        var daysStr = Std.string(val).lpad(' ', 3);
 
         buf.add(onOrOffStr + " " + daysStr + 
-                ((days==1)? " day " : " days") + 
+                ((val==1)? " day " : " days") + 
                 " from " + from + "\n");
+    }
+
+    private function appendBurst(val :Float, from :Gregorian, onOrOff :String)
+    {
+        buf.add(from + ": " + val + "\n");
     }
 
     public function toString()

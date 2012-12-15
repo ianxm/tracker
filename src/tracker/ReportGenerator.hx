@@ -100,7 +100,14 @@ class ReportGenerator
             {
                 if( tail == null )
                     reports.add(new tracker.report.DurationReport());
-                reports.add(new tracker.report.StreakLogReport());
+                reports.add(new tracker.report.StreakLogReport(cmd));
+                rev = true;
+            }
+        case BURSTS:
+            {
+                if( tail == null )
+                    reports.add(new tracker.report.DurationReport());
+                reports.add(new tracker.report.StreakLogReport(cmd));
                 rev = true;
             }
         case CAL:
