@@ -23,6 +23,7 @@ import haxe.Template;
 import haxe.Resource;
 import neko.Lib;
 import neko.io.Process;
+import haxe.io.Bytes;
 import utils.Utils;
 import tracker.Main;
 import tracker.report.Report;
@@ -36,9 +37,10 @@ class GraphGenerator
     private var fname     :String;
     private var makePng   :Bool;
     private var makeSvg   :Bool;
+    private var drawAscii :Bool;
     private var title     :String;
 
-    public function new(t :String, gt :GraphType, f :String)
+    public function new(t :String, gt :GraphType, f :String, term :GraphTerm)
     {
         checkGnuplot();
         reports = new List<Report>();
@@ -57,6 +59,7 @@ class GraphGenerator
                 throw "graph output files must end in '.png' or '.svg'";
             Lib.println("saving graph to: " + fname);
         }
+        drawAscii = ( !makePng && !makeSvg && f==null && term==ASCII );
     }
 
     public function setReport(gt, vt)
@@ -78,6 +81,7 @@ class GraphGenerator
         var config = reports.first().toString().replace(":","");
         var params = { makePng: makePng,
                        makeSvg: makeSvg,
+                       drawAscii: drawAscii,
                        useMagick: (!makePng && !makeSvg && checkImageMagick()),
                        fname: fname,
                        title: title,
@@ -97,6 +101,9 @@ class GraphGenerator
             ret.stdin.close();
             if( ret.exitCode() != 0 )
                 throw("gnuplot failed");
+            var output = ret.stdout.readAll();
+            if( output.length > 0 )
+                Lib.println(output.readString(1,output.length-1));
         } catch( ex : String ) {
             throw("gnuplot failed" );
         }

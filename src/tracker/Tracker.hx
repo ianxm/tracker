@@ -338,12 +338,12 @@ class Tracker
     }
 
     // run the graph generator
-    public function graph(fname :String, graphType, groupType, valType)
+    public function graph(fname :String, graphType, groupType, valType, graphTerm)
     {
         connect();
         checkMetrics();                                     // check that all requested metrics exist
 
-        var graphGenerator = new GraphGenerator(metrics.list().join(", "), graphType, fname);
+        var graphGenerator = new GraphGenerator(metrics.list().join(", "), graphType, fname, graphTerm);
         graphGenerator.setReport(groupType, valType);
 
         if( range[0] != null )                              // start..
@@ -514,6 +514,7 @@ class Tracker
     }
 
     // check that metrics exist, replace tags or splat
+    // add metric if it doesn't exist
     private function checkMetrics()
     {
         var allMetrics = getAllMetrics();
@@ -540,7 +541,7 @@ class Tracker
         }
     }
 
-    // get a set of all metrics in the db
+    // get a set of all metrics names in the db
     private function getAllMetrics()
     {
         var rs = db.request("SELECT name FROM metrics");

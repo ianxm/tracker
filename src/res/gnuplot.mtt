@@ -5,6 +5,10 @@
 ::elseif makeSvg::
   set term svg size 600, 400
   set output "::fname::"
+::elseif drawAscii::
+  set term dumb
+  set xtics scale 0.5
+  set ytics scale 0.5
 ::else::
   set term wxt persist
 ::end::

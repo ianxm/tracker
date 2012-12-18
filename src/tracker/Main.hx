@@ -27,7 +27,7 @@ import altdate.Gregorian;
 
 class Main
 {
-    private static var VERSION = "v0.22";
+    private static var VERSION = "v0.23";
 
     public static var NO_DATA = Math.NaN;
     public static var IS_NO_DATA = Math.isNaN;
@@ -41,6 +41,7 @@ class Main
     private var valType    :ValType;
     private var groupType  :GroupType;
     private var graphType  :GraphType;
+    private var graphTerm  :GraphTerm;
     private var fname      :String;
     private var tail       :Int;
     private var tag        :String;
@@ -52,6 +53,7 @@ class Main
         groupType = DAY;
         valType = TOTAL;
         graphType = LINE;
+        graphTerm = WINDOW;
         metrics = new Set<String>();
         range = [null, null];
         undoMode = u;
@@ -79,7 +81,7 @@ class Main
             case ADD_TAG:    worker.addTag(tag);
             case RM_TAG:     worker.rmTag(tag);
             case LIST_TAGS:  worker.listTags();
-            case GRAPH:      worker.graph(fname, graphType, groupType, valType);
+            case GRAPH:      worker.graph(fname, graphType, groupType, valType, graphTerm);
             default:         worker.view(cmd, groupType, valType, tail, min);
             }
             worker.close();
@@ -140,32 +142,33 @@ class Main
                         range = [date, date];
                     }
                 }
-            case "-o":        fname = args.shift();         // save image or csv file
+            case "-o":            fname = args.shift();         // save image or csv file
             case "--all-metrics": metrics.add("*");             // select all metrics
-            case "--min":     min = Std.parseFloat(args.shift());
-            case "--repo":    dbFile = args.shift();        // set filename
+            case "--min":         min = Std.parseFloat(args.shift());
+            case "--repo":        dbFile = args.shift();        // set filename
+            case "--ascii-graph": graphTerm = ASCII;
             case "-v",
-                "--version":  printVersion();
+                "--version":      printVersion();
             case "-h",
-                "--help":     printHelp();
+                "--help":         printHelp();
 
-            case "-by-day":    groupType = DAY;
-            case "-by-week":   groupType = WEEK;
-            case "-by-month":  groupType = MONTH;
-            case "-by-year":   groupType = YEAR;
-            case "-by-full":   groupType = FULL;
+            case "-by-day":       groupType = DAY;
+            case "-by-week":      groupType = WEEK;
+            case "-by-month":     groupType = MONTH;
+            case "-by-year":      groupType = YEAR;
+            case "-by-full":      groupType = FULL;
 
-            case "-total":     valType = TOTAL;
-            case "-count":     valType = COUNT;
-            case "-percent":   valType = PERCENT;
-            case "-per-day":   valType = AVG_DAY;
-            case "-per-week":  valType = AVG_WEEK;
-            case "-per-month": valType = AVG_MONTH;
-            case "-per-year":  valType = AVG_YEAR;
+            case "-total":        valType = TOTAL;
+            case "-count":        valType = COUNT;
+            case "-percent":      valType = PERCENT;
+            case "-per-day":      valType = AVG_DAY;
+            case "-per-week":     valType = AVG_WEEK;
+            case "-per-month":    valType = AVG_MONTH;
+            case "-per-year":     valType = AVG_YEAR;
 
-            case "-line":      graphType = LINE;
-            case "-bar":       graphType = BAR;
-            case "-point":     graphType = POINT;
+            case "-line":         graphType = LINE;
+            case "-bar":          graphType = BAR;
+            case "-point":        graphType = POINT;
 
             default:                                        // else assume it is a metric
                 if( StringTools.startsWith(arg, "=") )
@@ -349,6 +352,7 @@ options:
                    this only affects 'streaks', 'busts', 'log', 'hist'
     --all-metrics  select all existing metrics
     --repo FILE    specify a repository filename
+    --ascii-graph  draw the graph in ascii art to the terminal
     --min VAL      min threshold to count as an occurrence
     -v, --version  show version
     -h, --help     show help
@@ -468,4 +472,10 @@ enum GraphType
     LINE;                                                  // line graph
     BAR;                                                   // bar graph
     POINT;                                                 // point graph
+}
+
+enum GraphTerm
+{
+    ASCII;                                                  // ascii art
+    WINDOW;                                                 // new window
 }
